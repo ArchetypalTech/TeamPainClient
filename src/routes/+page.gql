@@ -1,0 +1,11 @@
+  query Nodes {
+  models {
+    edges {
+      node {
+      	contractAddress
+      }
+    }
+  }
+  }
+
+  

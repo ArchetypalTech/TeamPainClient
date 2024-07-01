@@ -1,0 +1,416 @@
+schema {
+  query: World__Query
+  subscription: World__Subscription
+}
+
+scalar ByteArray
+
+scalar ContractAddress
+
+scalar Cursor
+
+scalar DateTime
+
+scalar Enum
+
+union ModelUnion = Moves | Output | Player | Position
+
+type Moves {
+  entity: World__Entity
+  last_direction: Enum
+  player: ContractAddress
+  remaining: u8
+}
+
+type MovesConnection {
+  edges: [MovesEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type MovesEdge {
+  cursor: Cursor
+  node: Moves
+}
+
+input MovesOrder {
+  direction: OrderDirection!
+  field: MovesOrderField!
+}
+
+enum MovesOrderField {
+  LAST_DIRECTION
+  PLAYER
+  REMAINING
+}
+
+input MovesWhereInput {
+  last_direction: Enum
+  player: ContractAddress
+  playerEQ: ContractAddress
+  playerGT: ContractAddress
+  playerGTE: ContractAddress
+  playerIN: [ContractAddress]
+  playerLIKE: ContractAddress
+  playerLT: ContractAddress
+  playerLTE: ContractAddress
+  playerNEQ: ContractAddress
+  playerNOTIN: [ContractAddress]
+  playerNOTLIKE: ContractAddress
+  remaining: u8
+  remainingEQ: u8
+  remainingGT: u8
+  remainingGTE: u8
+  remainingIN: [u8]
+  remainingLIKE: u8
+  remainingLT: u8
+  remainingLTE: u8
+  remainingNEQ: u8
+  remainingNOTIN: [u8]
+  remainingNOTLIKE: u8
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+type Output {
+  entity: World__Entity
+  playerId: ContractAddress
+  text: ByteArray
+}
+
+type OutputConnection {
+  edges: [OutputEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type OutputEdge {
+  cursor: Cursor
+  node: Output
+}
+
+input OutputOrder {
+  direction: OrderDirection!
+  field: OutputOrderField!
+}
+
+enum OutputOrderField {
+  PLAYERID
+  TEXT
+}
+
+input OutputWhereInput {
+  playerId: ContractAddress
+  playerIdEQ: ContractAddress
+  playerIdGT: ContractAddress
+  playerIdGTE: ContractAddress
+  playerIdIN: [ContractAddress]
+  playerIdLIKE: ContractAddress
+  playerIdLT: ContractAddress
+  playerIdLTE: ContractAddress
+  playerIdNEQ: ContractAddress
+  playerIdNOTIN: [ContractAddress]
+  playerIdNOTLIKE: ContractAddress
+  text: ByteArray
+  textEQ: ByteArray
+  textGT: ByteArray
+  textGTE: ByteArray
+  textIN: [ByteArray]
+  textLIKE: ByteArray
+  textLT: ByteArray
+  textLTE: ByteArray
+  textNEQ: ByteArray
+  textNOTIN: [ByteArray]
+  textNOTLIKE: ByteArray
+}
+
+type Player {
+  entity: World__Entity
+  player_adr: ContractAddress
+  player_id: u32
+}
+
+type PlayerConnection {
+  edges: [PlayerEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type PlayerEdge {
+  cursor: Cursor
+  node: Player
+}
+
+input PlayerOrder {
+  direction: OrderDirection!
+  field: PlayerOrderField!
+}
+
+enum PlayerOrderField {
+  PLAYER_ADR
+  PLAYER_ID
+}
+
+input PlayerWhereInput {
+  player_adr: ContractAddress
+  player_adrEQ: ContractAddress
+  player_adrGT: ContractAddress
+  player_adrGTE: ContractAddress
+  player_adrIN: [ContractAddress]
+  player_adrLIKE: ContractAddress
+  player_adrLT: ContractAddress
+  player_adrLTE: ContractAddress
+  player_adrNEQ: ContractAddress
+  player_adrNOTIN: [ContractAddress]
+  player_adrNOTLIKE: ContractAddress
+  player_id: u32
+  player_idEQ: u32
+  player_idGT: u32
+  player_idGTE: u32
+  player_idIN: [u32]
+  player_idLIKE: u32
+  player_idLT: u32
+  player_idLTE: u32
+  player_idNEQ: u32
+  player_idNOTIN: [u32]
+  player_idNOTLIKE: u32
+}
+
+type Position {
+  entity: World__Entity
+  player: ContractAddress
+  vec: Position_Vec2
+}
+
+type PositionConnection {
+  edges: [PositionEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type PositionEdge {
+  cursor: Cursor
+  node: Position
+}
+
+input PositionOrder {
+  direction: OrderDirection!
+  field: PositionOrderField!
+}
+
+enum PositionOrderField {
+  PLAYER
+  VEC
+}
+
+input PositionWhereInput {
+  player: ContractAddress
+  playerEQ: ContractAddress
+  playerGT: ContractAddress
+  playerGTE: ContractAddress
+  playerIN: [ContractAddress]
+  playerLIKE: ContractAddress
+  playerLT: ContractAddress
+  playerLTE: ContractAddress
+  playerNEQ: ContractAddress
+  playerNOTIN: [ContractAddress]
+  playerNOTLIKE: ContractAddress
+}
+
+type Position_Vec2 {
+  x: u32
+  y: u32
+}
+
+type World__Content {
+  coverUri: String
+  description: String
+  iconUri: String
+  name: String
+  socials: [World__Social]
+  website: String
+}
+
+type World__Entity {
+  createdAt: DateTime
+  eventId: String
+  executedAt: DateTime
+  id: ID
+  keys: [String]
+  models: [ModelUnion]
+  updatedAt: DateTime
+}
+
+type World__EntityConnection {
+  edges: [World__EntityEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type World__EntityEdge {
+  cursor: Cursor
+  node: World__Entity
+}
+
+type World__Event {
+  createdAt: DateTime
+  data: [String]
+  executedAt: DateTime
+  id: ID
+  keys: [String]
+  transactionHash: String
+}
+
+type World__EventConnection {
+  edges: [World__EventEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type World__EventEdge {
+  cursor: Cursor
+  node: World__Event
+}
+
+type World__EventMessage {
+  createdAt: DateTime
+  eventId: String
+  executedAt: DateTime
+  id: ID
+  keys: [String]
+  models: [ModelUnion]
+  updatedAt: DateTime
+}
+
+type World__EventMessageConnection {
+  edges: [World__EventMessageEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type World__EventMessageEdge {
+  cursor: Cursor
+  node: World__EventMessage
+}
+
+type World__Metadata {
+  content: World__Content
+  coverImg: String
+  createdAt: DateTime
+  executedAt: DateTime
+  iconImg: String
+  id: ID
+  updatedAt: DateTime
+  uri: String
+  worldAddress: String!
+}
+
+type World__MetadataConnection {
+  edges: [World__MetadataEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type World__MetadataEdge {
+  cursor: Cursor
+  node: World__Metadata
+}
+
+type World__Model {
+  classHash: felt252
+  contractAddress: felt252
+  createdAt: DateTime
+  executedAt: DateTime
+  id: ID
+  name: String
+  transactionHash: felt252
+}
+
+type World__ModelConnection {
+  edges: [World__ModelEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type World__ModelEdge {
+  cursor: Cursor
+  node: World__Model
+}
+
+input World__ModelOrder {
+  direction: OrderDirection!
+  field: World__ModelOrderField!
+}
+
+enum World__ModelOrderField {
+  CLASS_HASH
+  NAME
+}
+
+type World__PageInfo {
+  endCursor: Cursor
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: Cursor
+}
+
+type World__Query {
+  entities(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EntityConnection
+  entity(id: ID!): World__Entity!
+  eventMessage(id: ID!): World__EventMessage!
+  eventMessages(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EventMessageConnection
+  events(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EventConnection
+  metadatas(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int): World__MetadataConnection
+  model(id: ID!): World__Model!
+  models(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: World__ModelOrder): World__ModelConnection
+  movesModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: MovesOrder, where: MovesWhereInput): MovesConnection
+  outputModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: OutputOrder, where: OutputWhereInput): OutputConnection
+  playerModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: PlayerOrder, where: PlayerWhereInput): PlayerConnection
+  positionModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: PositionOrder, where: PositionWhereInput): PositionConnection
+  transaction(transactionHash: ID!): World__Transaction!
+  transactions(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int): World__TransactionConnection
+}
+
+type World__Social {
+  name: String
+  url: String
+}
+
+type World__Subscription {
+  entityUpdated(id: ID): World__Entity!
+  eventEmitted(keys: [String]): World__Event!
+  eventMessageUpdated(id: ID): World__EventMessage!
+  modelRegistered(id: ID): World__Model!
+}
+
+type World__Transaction {
+  calldata: [felt252]
+  createdAt: DateTime
+  executedAt: DateTime
+  id: ID
+  maxFee: felt252
+  nonce: felt252
+  senderAddress: felt252
+  signature: [felt252]
+  transactionHash: felt252
+}
+
+type World__TransactionConnection {
+  edges: [World__TransactionEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type World__TransactionEdge {
+  cursor: Cursor
+  node: World__Transaction
+}
+
+scalar felt252
+
+scalar u8
+
+scalar u32
