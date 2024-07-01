@@ -8,24 +8,10 @@
   $: ({ Nodes } = data);
 
   $: results = $Nodes.data;
-  $: console.log(results);
-  // let updates;
-  // // will start listening onMount (browser only)
+  $: console.log(results); // works
 
-  // const store = graphql(`
-  //   query Test {
-  //     models {
-  //       edges {
-  //         node {
-  //           contractAddress
-  //         }
-  //       }
-  //     }
-  //   }
-  // `);
-  // $: thing = updates ? updates : null;
-  // $: console.log($thing);
   onMount(() => {
+    // breaks && when outside of mount, too
     const updates = graphql(`
       query Test {
         models {
