@@ -22,5 +22,6 @@ See graphql onload query in `+page.gql`
 
 ## Extend API
 
-Use the `/api/+server.ts` to **update** the POST method and trigger a transaction in Torri (from this server) 
+Use the `/api/+server.ts` to **update** the POST method and trigger a transaction in Torri (from this server)
+
 (☞ﾟヮﾟ)☞ This is your Job 👀
