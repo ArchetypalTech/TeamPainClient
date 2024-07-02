@@ -1,8 +1,8 @@
 <script lang="ts">
   import { graphql } from "$houdini";
-  import { browser } from "$app/environment";
+  // import { browser } from "$app/environment";
+  // import { onMount } from "svelte";
   import type { PageData } from "./$houdini";
-  import { onMount } from "svelte";
   export let data: PageData;
 
   $: ({ Nodes } = data);
@@ -10,24 +10,18 @@
   $: results = $Nodes.data;
   $: console.log(results); // works
 
-  onMount(() => {
-    // breaks && when outside of mount, too
-    const updates = graphql(`
-      query Test {
-        models {
-          edges {
-            node {
-              contractAddress
-            }
-          }
-        }
+  const updates = graphql(`
+    subscription Event {
+      eventEmitted {
+        id
       }
-    `);
-    browser && console.log("hello");
-  });
+    }
+  `);
+
+  $: updates.listen();
+  $: event = $updates.data?.eventEmitted?.id || "pending";
+  $: console.log($updates.data);
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<h1>The Trial Trail</h1>
+{event}
