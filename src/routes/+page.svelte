@@ -5,6 +5,7 @@
   import type { PageData } from "./$houdini";
   export let data: PageData;
 
+  // basic initial graph query (from +page.gql)
   $: ({ Nodes } = data);
 
   $: results = $Nodes.data;
@@ -18,10 +19,12 @@
     }
   `);
 
+  // subscription to torri
   $: updates.listen();
   $: event = $updates.data?.eventEmitted?.id || "pending";
   $: console.log($updates.data);
 
+  // POST input data to /api endpoint
   async function dispatch(event: Event) {
     const form = event.target as HTMLFormElement;
     const data = new FormData(form);
