@@ -18,10 +18,14 @@
 
 See graphql onload query in `+page.gql`
 
+---
+
+**IF subscription fails** - it's because I forgot to commit to ws endpoint ☎️
+
 
 
 ## Extend API
 
-Use the `/api/+server.ts` to **update** the POST method and trigger a transaction in Torri (from this server)
+Use the `routes/api/+server.ts` to **update** the POST method and trigger a transaction in Torri (from this server)
 
 (☞ﾟヮﾟ)☞ This is your Job 👀
