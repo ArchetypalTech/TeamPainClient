@@ -8,7 +8,7 @@
   $: ({ Nodes } = data);
 
   $: results = $Nodes.data;
-  $: console.log(results); // works
+  $: console.log(results);
 
   const updates = graphql(`
     subscription Event {
@@ -21,7 +21,23 @@
   $: updates.listen();
   $: event = $updates.data?.eventEmitted?.id || "pending";
   $: console.log($updates.data);
+
+  async function dispatch(event: Event) {
+    const form = event.target as HTMLFormElement;
+    const data = new FormData(form);
+    const response = await fetch("/api", {
+      method: "POST",
+      body: data,
+    });
+    const { value } = await response.json();
+    console.log("data consumed:", value);
+  }
 </script>
 
 <h1>The Trial Trail</h1>
-{event}
+<code>{event}</code>
+<hr />
+<form on:submit|preventDefault={dispatch}>
+  <input type="text" name="entry" />
+  <button>Submit</button>
+</form>
