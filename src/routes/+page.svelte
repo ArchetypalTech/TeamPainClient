@@ -15,6 +15,7 @@
     subscription Event {
       eventEmitted {
         id
+        keys
       }
     }
   `);
@@ -39,6 +40,7 @@
 
 <h1>The Trial Trail</h1>
 <code>{event}</code>
+<code>{results?.outputModels?.edges[0]?.node?.text || "pending"}</code>
 <hr />
 <form on:submit|preventDefault={dispatch}>
   <input type="text" name="entry" />

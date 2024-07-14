@@ -1,8 +1,8 @@
   query Nodes {
-  models {
+  outputModels {
     edges {
       node {
-      	contractAddress
+      	text
       }
     }
   }
