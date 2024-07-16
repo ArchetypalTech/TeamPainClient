@@ -23,6 +23,8 @@
     },
     "type": "module",
     "dependencies": {
-        "graphql-ws": "^5.16.0"
+        "graphql-ws": "^5.16.0",
+        "micro-starknet": "^0.2.3",
+        "starknet": "^6.11.0"
     }
 }

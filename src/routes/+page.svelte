@@ -1,8 +1,8 @@
 <script lang="ts">
   import { graphql } from "$houdini";
-  // import { browser } from "$app/environment";
-  // import { onMount } from "svelte";
   import type { PageData } from "./$houdini";
+  import { getEntityIdFromKeys } from "$lib/utils";
+
   export let data: PageData;
 
   // basic initial graph query (from +page.gql)
@@ -20,6 +20,19 @@
     }
   `);
 
+  // let entitySub = (id: string) => {
+  //   return graphql(`
+  //     subscription EntityModel {
+  //       entityUpdated(id: id) {
+  //         keys
+  //         models {
+  //           __typename
+  //         }
+  //       }
+  //     }
+  //   `);
+  // };
+
   // subscription to torri
   $: updates.listen();
   $: event = $updates.data?.eventEmitted?.id || "pending";
@@ -36,6 +49,9 @@
     const { value } = await response.json();
     console.log("data consumed:", value);
   }
+  let possibleKey = "";
+
+  let asPoison = getEntityIdFromKeys();
 </script>
 
 <h1>The Trial Trail</h1>
@@ -46,3 +62,5 @@
   <input type="text" name="entry" />
   <button>Submit</button>
 </form>
+<input type="text" bind:value={possibleKey} />
+<code>{asPoison}</code>
