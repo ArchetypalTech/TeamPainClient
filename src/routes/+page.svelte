@@ -2,6 +2,7 @@
   import { graphql } from "$houdini";
   import type { PageData } from "./$houdini";
   import { getEntityIdFromKeys } from "$lib/utils";
+  import { systemCall } from "$lib";
 
   export let data: PageData;
 
@@ -52,6 +53,10 @@
   let possibleKey = "";
 
   let asPoison = getEntityIdFromKeys();
+
+  setTimeout(() => {
+    systemCall();
+  }, 3000);
 </script>
 
 <h1>The Trial Trail</h1>

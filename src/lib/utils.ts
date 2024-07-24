@@ -10,8 +10,8 @@ import { shortString } from 'starknet'
  */
 export function getEntityIdFromKeys(keys: string): any {
 
-  const encString = shortString.encodeShortString('playerId')
-  const big = BigInt(encString)
+  // const encString = shortString.encodeShortString('playerId')
+  const big = BigInt(23)
 
   // if (keys.length === 1) {
   //     return ("0x" + keys[0].toString(16)) as Entity;

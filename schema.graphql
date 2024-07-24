@@ -77,7 +77,7 @@ enum OrderDirection {
 
 type Output {
   entity: World__Entity
-  playerId: ContractAddress
+  playerId: felt252
   text: ByteArray
 }
 
@@ -103,17 +103,17 @@ enum OutputOrderField {
 }
 
 input OutputWhereInput {
-  playerId: ContractAddress
-  playerIdEQ: ContractAddress
-  playerIdGT: ContractAddress
-  playerIdGTE: ContractAddress
-  playerIdIN: [ContractAddress]
-  playerIdLIKE: ContractAddress
-  playerIdLT: ContractAddress
-  playerIdLTE: ContractAddress
-  playerIdNEQ: ContractAddress
-  playerIdNOTIN: [ContractAddress]
-  playerIdNOTLIKE: ContractAddress
+  playerId: felt252
+  playerIdEQ: felt252
+  playerIdGT: felt252
+  playerIdGTE: felt252
+  playerIdIN: [felt252]
+  playerIdLIKE: felt252
+  playerIdLT: felt252
+  playerIdLTE: felt252
+  playerIdNEQ: felt252
+  playerIdNOTIN: [felt252]
+  playerIdNOTLIKE: felt252
   text: ByteArray
   textEQ: ByteArray
   textGT: ByteArray
