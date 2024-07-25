@@ -2,7 +2,7 @@
   outputModels {
     edges {
       node {
-      	text
+      	text_o_vision
       }
     }
   }
