@@ -55,7 +55,7 @@
   let asPoison = getEntityIdFromKeys();
 
   setTimeout(() => {
-    systemCall();
+    fetch('http://localhost:5173/api', { method: 'GET' });
   }, 3000);
 </script>
 

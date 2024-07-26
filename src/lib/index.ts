@@ -22,7 +22,7 @@ export async function systemCall() {
 
     // now get the contract abi's from the manifest and make a starknet contract
     const contractAbi = json.parse(
-        fs.readFileSync('/Users/tims/DATA/bb/DOJO/TOT_ZK/JCEE/src/manifest/dev/manifest.json').toString('ascii')
+        fs.readFileSync('/Users/tims/DATA/bb/DOJO/TOT_ZK/JCEE/src/manifest/manifest.json').toString('ascii')
     );
 
     const contractAddr: string = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146';
