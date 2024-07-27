@@ -20,42 +20,37 @@ export const GET: RequestHandler = async () => {
     // set up the provider and account. Writes are not free
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
-
     //console.log(burnerAccount)
-    //const actionsContractAbi = json.parse(
-        //fs.readFileSync('/Users/tims/DATA/bb/DOJO/TOT_ZK/JCEE/src/manifest/actions.json').toString('ascii')
-    //);
+    
 
     const contractAbi = json.parse(
-        fs.readFileSync('/Users/tims/DATA/bb/DOJO/TOT_ZK/JCEE/src/manifest/manifest.json').toString('ascii')
+        fs.readFileSync('/Users/tims/DATA/BB/dojo/teampain_client/src/manifest/outputter.json').toString('ascii')
     );
     //console.log(contractAbi);
 
     const contractAddr: string = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146';
-    //const actionContractAddr: string = '0x68d70420390be33149d1c82e49096fff612fe1c95abd5528aa559e7c6527f78';
 
-    //const theAction: Contract = new Contract(actionsContractAbi.abi, actionContractAddr, katanaProvider);
     const theOutputter: Contract = new Contract(contractAbi.abi, contractAddr, katanaProvider);
     //console.log(theOutputter);
 
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
-    //theAction.connect(burnerAccount);
-    //console.log(theOutputter);
+    console.log(theOutputter);
 
     // make calls to contract
     const call = theOutputter.populate('updateOutput', ["FoobyBarby pink dress death cult"]);
     console.log(call.calldata)
 
     // call it baby
-    //const actionResponse = await theAction.call("spawn");
     const response = await theOutputter.updateOutput(call.calldata);
     //const response = await theOutputter.invoke("updateOutput", ["foo"]);
-    //console.log(`-----> res: ${response}`)
-    console.log(`-----> res: ${actionResponseResponse}`)
+    console.log(`-----> res: ${response}`)
+    //console.log(`-----> res: ${actionResponseResponse}`)
 
     // pray for rain
-    await katanaProvider.waitForTransaction(response.transaction_hash);
+    // await katanaProvider.waitForTransaction(response.transaction_hash);
+
+    console.log("<----- tx_hash")
     return new Response(JSON.stringify({ success: true}), {
         headers: {
             'Content-Type': "application/json"
