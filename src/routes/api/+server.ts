@@ -1,7 +1,8 @@
 import { exec } from 'child_process';
 import type { RequestHandler } from './$types';
 import fs from "fs";
-import { RpcProvider, Account, json, Contract } from 'starknet';
+import { RpcProvider, Account, json, Contract, CallData, byteArray } from 'starknet';
+//import {Calldata} from 'starknet/utils';
 
 
 const KATANA_ENDPOINT = 'http://localhost:5050';
@@ -17,6 +18,7 @@ const debug = true;
 
 // get
 export const GET: RequestHandler = async () => {
+    console.log('----------------> GET')
     // set up the provider and account. Writes are not free
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
@@ -26,29 +28,27 @@ export const GET: RequestHandler = async () => {
     const contractAbi = json.parse(
         fs.readFileSync('/Users/tims/DATA/BB/dojo/teampain_client/src/manifest/outputter.json').toString('ascii')
     );
-    //console.log(contractAbi);
 
     const contractAddr: string = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146';
 
     const theOutputter: Contract = new Contract(contractAbi.abi, contractAddr, katanaProvider);
-    //console.log(theOutputter);
 
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
-    console.log(theOutputter);
 
-    // make calls to contract
-    const call = theOutputter.populate('updateOutput', ["FoobyBarby pink dress death cult"]);
-    console.log(call.calldata)
 
+    //debugger;
+    
     // call it baby
-    const response = await theOutputter.updateOutput(call.calldata);
-    //const response = await theOutputter.invoke("updateOutput", ["foo"]);
+    const calldata = CallData.compile([byteArray.byteArrayFromString('foobarish')]);
+    console.log("+++++++++++++++++++++++++++++++++")
+    console.log(calldata)
+    console.log("+++++++++++++++++++++++++++++++++")
+    let response = await theOutputter.invoke("updateOutput", [0, 'fooo'])
     console.log(`-----> res: ${response}`)
-    //console.log(`-----> res: ${actionResponseResponse}`)
 
     // pray for rain
-    // await katanaProvider.waitForTransaction(response.transaction_hash);
+    await katanaProvider.waitForTransaction(response.transaction_hash);
 
     console.log("<----- tx_hash")
     return new Response(JSON.stringify({ success: true}), {
