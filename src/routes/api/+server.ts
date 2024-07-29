@@ -5,10 +5,23 @@ import { RpcProvider, Account, json, Contract, CallData, byteArray } from 'stark
 //import {Calldata} from 'starknet/utils';
 
 
+// wallet 10
+// NB `sozo` uses wallet 0 as the migration account this
+// aacoutn will fail if we use it as the account for the
+// contract invoke calls
+//| Account address |  0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114
+//| Private key     |  0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b
+//| Public key      |  0x4c339f18b9d1b95b64a6d378abd1480b2e0d5d5bd33cd0828cbce4d65c27284
+
+
+
 const KATANA_ENDPOINT = 'http://localhost:5050';
-// this SHOULD be a burner account deployed on Katana by default
-const pKey = '0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a';
-const addr = '0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828cae';
+
+
+
+// this should be a burner account deployed on Katana by default
+const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
+const addr = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114';
 
 
 // TODO - this manifest-path will FAIL
@@ -23,8 +36,9 @@ export const GET: RequestHandler = async () => {
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
     //console.log(burnerAccount)
-    
 
+
+    // read in the compiled contract abi
     const contractAbi = json.parse(
         fs.readFileSync('/Users/tims/DATA/BB/dojo/teampain_client/src/manifest/outputter.json').toString('ascii')
     );
@@ -34,23 +48,26 @@ export const GET: RequestHandler = async () => {
     const theOutputter: Contract = new Contract(contractAbi.abi, contractAddr, katanaProvider);
 
     // connect the account to the contract
-    theOutputter.connect(burnerAccount);
+    const connection = theOutputter.connect(burnerAccount);
 
 
     //debugger;
-    
+
     // call it baby
-    const calldata = CallData.compile([byteArray.byteArrayFromString('foobarish')]);
-    console.log("+++++++++++++++++++++++++++++++++")
-    console.log(calldata)
-    console.log("+++++++++++++++++++++++++++++++++")
-    let response = await theOutputter.invoke("updateOutput", [0, 'fooo'])
-    console.log(`-----> res: ${response}`)
+    const calldata = CallData.compile([byteArray.byteArrayFromString('foobar')]);
+
+    const res2 = await theOutputter.updateOutput(calldata)
+    //console.log("+++++++++++++++++++++++++++++++++")
+    //console.log(res2, calldata)
+    //console.log("+++++++++++++++++++++++++++++++++")
+    // let response = await theOutputter.invoke("updateOutput", [calldata])
+     //console.log(`-----> res: ${res2}`)
 
     // pray for rain
-    await katanaProvider.waitForTransaction(response.transaction_hash);
+    await katanaProvider.waitForTransaction(res2.transaction_hash);
+    console.log("==================================")
+    console.log(res2.transaction_hash)
 
-    console.log("<----- tx_hash")
     return new Response(JSON.stringify({ success: true}), {
         headers: {
             'Content-Type': "application/json"
@@ -61,23 +78,23 @@ export const GET: RequestHandler = async () => {
 
 // POST on route /api
 export const POST: RequestHandler = async (event) => {
-  const data = await event.request.formData()
-  const action = data.get('entry')
-  // log recieving POST
-  console.log(action)
+    const data = await event.request.formData()
+    const action = data.get('entry')
+    // log recieving POST
+    console.log(action)
 
-  const RESPONSE = new Response(JSON.stringify({ success: true, value: action }), {
-    headers: {
-      'Content-Type': "application/json"
-    }
-  })
-  if (debug) return RESPONSE
-  // example to show you can execute server side code here
-  return new Promise((resolve, reject) => {
-    exec(COMMAND, (error, stdout, stderr) => {
-      if (error) console.warn(error);
-      if (stdout) resolve(RESPONSE);
-      reject(stderr)
-    });
-  })
+    const RESPONSE = new Response(JSON.stringify({ success: true, value: action }), {
+        headers: {
+            'Content-Type': "application/json"
+        }
+    })
+    if (debug) return RESPONSE
+        // example to show you can execute server side code here
+        return new Promise((resolve, reject) => {
+            exec(COMMAND, (error, stdout, stderr) => {
+                if (error) console.warn(error);
+                if (stdout) resolve(RESPONSE);
+                reject(stderr)
+            });
+        })
 }
