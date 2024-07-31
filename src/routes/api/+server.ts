@@ -77,7 +77,7 @@ export const GET: RequestHandler = async () => {
 }
 
 
-
+const SHELL_COMMAND = "echo 'hello worlz'"
 function executeShellScript() {
     const RESPONSE = new Response(JSON.stringify({ success: true, value: action }), {
         headers: {
@@ -86,7 +86,7 @@ function executeShellScript() {
     })
     // example to show you can execute server side code here
     return new Promise((resolve, reject) => {
-        exec(COMMAND, (error, stdout, stderr) => {
+        exec(SHELL_COMMAND, (error, stdout, stderr) => {
             if (error) console.warn(error);
             if (stdout) resolve(RESPONSE);
             reject(stderr)
