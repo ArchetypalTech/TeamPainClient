@@ -1,11 +1,12 @@
-  query Nodes {
-  outputModels {
+query Nodes{
+  models {
     edges {
       node {
-      	text_o_vision
+      	id
+        contractAddress
+      	name
+        classHash
       }
     }
   }
-  }
-
-  
+} 

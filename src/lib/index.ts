@@ -1,71 +1,90 @@
 // place files you want to import through the `$lib` alias in this folder.
-
-
-import { RpcProvider, Account, json, Contract } from 'starknet';
+import { RpcProvider, Account, json, Contract, CallData, byteArray } from 'starknet';
 import fs from "fs";
+import path from 'path'
+import { fileURLToPath } from 'url';
 
+
+// ES6 work around for getting project relative paths
+// const filepath = setFilePath('../manifest/outputter.json') // => filepath()
+export const setFilePath = (target: string) => {
+    // relative to $lib
+    return () => {
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename)
+        return path.resolve(__dirname, target)
+    }
+}
+
+const MANIFEST = setFilePath('../manifest/outputter.json')
 
 const KATANA_ENDPOINT = 'http://localhost:5050';
+const ENTITY_ADDRESS = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146'
 
+const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
+const addr = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114';
 
-//const pKey = process.env.KT_S0_ACT_P_KEY ?? "";
-//const addr = process.env.KT_S0_ACT_ADDR ?? "";
-const pKey = '0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a';
-const addr = '0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828cae';
+// SYSTEM CALLS
 
+export const systemCalls = {
+    sendMessage
+}
 
-export async function systemCall() {
+// MUTATATION | ACTION
+
+export async function sendMessage(message: string) {
 
     // set up the provider and account. Writes are not free
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
 
     // now get the contract abi's from the manifest and make a starknet contract
-    const contractAbi = json.parse(
-        fs.readFileSync('/Users/tims/DATA/bb/DOJO/TOT_ZK/JCEE/src/manifest/manifest.json').toString('ascii')
-    );
-
-    const contractAddr: string = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146';
-
-    const theOutputter: Contract = new Contract(contractAbi.abi, contractAddr, katanaProvider);
-
+    const contractAbi = json.parse(fs.readFileSync(MANIFEST()).toString('ascii'));
+    const theOutputter: Contract = new Contract(contractAbi.abi, ENTITY_ADDRESS, katanaProvider);
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
-    
-    // make calls to contract
-    // we need to populate the calldata because of type conversion ? copying starknet.js here
-    const call = theOutputter.populate('updateOutput', ["FoobyBarby pink dress death cult"]);
+    // create message as readable contract data
+    const calldata = CallData.compile([byteArray.byteArrayFromString(message)]);
     // call it baby
-    const response = await theOutputter.updateOutput(call.calldata);
+    const response = await theOutputter.updateOutput(calldata)
     // pray for rain
     await katanaProvider.waitForTransaction(response.transaction_hash);
 
-    // get bacon. shoot laser. win
-    
-    //const params = {
-        //contractName: "outputter",
-        //entrypoint: "updateOutput",
-        //calldata: ["foo"],
-    //};
-
-    //const body = JSON.stringify({
-        //jsonrpc: "2.0",
-        //method: "starknet_chainId",
-        //params,
-        //id: 1
-    //});
-
-    //const response = await fetch(KATANA_ENDPOINT, {
-        //method: 'POST',
-        //headers: {
-            //"Content-Type": 'application/json'
-        //},
-        //body,
-    //});
-
     // scream shout, let it all out, cmon
-    console.log(response);
+    console.log("success", response);
     const data = await response.json();
+    console.log("as json", data);
     return data.result;
+    // should be using web standards
+    // return new Response(JSON.stringify(data), {
+    //     headers: {
+    //         'Content-Type': "application/json"
+    //     }
+    // })
+}
 
+// How we expect to use a standard RPC call
+async function standardRPC() {
+    // get bacon. shoot laser. win
+
+    const params = {
+        contractName: "outputter",
+        entrypoint: "updateOutput",
+        calldata: ["foo"],
+    };
+
+    const body = JSON.stringify({
+        jsonrpc: "2.0",
+        method: "starknet_chainId",
+        params,
+        id: 1
+    });
+
+    const response = await fetch(KATANA_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            "Content-Type": 'application/json'
+        },
+        body,
+    });
 }
