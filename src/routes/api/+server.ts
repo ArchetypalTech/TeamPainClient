@@ -39,6 +39,7 @@ export const POST: RequestHandler = async (event) => {
  * */
 export const GET: RequestHandler = async () => {
     console.log('----------------> GET',)
+
     // set up the provider and account. Writes are not free
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
@@ -75,12 +76,11 @@ export const GET: RequestHandler = async () => {
     console.log("==================================")
     console.log(res2.transaction_hash)
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ message: "Successfull GET" }), {
         headers: {
             'Content-Type': "application/json"
         }
     })
-
 }
 
 

@@ -28,7 +28,8 @@
   }
 
   async function testRequest() {
-    const status = await fetch("http://localhost:5173/api", { method: "GET" });
+    const call = await fetch("/api", { method: "GET" });
+    const status = await call.json();
     health = JSON.stringify(status);
   }
 </script>

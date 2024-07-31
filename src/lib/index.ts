@@ -52,15 +52,12 @@ export async function sendMessage(message: string) {
 
     // scream shout, let it all out, cmon
     console.log("success", response);
-    const data = await response.json();
-    console.log("as json", data);
-    return data.result;
-    // should be using web standards
-    // return new Response(JSON.stringify(data), {
-    //     headers: {
-    //         'Content-Type': "application/json"
-    //     }
-    // })
+    // const data = await response.json();
+    return new Response(JSON.stringify(response), {
+        headers: {
+            'Content-Type': "application/json"
+        }
+    })
 }
 
 // How we expect to use a standard RPC call
