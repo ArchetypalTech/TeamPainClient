@@ -19,8 +19,6 @@ const KATANA_ENDPOINT = 'http://localhost:5050';
 const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
 const addr = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114';
 
-// TODO - this manifest-path will FAIL
-const COMMAND = `sozo execute --manifest-path ./tot-dojo/Scarb.toml the_oruggin_trail::systems::outputter::outputter updateOutput --calldata str:"foo"`
 // toggle to pass command to Torri client
 const MANIFEST = setFilePath('../manifest/outputter.json')
 
@@ -43,8 +41,6 @@ export const GET: RequestHandler = async () => {
     // set up the provider and account. Writes are not free
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
-    //console.log(burnerAccount)
-
 
     // read in the compiled contract abi
     const contractAbi = json.parse(
@@ -56,10 +52,7 @@ export const GET: RequestHandler = async () => {
     const theOutputter: Contract = new Contract(contractAbi.abi, contractAddr, katanaProvider);
 
     // connect the account to the contract
-    const connection = theOutputter.connect(burnerAccount);
-
-
-    //debugger;
+    theOutputter.connect(burnerAccount);
 
     // call it baby
     const calldata = CallData.compile([byteArray.byteArrayFromString('foobar')]);
@@ -76,7 +69,7 @@ export const GET: RequestHandler = async () => {
     console.log("==================================")
     console.log(res2.transaction_hash)
 
-    return new Response(JSON.stringify({ message: "Successfull GET" }), {
+    return new Response(JSON.stringify({ message: "test transaction made: OK" }), {
         headers: {
             'Content-Type': "application/json"
         }
