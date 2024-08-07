@@ -7,7 +7,10 @@
         "build": "vite build",
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+        "build:dojo": "./tot-dojo/scripts/build_manifest.sh",
+        "deploy:local": "./scripts/dev_deploy.sh run",
+        "deploy:cleanup": "./tot-dojo/scripts/dev_deploy.sh cleanup"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",
