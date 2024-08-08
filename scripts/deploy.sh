@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -72,8 +72,17 @@ function set_env() {
     fi
 }
 
-function set_project_path() {
-    echo "Searching for project at $1"
+# we dont interact directly with models because the world store takes
+# care of that so we only need systesm for the front end to be able to
+# use the contract ABI's
+# we assume dev as the traget, this may need to be amended
+function get_systems() {
+    echo "Searching for root at $1"
+    readarray -t systems < <(find "$1/target/dev" -type f -name "*::systems::*.json")
+    # Iterate over the array
+    for file in "${systems[@]}"; do
+        echo "Processing file: $file"
+    done
 }
 
 # handle non optional command args
@@ -82,7 +91,7 @@ set +u
 if [ -z "$1" ]; then
     set_env
 else
-    set_project_path $1
+    get_systems $1
 fi
 
 if [ -z $DOJO_PROJ ]; then
