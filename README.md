@@ -23,3 +23,8 @@ See graphql onload query in `+page.gql`
 
 Use the `routes/api/+server.ts` to **update** the POST method and trigger a transaction in Katana (from this server)
 
+
+## scripts
+
+`pnpm deploy:cp_syatem_abis` copies the abi json files from a dojo project, this is assumed to be at ../tot but can ofc be overidden 
+

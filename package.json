@@ -8,9 +8,9 @@
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-        "build:dojo": "./tot-dojo/scripts/build_manifest.sh",
-        "deploy:local": "./scripts/dev_deploy.sh run",
-        "deploy:cleanup": "./tot-dojo/scripts/dev_deploy.sh cleanup"
+        "build:dojo": "../tot/scripts/build_manifest.sh",
+        "deploy:cp_system_abis": "./scripts/cp_abis.sh ../tot",
+        "deploy:cleanup": "../tot/scripts/dev_deploy.sh cleanup"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",
