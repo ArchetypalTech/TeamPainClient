@@ -9,4 +9,14 @@ describe("Fetch json abi's", () => {
       expect(result).toHaveLength(4);
     });
   });
+  
+  test("we get expected file names", () => {
+    const fp = path.resolve(__dirname, '../src/manifest');
+    const regex = /^system_.*\.json$/;
+    const expected = 'system_outputter.json';
+    return locateFiles(fp, regex).then( result => {
+      expect(result.some(r => r.includes(expected))).toBe(true)
+    });
+  });
+  
 });
