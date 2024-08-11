@@ -1,12 +1,12 @@
 import { locateFiles } from '$lib/contract_abis';
 import path from 'path';
 
-describe('testing index file', () => {
-  test('we should get some stuff', () => {
+describe("Fetch json abi's", () => {
+  test("we get 4 abi's returned", () => {
     const fp = path.resolve(__dirname, '../src/manifest');
     const regex = /^system_.*\.json$/;
     return locateFiles(fp, regex).then( result => {
-      expect(result.toBe('foo'));
+      expect(result).toHaveLength(4);
     });
   });
 });
