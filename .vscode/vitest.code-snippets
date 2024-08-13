@@ -1,0 +1,20 @@
+	{
+		"Vitest Test Scaffold": {
+		  "prefix": "vit",
+		  "body": [
+			"describe('${1:Component/Function Name}', () => {",
+			"  it('${2:should do something}', () => {",
+			"    // Arrange",
+			"    ${3:const result = true}",
+			"",
+			"    // Act",
+			"    ${4:// Perform the action}",
+			"",
+			"    // Assert",
+			"    ${5:expect(result).toBe(true)}",
+			"  })",
+			"})"
+		  ],
+		  "description": "Scaffold for a Vitest test suite (without import)"
+		}
+	  }

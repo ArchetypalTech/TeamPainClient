@@ -1,8 +1,9 @@
-import { json, Contract } from 'starknet'
+import { json, Contract, RpcProvider, Account } from 'starknet'
 import * as fs from 'fs';
 import * as path from 'path';
 import { setFilePath } from '../lib';
 import { DO_SystemAbi, type SysAbi } from '$lib/system';
+import { get } from 'svelte/store';
 
 /**
  * Finds and then returns a set of strings repreenting files
@@ -49,9 +50,17 @@ async function parseAbis(f_paths: string[]): Promise<SysAbi[]> {
 
 }
 
+async function getAddresses(c_names: string[], m_path: string): Promise<Map<string, string>> {
+
+}
+
+async function getSystemContracts(f_paths: string[], provider: RpcProvider, address: string): Promise<any> {
+
+}
+
 // Conditional export for testing purposes
 if (process.env.NODE_ENV === 'test') {
     module.exports = { locateFiles, parseAbis };
   } else {
-    // module.exports = { publicFunction };
+    module.exports = { getSystemContracts };
   }

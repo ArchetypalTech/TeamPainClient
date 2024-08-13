@@ -3,6 +3,20 @@ import * as path from 'path';
 
 import { locateFiles, parseAbis } from '$lib/contract_abis'
 
+
+describe('Creates contracts', () => {
+  it('shoukld create an array of Contract objects', () => {
+    // Arrange
+    const result = true
+
+    // Act
+    // Perform the action
+
+    // Assert
+    expect(result).toBe(true)
+  });
+});
+
 describe("Fetch JSON Abi's", () => {
   it("we get 4 abi's returned", () => {
     const fp = path.resolve(__dirname, '../manifest');

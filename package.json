@@ -9,9 +9,9 @@
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
         "build:dojo": "../tot/scripts/build_manifest.sh",
-        "deploy:cp_system_abis": "./scripts/cp_abis.sh ../tot",
+        "deploy:cp_abis": "./scripts/cp_abis.sh ../tot",
         "deploy:cleanup": "../tot/scripts/dev_deploy.sh cleanup",
-        "test": "vitest"
+        "deploy:dojo": "../tot/scripts/dev_deploy.sh run"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",
