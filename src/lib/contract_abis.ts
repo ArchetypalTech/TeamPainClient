@@ -40,10 +40,9 @@ async function parseAbis(f_paths: string[]): Promise<SysAbi[]> {
 
         // Read and parse the JSON file
         const manifest = setFilePath(p);
-        // const fileContent = json.parse(
-        //     fs.readFileSync(manifest()).toString('ascii')
-        // );
-        const fileContent = "foo";
+        const fileContent = json.parse(
+            fs.readFileSync(manifest()).toString('ascii')
+        );
         // Create and return a new SystemAbi object
         return new DO_SystemAbi({ c_name: name, data: fileContent });
     });
