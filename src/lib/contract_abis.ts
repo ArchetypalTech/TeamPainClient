@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { setFilePath } from '../lib';
 import { DO_SystemAbi, type SysAbi } from '$lib/system';
-import { get } from 'svelte/store';
+import { readFile } from 'fs/promises';
 
 /**
  * Finds and then returns a set of strings repreenting files
@@ -19,10 +19,10 @@ import { get } from 'svelte/store';
  */
 async function locateFiles(dir: string, pattern: RegExp): Promise<string[]> {
     return fs.readdirSync(dir)
-    .filter((file) => {
-        return fs.statSync(path.join(dir, file)).isFile() && pattern.test(file);
-    })
-    .map((file) => path.join(dir, file)); // Return full path
+        .filter((file) => {
+            return fs.statSync(path.join(dir, file)).isFile() && pattern.test(file);
+        })
+        .map((file) => path.join(dir, file)); // Return full path
 }
 
 /**
@@ -50,8 +50,46 @@ async function parseAbis(f_paths: string[]): Promise<SysAbi[]> {
 
 }
 
-async function getAddresses(c_names: string[], m_path: string): Promise<Map<string, string>> {
+// intermediate store objects for parsing the manifest to
+// addresses
+interface ContractAddress {
+    address: string;
+    name: string;
+}
 
+// intermediate store objects for parsing the manifest to
+// addresses
+interface ContractList {
+    contracts: ContractAddress[];
+}
+
+async function readAddressPath(m_path: string): Promise<ContractList> {
+    const manifest_path = setFilePath(m_path);
+    try {
+        const _raw = await readFile(manifest_path(), 'utf8');
+        return JSON.parse(_raw) as ContractList;
+    } catch (error) {
+        if (error instanceof SyntaxError) {
+            throw new Error(`Invalid JSON in file ${m_path}: ${error.message}`);
+        }
+        console.error("E:", error);
+        throw error;
+    }
+}
+
+async function getAddresses(m_path: string): Promise<ContractAddress[]> {
+    const c_list: ContractList = await readAddressPath(setFilePath(m_path)());
+    try {
+        const c: ContractAddress[] = c_list.contracts.map(ct => (
+            {
+                address: ct.address,
+                name: ct.name
+            }
+        ));
+        return c;
+    } catch (error) {
+        console.error('Error reading or parsing file:', error);
+    }
 }
 
 async function getSystemContracts(f_paths: string[], provider: RpcProvider, address: string): Promise<any> {
@@ -60,7 +98,7 @@ async function getSystemContracts(f_paths: string[], provider: RpcProvider, addr
 
 // Conditional export for testing purposes
 if (process.env.NODE_ENV === 'test') {
-    module.exports = { locateFiles, parseAbis };
-  } else {
+    module.exports = { locateFiles, parseAbis, getAddresses };
+} else {
     module.exports = { getSystemContracts };
-  }
+}

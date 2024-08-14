@@ -7,6 +7,10 @@
 
 export interface SysAbi {
     /**
+     * short form name
+     */
+    name: string;
+    /**
      * The name of the parsed system
      */
     c_name: string;

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as path from 'path';
 
-import { locateFiles, parseAbis } from '$lib/contract_abis'
+import { locateFiles, parseAbis, getAddresses } from '$lib/contract_abis'
 
 
 describe('Creates contracts', () => {
@@ -44,11 +44,10 @@ describe("Fetch JSON Abi's", () => {
     });
   });
 
-  it("returns valid SystemAbis objects", () => {
-    const f_paths = ['../tests/assets/system_outputter.json', '../tests/assets/system_actions.json'];
-     return parseAbis(f_paths).then(result => {
-      expect(result[0].c_name).toEqual('system_outputter');
-      expect(result[0].data).not.toBeNull;
+  it("returns valid intermediate address objects", () => {
+    const f_paths = ['../tests/assets/manifest.json'];
+     return getAddresses(f_paths[0]).then(result => {
+      expect(result.length).toBeGreaterThan(0);
     }); 
   });
 
