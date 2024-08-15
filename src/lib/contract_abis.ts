@@ -1,4 +1,4 @@
-import { json, Contract, RpcProvider, Account } from 'starknet'
+import { json, Contract, RpcProvider, Account, splitArgsAndOptions } from 'starknet'
 import * as fs from 'fs';
 import * as path from 'path';
 import { setFilePath } from '../lib';
@@ -55,6 +55,7 @@ async function parseAbis(f_paths: string[]): Promise<SysAbi[]> {
 interface ContractAddress {
     address: string;
     name: string;
+    s_name: string;
 }
 
 // intermediate store objects for parsing the manifest to
@@ -63,6 +64,15 @@ interface ContractList {
     contracts: ContractAddress[];
 }
 
+/**
+ * Reads in a `manifest.json` as produced from the sozo tool
+ * in theory also understands the format enough to produce a
+ * Contract{} interface but not a guarantee. Does however give
+ * back a JSON object from the manifest
+ * 
+ * @param m_path: string, the path to the `manifest.json` produced by sozo 
+ * @returns Promise<ContractList>
+ */
 async function readAddressPath(m_path: string): Promise<ContractList> {
     const manifest_path = setFilePath(m_path);
     try {
@@ -77,13 +87,21 @@ async function readAddressPath(m_path: string): Promise<ContractList> {
     }
 }
 
+/**
+ * Given a valid manifest and valid path to said manifest will read the file
+ * and return a list of `ContractAddress`'s that can then be used to populate
+ * the higher `SysAbi` interface 
+ * 
+ * @param m_path: string, the path to a `manifest.json` as produced by sozo 
+ * @returns  Promise<ContractAddress>
+ */
 async function getAddresses(m_path: string): Promise<ContractAddress[]> {
     const c_list: ContractList = await readAddressPath(setFilePath(m_path)());
     try {
         const c: ContractAddress[] = c_list.contracts.map(ct => (
             {
                 address: ct.address,
-                name: ct.name
+                name: ct.name,
             }
         ));
         return c;
@@ -92,13 +110,23 @@ async function getAddresses(m_path: string): Promise<ContractAddress[]> {
     }
 }
 
+function setShortName(c_address: ContractAddress[], type_desc: string): ContractAddress[] {
+    return c_address.map( ct =>  {
+        const splits = ct.name.split("::");
+        const idx = splits.indexOf(type_desc);
+        const sname = `${splits[idx]}_${splits[splits.length - 1]}`; 
+        const ca: ContractAddress = {address: ct.address, name: ct.name, s_name: sname};
+        return ca;
+    } );
+}
+
 async function getSystemContracts(f_paths: string[], provider: RpcProvider, address: string): Promise<any> {
 
 }
 
 // Conditional export for testing purposes
 if (process.env.NODE_ENV === 'test') {
-    module.exports = { locateFiles, parseAbis, getAddresses };
+    module.exports = { locateFiles, parseAbis, getAddresses, setShortName } ;
 } else {
     module.exports = { getSystemContracts };
 }

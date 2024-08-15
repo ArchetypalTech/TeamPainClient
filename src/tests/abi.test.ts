@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import * as path from 'path';
 
-import { locateFiles, parseAbis, getAddresses } from '$lib/contract_abis'
+import { locateFiles, parseAbis, getAddresses, setShortName } from '$lib/contract_abis'
+import type { Contract } from 'starknet';
 
 
 describe('Creates contracts', () => {
@@ -46,9 +47,27 @@ describe("Fetch JSON Abi's", () => {
 
   it("returns valid intermediate address objects", () => {
     const f_paths = ['../tests/assets/manifest.json'];
-     return getAddresses(f_paths[0]).then(result => {
+    return getAddresses(f_paths[0]).then(result => {
       expect(result.length).toBeGreaterThan(0);
-    }); 
+      const expected: ContractAddress = {
+        address: "0x48a75af79de26bd265c05d82043ba29b30cbf5e15963bd9ebfc641b1cecc824",
+        name: "the_oruggin_trail::systems::meatpuppet::meatpuppet"
+      };
+      expect(result).toContainEqual(expected);
+    });
+  });
+  
+  it("correctly processes namespaces to short names", async () => {
+    const f_paths = ['../tests/assets/manifest.json'];
+    return getAddresses(f_paths[0]).then( result => {
+        const actual = setShortName(result, "systems");
+        const expected: ContractAddress =  {
+          address: '0x48a75af79de26bd265c05d82043ba29b30cbf5e15963bd9ebfc641b1cecc824',
+          name: 'the_oruggin_trail::systems::meatpuppet::meatpuppet',
+          s_name: 'systems_meatpuppet'
+        };
+        expect(actual).toContainEqual(expected);
+    });
   });
 
 });
