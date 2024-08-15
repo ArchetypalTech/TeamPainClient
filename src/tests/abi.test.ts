@@ -1,25 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import * as path from 'path';
 
-import { locateFiles, parseAbis, getAddresses, setShortName } from '$lib/contract_abis'
-import type { Contract } from 'starknet';
+import { locateFiles, parseAbis, getAddresses, setShortName, getSysContractObjects } from '$lib/contract_abis'
+import { RpcProvider, type Contract } from 'starknet';
+import { DO_SystemAbi } from '$lib';
 
 
-describe('Creates contracts', () => {
-  it('shoukld create an array of Contract objects', () => {
-    // Arrange
-    const result = true
-
-    // Act
-    // Perform the action
-
-    // Assert
-    expect(result).toBe(true)
+describe('Create a set of Contract Objects from src files', () => {
+  it('we create an array of Contract objects', () => {
+    const KATANA_ENDPOINT = 'http://localhost:5050';
+    const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
+    const dp = path.resolve(__dirname, '../manifest');
+    return getSysContractObjects(dp, katanaProvider).then(result => {
+      expect(result).toHaveLength(2);
+    });
   });
 });
 
-describe("Fetch JSON Abi's", () => {
-  it("we get 4 abi's returned", () => {
+describe("Find and process JSON Abi's and manifest files", () => {
+  it("we can find the src abi files", () => {
     const fp = path.resolve(__dirname, '../manifest');
     const regex = /^system_.*\.json$/;
     return locateFiles(fp, regex).then(result => {
@@ -27,7 +26,7 @@ describe("Fetch JSON Abi's", () => {
     });
   });
 
-  it("returns expected file names", () => {
+  it("we can create a filename of form system_foo", () => {
     const fp = path.resolve(__dirname, '../manifest');
     const regex = /^system_.*\.json$/;
     const expected = 'system_outputter.json';
@@ -36,16 +35,17 @@ describe("Fetch JSON Abi's", () => {
     });
   });
 
-  it("returns some SystemAbi objects", () => {
+  it("we return some SystemAbi objects", () => {
     const f_paths = ['../tests/assets/system_actions.json', '../tests/assets/system_outputter.json'];
     return parseAbis(f_paths).then(result => {
       expect(result).toBeTruthy();
       expect(Array.isArray(result)).toBe(true);
+      expect(result[1].c_name).toEqual("system_outputter");
       expect(result.length).toEqual(2);
     });
   });
 
-  it("returns valid intermediate address objects", () => {
+  it("we return valid intermediate address objects", () => {
     const f_paths = ['../tests/assets/manifest.json'];
     return getAddresses(f_paths[0]).then(result => {
       expect(result.length).toBeGreaterThan(0);
@@ -57,7 +57,7 @@ describe("Fetch JSON Abi's", () => {
     });
   });
   
-  it("correctly processes namespaces to short names", async () => {
+  it("we correctly process namespaces to short names", async () => {
     const f_paths = ['../tests/assets/manifest.json'];
     return getAddresses(f_paths[0]).then( result => {
         const actual = setShortName(result, "systems");
@@ -69,5 +69,4 @@ describe("Fetch JSON Abi's", () => {
         expect(actual).toContainEqual(expected);
     });
   });
-
 });

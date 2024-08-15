@@ -1,18 +1,22 @@
-import { json, Contract, RpcProvider, Account, splitArgsAndOptions } from 'starknet'
+import { json, Contract, RpcProvider, num } from 'starknet'
 import * as fs from 'fs';
 import * as path from 'path';
 import { setFilePath } from '../lib';
 import { DO_SystemAbi, type SysAbi } from '$lib/system';
+import { type RpcAbi } from '$lib/system';
 import { readFile } from 'fs/promises';
 
+
+///// CONTRACT ABI PROC /////
+
 /**
- * Finds and then returns a set of strings repreenting files
+ * Finds and then returns a set of strings representing files
  * under a directory that match the passed in regex
  *
  * This function kinda of hangs of the output of the build
  * script `scripts/cp_abis.sh
  *
- * @param {string} doc - The root path for the serach.
+ * @param {string} doc - The root path for the search.
  * @param {RegExp} pattern - The regex.
  * @returns {string[]} The found file path strings.
  *
@@ -50,6 +54,7 @@ async function parseAbis(f_paths: string[]): Promise<SysAbi[]> {
 
 }
 
+///// MANIFEST PROC /////
 // intermediate store objects for parsing the manifest to
 // addresses
 interface ContractAddress {
@@ -120,13 +125,44 @@ function setShortName(c_address: ContractAddress[], type_desc: string): Contract
     } );
 }
 
-async function getSystemContracts(f_paths: string[], provider: RpcProvider, address: string): Promise<any> {
+///// API /////
 
+ /**
+  * Processes manifest and contact ABI's to a set of objects 
+  * we can use to setup RPC calls.
+  * The source files should be copied over by the build scripts or
+  * manually to $ROOT/src/manifest
+  * 
+  * @param f_paths string; the path to the manifest files both ABI and manifest 
+  * @param provider 
+  * @param address 
+  * @returns `Promise<SysAbi[]>` 
+  */
+async function getSysContractObjects(dir_path: string, provider: RpcProvider): Promise<RpcAbi[]> {
+    // get the file list
+    const rgx =  /^system_.*\.json$/;
+    const f_paths = await locateFiles(dir_path, rgx);
+    // read the abi files into intermediate objects (no address)
+    const abi_intermediates: DO_SystemAbi[] = await parseAbis(f_paths); 
+    // read the manifest file and get addresses
+    const addresses = await getAddresses(dir_path);
+    const abi_objs = await setShortName(addresses, 'systems');
+    return abi_intermediates.map( (i_abi: DO_SystemAbi, idx: number) => {
+        //grab a matching intermediate object
+        const i_index = abi_objs.findIndex(obj => obj.s_name === i_abi.c_name);
+        const i_obj = abi_objs[i_index];
+        const abi_data = i_abi.data;
+        const address = i_obj.address;
+        i_abi.address = address;
+        i_abi.c_name = i_obj.name;
+        const stk_contract = new Contract(abi_data, address, provider);
+        return {sys_abi: i_abi, dojo_contract: stk_contract};
+    } );
 }
 
 // Conditional export for testing purposes
 if (process.env.NODE_ENV === 'test') {
-    module.exports = { locateFiles, parseAbis, getAddresses, setShortName } ;
+    module.exports = {  getSysContractObjects, locateFiles, parseAbis, getAddresses, setShortName } ;
 } else {
-    module.exports = { getSystemContracts };
+    module.exports = { getSysContractObjects };
 }
