@@ -146,7 +146,7 @@ function mv_systems() {
     for file in "${systems[@]}"; do
         echo "Process file: $file"
         f_path="${file##*/}"
-        f_name="system_${f_path##*::}"
+        f_name="systems_${f_path##*::}"
         # copy the files into the local project
         cp "${file}" "${FE_DEST}/${f_name}"
     done

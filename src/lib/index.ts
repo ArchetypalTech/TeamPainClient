@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 
 export * from './system';
 
-
 // ES6 work around for getting project relative paths
 // const filepath = setFilePath('../manifest/outputter.json') // => filepath()
 export const setFilePath = (target: string) => {

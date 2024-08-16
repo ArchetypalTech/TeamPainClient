@@ -3,16 +3,17 @@ import * as path from 'path';
 
 import { locateFiles, parseAbis, getAddresses, setShortName, getSysContractObjects } from '$lib/contract_abis'
 import { RpcProvider, type Contract } from 'starknet';
-import { DO_SystemAbi } from '$lib';
+import { DO_SystemAbi, setFilePath } from '$lib';
 
 
 describe('Create a set of Contract Objects from src files', () => {
   it('we create an array of Contract objects', () => {
     const KATANA_ENDPOINT = 'http://localhost:5050';
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
-    const dp = path.resolve(__dirname, '../manifest');
+    const dp = '../tests/assets/';
+    const regex = /^systems_.*\.json$/;
     return getSysContractObjects(dp, katanaProvider).then(result => {
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(4);
     });
   });
 });
@@ -20,7 +21,7 @@ describe('Create a set of Contract Objects from src files', () => {
 describe("Find and process JSON Abi's and manifest files", () => {
   it("we can find the src abi files", () => {
     const fp = path.resolve(__dirname, '../manifest');
-    const regex = /^system_.*\.json$/;
+    const regex = /^systems_.*\.json$/;
     return locateFiles(fp, regex).then(result => {
       expect(result).toHaveLength(4);
     });
@@ -28,19 +29,19 @@ describe("Find and process JSON Abi's and manifest files", () => {
 
   it("we can create a filename of form system_foo", () => {
     const fp = path.resolve(__dirname, '../manifest');
-    const regex = /^system_.*\.json$/;
-    const expected = 'system_outputter.json';
+    const regex = /^systems_.*\.json$/;
+    const expected = 'systems_outputter.json';
     return locateFiles(fp, regex).then(result => {
       expect(result.some(r => r.includes(expected))).toBe(true)
     });
   });
 
   it("we return some SystemAbi objects", () => {
-    const f_paths = ['../tests/assets/system_actions.json', '../tests/assets/system_outputter.json'];
+    const f_paths = ['../tests/assets/systems_actions.json', '../tests/assets/systems_outputter.json'];
     return parseAbis(f_paths).then(result => {
       expect(result).toBeTruthy();
       expect(Array.isArray(result)).toBe(true);
-      expect(result[1].c_name).toEqual("system_outputter");
+      expect(result[1].c_name).toEqual("systems_outputter");
       expect(result.length).toEqual(2);
     });
   });

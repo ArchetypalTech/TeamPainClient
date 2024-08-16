@@ -1,5 +1,6 @@
 import { json, Contract, RpcProvider, num } from 'starknet'
 import * as fs from 'fs';
+import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { setFilePath } from '../lib';
 import { DO_SystemAbi, type SysAbi } from '$lib/system';
@@ -22,6 +23,7 @@ import { readFile } from 'fs/promises';
  *
  */
 async function locateFiles(dir: string, pattern: RegExp): Promise<string[]> {
+    // console.log("fp", dir)
     return fs.readdirSync(dir)
         .filter((file) => {
             return fs.statSync(path.join(dir, file)).isFile() && pattern.test(file);
@@ -45,6 +47,7 @@ async function parseAbis(f_paths: string[]): Promise<SysAbi[]> {
 
         // Read and parse the JSON file
         const manifest = setFilePath(p);
+        // console.log("parse", manifest());
         const fileContent = json.parse(
             fs.readFileSync(manifest()).toString('ascii')
         );
@@ -101,7 +104,9 @@ async function readAddressPath(m_path: string): Promise<ContractList> {
  * @returns  Promise<ContractAddress>
  */
 async function getAddresses(m_path: string): Promise<ContractAddress[]> {
-    const c_list: ContractList = await readAddressPath(setFilePath(m_path)());
+    const resolved_dir = setFilePath(m_path)();
+    // const resolved_manifest_path = path.join(resolved_dir, 'manifest.json');
+    const c_list: ContractList = await readAddressPath(resolved_dir);
     try {
         const c: ContractAddress[] = c_list.contracts.map(ct => (
             {
@@ -116,13 +121,17 @@ async function getAddresses(m_path: string): Promise<ContractAddress[]> {
 }
 
 function setShortName(c_address: ContractAddress[], type_desc: string): ContractAddress[] {
-    return c_address.map( ct =>  {
+    // console.log('===========');
+    let ca = c_address.map( ct =>  {
         const splits = ct.name.split("::");
         const idx = splits.indexOf(type_desc);
         const sname = `${splits[idx]}_${splits[splits.length - 1]}`; 
         const ca: ContractAddress = {address: ct.address, name: ct.name, s_name: sname};
         return ca;
     } );
+    // console.log(ca);
+    // console.log('<<<<<<<<<<<');
+    return ca;
 }
 
 ///// API /////
@@ -140,13 +149,20 @@ function setShortName(c_address: ContractAddress[], type_desc: string): Contract
   */
 async function getSysContractObjects(dir_path: string, provider: RpcProvider): Promise<RpcAbi[]> {
     // get the file list
-    const rgx =  /^system_.*\.json$/;
-    const f_paths = await locateFiles(dir_path, rgx);
+    const rgx =  /^systems_.*\.json$/;
+
+    const _man_d = setFilePath(dir_path);
+    const f_paths = await locateFiles(_man_d(), rgx);
+
     // read the abi files into intermediate objects (no address)
     const abi_intermediates: DO_SystemAbi[] = await parseAbis(f_paths); 
+    
     // read the manifest file and get addresses
-    const addresses = await getAddresses(dir_path);
+    const m_path = path.join(dir_path, 'manifest.json')
+    const addresses = await getAddresses(m_path);
+
     const abi_objs = await setShortName(addresses, 'systems');
+
     return abi_intermediates.map( (i_abi: DO_SystemAbi, idx: number) => {
         //grab a matching intermediate object
         const i_index = abi_objs.findIndex(obj => obj.s_name === i_abi.c_name);
@@ -155,7 +171,8 @@ async function getSysContractObjects(dir_path: string, provider: RpcProvider): P
         const address = i_obj.address;
         i_abi.address = address;
         i_abi.c_name = i_obj.name;
-        const stk_contract = new Contract(abi_data, address, provider);
+        i_abi.s_name = i_obj.s_name;
+        const stk_contract: Contract = new Contract(abi_data.abi, address, provider);
         return {sys_abi: i_abi, dojo_contract: stk_contract};
     } );
 }
