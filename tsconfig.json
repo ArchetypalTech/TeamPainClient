@@ -10,10 +10,18 @@
         "sourceMap": true,
         "strict": true,
         "moduleResolution": "bundler",
+        "jsx": "preserve",
         "rootDirs": [
             ".",
             "./.svelte-kit/types",
             "./$houdini/types"
-        ]
-    }
+        ],
+        "types": ["vitest/globals"]
+    },
+    "include": ["src/**/*", "tests/**/*"],
+    "exclude": ["node_modules"]
 }
+
+
+
+  

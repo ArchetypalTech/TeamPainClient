@@ -1,8 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite'
 import houdini from 'houdini/vite'
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite';
 
-export default defineConfig({
+const config: UserConfig = {
 	plugins: [houdini(), sveltekit()],
     server: {
         proxy: {
@@ -14,4 +14,5 @@ export default defineConfig({
         },
         cors: true
     }
-});
+};
+export default defineConfig(config);

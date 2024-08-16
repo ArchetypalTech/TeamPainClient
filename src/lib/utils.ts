@@ -10,7 +10,7 @@ import { poseidonHashMany } from 'micro-starknet'
  */
 export function getEntityIdFromKeys(keys: string | number): any {
 
-  // const encString = shortString.encodeShortString('playerId')
+  // needs to use an iterator but for now we just use the one key value
   const big = BigInt(keys)
 
   // if (keys.length === 1) {

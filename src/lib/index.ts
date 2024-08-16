@@ -4,6 +4,7 @@ import fs from "fs";
 import path from 'path'
 import { fileURLToPath } from 'url';
 
+export * from './system';
 
 // ES6 work around for getting project relative paths
 // const filepath = setFilePath('../manifest/outputter.json') // => filepath()
@@ -16,16 +17,25 @@ export const setFilePath = (target: string) => {
     }
 }
 
+// make this go away into a setup function
 const MANIFEST = setFilePath('../manifest/outputter.json')
 
+// fish this from an env file if in local mode
 const KATANA_ENDPOINT = 'http://localhost:5050';
+
+// fish this from the manifest file also we need all of them
 const ENTITY_ADDRESS = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146'
 
+// this should come from somewhere not quite so bad, i.e it needs to be passed into the setup functions
+// should we be using `controller`at this point in the astartup logic
 const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
 const addr = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114';
 
-// SYSTEM CALLS
 
+
+
+// SYSTEM CALLS
+// import these based on the contract abi's
 export const systemCalls = {
     sendMessage
 }
