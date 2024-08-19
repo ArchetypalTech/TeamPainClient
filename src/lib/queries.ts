@@ -9,14 +9,15 @@ export const updates = graphql(`
   }
 `);
 
-export const katana = graphql(`
+export const torii_client = graphql(`
   subscription EntityModel($id: ID!) {
     entityUpdated(id: $id) {
+      id
       keys
       models {
         __typename,
         ... on Output {
-          text
+          text_o_vision
         }
       }
     }

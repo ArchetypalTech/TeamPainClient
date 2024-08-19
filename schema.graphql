@@ -3,6 +3,96 @@ schema {
   subscription: World__Subscription
 }
 
+type Action {
+  actionId: felt252
+  actionType: Enum
+  affectedByActionId: felt252
+  affectsActionId: felt252
+  dBit: bool
+  dBitTxt: ByteArray
+  enabled: bool
+  entity: World__Entity
+  revertable: bool
+}
+
+type ActionConnection {
+  edges: [ActionEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type ActionEdge {
+  cursor: Cursor
+  node: Action
+}
+
+input ActionOrder {
+  direction: OrderDirection!
+  field: ActionOrderField!
+}
+
+enum ActionOrderField {
+  ACTIONID
+  ACTIONTYPE
+  AFFECTEDBYACTIONID
+  AFFECTSACTIONID
+  DBIT
+  DBITTXT
+  ENABLED
+  REVERTABLE
+}
+
+input ActionWhereInput {
+  actionId: felt252
+  actionIdEQ: felt252
+  actionIdGT: felt252
+  actionIdGTE: felt252
+  actionIdIN: [felt252]
+  actionIdLIKE: felt252
+  actionIdLT: felt252
+  actionIdLTE: felt252
+  actionIdNEQ: felt252
+  actionIdNOTIN: [felt252]
+  actionIdNOTLIKE: felt252
+  actionType: Enum
+  affectedByActionId: felt252
+  affectedByActionIdEQ: felt252
+  affectedByActionIdGT: felt252
+  affectedByActionIdGTE: felt252
+  affectedByActionIdIN: [felt252]
+  affectedByActionIdLIKE: felt252
+  affectedByActionIdLT: felt252
+  affectedByActionIdLTE: felt252
+  affectedByActionIdNEQ: felt252
+  affectedByActionIdNOTIN: [felt252]
+  affectedByActionIdNOTLIKE: felt252
+  affectsActionId: felt252
+  affectsActionIdEQ: felt252
+  affectsActionIdGT: felt252
+  affectsActionIdGTE: felt252
+  affectsActionIdIN: [felt252]
+  affectsActionIdLIKE: felt252
+  affectsActionIdLT: felt252
+  affectsActionIdLTE: felt252
+  affectsActionIdNEQ: felt252
+  affectsActionIdNOTIN: [felt252]
+  affectsActionIdNOTLIKE: felt252
+  dBit: bool
+  dBitTxt: ByteArray
+  dBitTxtEQ: ByteArray
+  dBitTxtGT: ByteArray
+  dBitTxtGTE: ByteArray
+  dBitTxtIN: [ByteArray]
+  dBitTxtLIKE: ByteArray
+  dBitTxtLT: ByteArray
+  dBitTxtLTE: ByteArray
+  dBitTxtNEQ: ByteArray
+  dBitTxtNOTIN: [ByteArray]
+  dBitTxtNOTLIKE: ByteArray
+  enabled: bool
+  revertable: bool
+}
+
 scalar ByteArray
 
 scalar ContractAddress
@@ -13,7 +103,7 @@ scalar DateTime
 
 scalar Enum
 
-union ModelUnion = Moves | Output | Player | Position
+union ModelUnion = Action | Moves | Object | Output | Player | Position | Room | Spawnroom | Txtdef
 
 type Moves {
   entity: World__Entity
@@ -70,6 +160,82 @@ input MovesWhereInput {
   remainingNOTLIKE: u8
 }
 
+type Object {
+  destId: felt252
+  dirType: Enum
+  entity: World__Entity
+  matType: Enum
+  objType: Enum
+  objectActionIds: [felt252]
+  objectId: felt252
+  txtDefId: felt252
+}
+
+type ObjectConnection {
+  edges: [ObjectEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type ObjectEdge {
+  cursor: Cursor
+  node: Object
+}
+
+input ObjectOrder {
+  direction: OrderDirection!
+  field: ObjectOrderField!
+}
+
+enum ObjectOrderField {
+  DESTID
+  DIRTYPE
+  MATTYPE
+  OBJECTACTIONIDS
+  OBJECTID
+  OBJTYPE
+  TXTDEFID
+}
+
+input ObjectWhereInput {
+  destId: felt252
+  destIdEQ: felt252
+  destIdGT: felt252
+  destIdGTE: felt252
+  destIdIN: [felt252]
+  destIdLIKE: felt252
+  destIdLT: felt252
+  destIdLTE: felt252
+  destIdNEQ: felt252
+  destIdNOTIN: [felt252]
+  destIdNOTLIKE: felt252
+  dirType: Enum
+  matType: Enum
+  objType: Enum
+  objectId: felt252
+  objectIdEQ: felt252
+  objectIdGT: felt252
+  objectIdGTE: felt252
+  objectIdIN: [felt252]
+  objectIdLIKE: felt252
+  objectIdLT: felt252
+  objectIdLTE: felt252
+  objectIdNEQ: felt252
+  objectIdNOTIN: [felt252]
+  objectIdNOTLIKE: felt252
+  txtDefId: felt252
+  txtDefIdEQ: felt252
+  txtDefIdGT: felt252
+  txtDefIdGTE: felt252
+  txtDefIdIN: [felt252]
+  txtDefIdLIKE: felt252
+  txtDefIdLT: felt252
+  txtDefIdLTE: felt252
+  txtDefIdNEQ: felt252
+  txtDefIdNOTIN: [felt252]
+  txtDefIdNOTLIKE: felt252
+}
+
 enum OrderDirection {
   ASC
   DESC
@@ -78,7 +244,7 @@ enum OrderDirection {
 type Output {
   entity: World__Entity
   playerId: felt252
-  text: ByteArray
+  text_o_vision: ByteArray
 }
 
 type OutputConnection {
@@ -99,7 +265,7 @@ input OutputOrder {
 
 enum OutputOrderField {
   PLAYERID
-  TEXT
+  TEXT_O_VISION
 }
 
 input OutputWhereInput {
@@ -114,21 +280,22 @@ input OutputWhereInput {
   playerIdNEQ: felt252
   playerIdNOTIN: [felt252]
   playerIdNOTLIKE: felt252
-  text: ByteArray
-  textEQ: ByteArray
-  textGT: ByteArray
-  textGTE: ByteArray
-  textIN: [ByteArray]
-  textLIKE: ByteArray
-  textLT: ByteArray
-  textLTE: ByteArray
-  textNEQ: ByteArray
-  textNOTIN: [ByteArray]
-  textNOTLIKE: ByteArray
+  text_o_vision: ByteArray
+  text_o_visionEQ: ByteArray
+  text_o_visionGT: ByteArray
+  text_o_visionGTE: ByteArray
+  text_o_visionIN: [ByteArray]
+  text_o_visionLIKE: ByteArray
+  text_o_visionLT: ByteArray
+  text_o_visionLTE: ByteArray
+  text_o_visionNEQ: ByteArray
+  text_o_visionNOTIN: [ByteArray]
+  text_o_visionNOTLIKE: ByteArray
 }
 
 type Player {
   entity: World__Entity
+  location: felt252
   player_adr: ContractAddress
   player_id: u32
 }
@@ -150,11 +317,23 @@ input PlayerOrder {
 }
 
 enum PlayerOrderField {
+  LOCATION
   PLAYER_ADR
   PLAYER_ID
 }
 
 input PlayerWhereInput {
+  location: felt252
+  locationEQ: felt252
+  locationGT: felt252
+  locationGTE: felt252
+  locationIN: [felt252]
+  locationLIKE: felt252
+  locationLT: felt252
+  locationLTE: felt252
+  locationNEQ: felt252
+  locationNOTIN: [felt252]
+  locationNOTLIKE: felt252
   player_adr: ContractAddress
   player_adrEQ: ContractAddress
   player_adrGT: ContractAddress
@@ -223,6 +402,186 @@ input PositionWhereInput {
 type Position_Vec2 {
   x: u32
   y: u32
+}
+
+type Room {
+  dirObjIds: [felt252]
+  entity: World__Entity
+  objectIds: [felt252]
+  players: [felt252]
+  roomId: felt252
+  roomType: Enum
+  shortTxt: ByteArray
+  txtDefId: felt252
+}
+
+type RoomConnection {
+  edges: [RoomEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type RoomEdge {
+  cursor: Cursor
+  node: Room
+}
+
+input RoomOrder {
+  direction: OrderDirection!
+  field: RoomOrderField!
+}
+
+enum RoomOrderField {
+  DIROBJIDS
+  OBJECTIDS
+  PLAYERS
+  ROOMID
+  ROOMTYPE
+  SHORTTXT
+  TXTDEFID
+}
+
+input RoomWhereInput {
+  roomId: felt252
+  roomIdEQ: felt252
+  roomIdGT: felt252
+  roomIdGTE: felt252
+  roomIdIN: [felt252]
+  roomIdLIKE: felt252
+  roomIdLT: felt252
+  roomIdLTE: felt252
+  roomIdNEQ: felt252
+  roomIdNOTIN: [felt252]
+  roomIdNOTLIKE: felt252
+  roomType: Enum
+  shortTxt: ByteArray
+  shortTxtEQ: ByteArray
+  shortTxtGT: ByteArray
+  shortTxtGTE: ByteArray
+  shortTxtIN: [ByteArray]
+  shortTxtLIKE: ByteArray
+  shortTxtLT: ByteArray
+  shortTxtLTE: ByteArray
+  shortTxtNEQ: ByteArray
+  shortTxtNOTIN: [ByteArray]
+  shortTxtNOTLIKE: ByteArray
+  txtDefId: felt252
+  txtDefIdEQ: felt252
+  txtDefIdGT: felt252
+  txtDefIdGTE: felt252
+  txtDefIdIN: [felt252]
+  txtDefIdLIKE: felt252
+  txtDefIdLT: felt252
+  txtDefIdLTE: felt252
+  txtDefIdNEQ: felt252
+  txtDefIdNOTIN: [felt252]
+  txtDefIdNOTLIKE: felt252
+}
+
+type Spawnroom {
+  entity: World__Entity
+  id: u32
+  rooms: [felt252]
+}
+
+type SpawnroomConnection {
+  edges: [SpawnroomEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type SpawnroomEdge {
+  cursor: Cursor
+  node: Spawnroom
+}
+
+input SpawnroomOrder {
+  direction: OrderDirection!
+  field: SpawnroomOrderField!
+}
+
+enum SpawnroomOrderField {
+  ID
+  ROOMS
+}
+
+input SpawnroomWhereInput {
+  id: u32
+  idEQ: u32
+  idGT: u32
+  idGTE: u32
+  idIN: [u32]
+  idLIKE: u32
+  idLT: u32
+  idLTE: u32
+  idNEQ: u32
+  idNOTIN: [u32]
+  idNOTLIKE: u32
+}
+
+type Txtdef {
+  entity: World__Entity
+  id: felt252
+  owner: felt252
+  text: ByteArray
+}
+
+type TxtdefConnection {
+  edges: [TxtdefEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type TxtdefEdge {
+  cursor: Cursor
+  node: Txtdef
+}
+
+input TxtdefOrder {
+  direction: OrderDirection!
+  field: TxtdefOrderField!
+}
+
+enum TxtdefOrderField {
+  ID
+  OWNER
+  TEXT
+}
+
+input TxtdefWhereInput {
+  id: felt252
+  idEQ: felt252
+  idGT: felt252
+  idGTE: felt252
+  idIN: [felt252]
+  idLIKE: felt252
+  idLT: felt252
+  idLTE: felt252
+  idNEQ: felt252
+  idNOTIN: [felt252]
+  idNOTLIKE: felt252
+  owner: felt252
+  ownerEQ: felt252
+  ownerGT: felt252
+  ownerGTE: felt252
+  ownerIN: [felt252]
+  ownerLIKE: felt252
+  ownerLT: felt252
+  ownerLTE: felt252
+  ownerNEQ: felt252
+  ownerNOTIN: [felt252]
+  ownerNOTLIKE: felt252
+  text: ByteArray
+  textEQ: ByteArray
+  textGT: ByteArray
+  textGTE: ByteArray
+  textIN: [ByteArray]
+  textLIKE: ByteArray
+  textLT: ByteArray
+  textLTE: ByteArray
+  textNEQ: ByteArray
+  textNOTIN: [ByteArray]
+  textNOTLIKE: ByteArray
 }
 
 type World__Content {
@@ -358,6 +717,7 @@ type World__PageInfo {
 }
 
 type World__Query {
+  actionModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: ActionOrder, where: ActionWhereInput): ActionConnection
   entities(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EntityConnection
   entity(id: ID!): World__Entity!
   eventMessage(id: ID!): World__EventMessage!
@@ -367,11 +727,15 @@ type World__Query {
   model(id: ID!): World__Model!
   models(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: World__ModelOrder): World__ModelConnection
   movesModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: MovesOrder, where: MovesWhereInput): MovesConnection
+  objectModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: ObjectOrder, where: ObjectWhereInput): ObjectConnection
   outputModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: OutputOrder, where: OutputWhereInput): OutputConnection
   playerModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: PlayerOrder, where: PlayerWhereInput): PlayerConnection
   positionModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: PositionOrder, where: PositionWhereInput): PositionConnection
+  roomModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: RoomOrder, where: RoomWhereInput): RoomConnection
+  spawnroomModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: SpawnroomOrder, where: SpawnroomWhereInput): SpawnroomConnection
   transaction(transactionHash: ID!): World__Transaction!
   transactions(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int): World__TransactionConnection
+  txtdefModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: TxtdefOrder, where: TxtdefWhereInput): TxtdefConnection
 }
 
 type World__Social {
@@ -408,6 +772,8 @@ type World__TransactionEdge {
   cursor: Cursor
   node: World__Transaction
 }
+
+scalar bool
 
 scalar felt252
 
