@@ -17,12 +17,13 @@
   $: torii_client.listen({ id: getEntityIdFromKeys(ENTITY_ID) });
   // console.log($torii_client);
   var res : EntityModel$result = $torii_client.data;
-  console.log("RES", res);
+  // console.log("RES", res);
 
   // $: stream = $torii_client.data || "waiting for transaction";
 
   // POST input data to /api endpoint
   async function dispatch(event: Event) {
+    console.log('DISPATCH')
     const form = event.target as HTMLFormElement;
     const body = new FormData(form);
     console.log(body.get('entry'));

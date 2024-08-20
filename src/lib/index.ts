@@ -17,6 +17,7 @@ export const setFilePath = (target: string) => {
     }
 }
 
+
 // make this go away into a setup function
 const MANIFEST = setFilePath('../manifest/systems_outputter.json')
 
@@ -41,8 +42,7 @@ export const systemCalls = {
 }
 
 
-// MUTATATION | ACTION
-
+// MUTATATION | ACTION | POST
 export async function sendMessage(message: string) {
 
     console.log("MSG: ", message );
