@@ -1,7 +1,11 @@
 <script lang="ts">
   import type { PageData } from "./$houdini";
   import { torii_client } from "$lib/queries";
+  import { Terminal, Wallet } from "$components";
+  import { setupThree } from "../three";
+  // this should move into a util somewhere
   import { getEntityIdFromKeys } from "$lib/utils";
+  
   import { onMount } from "svelte";
 
   const ENTITY_ID = 23;
@@ -38,11 +42,18 @@
     const status = await call.json();
     health = JSON.stringify(status);
   }
+
+  onMount(() => {
+		setupThree();
+		// authenticateUser();
+	});
+
 </script>
 
 <h1>The Trial Trail</h1>
-<code>{results || "pending initial query: fetch models"}</code>
+<!-- <code>{results || "pending initial query: fetch models"}</code> -->
 <hr />
+
 <form on:submit|preventDefault={dispatch}>
   <input type="text" name="entry" />
   <button>Submit</button>
@@ -50,4 +61,4 @@
   <code>{ JSON.stringify($torii_client.data?.entityUpdated.models[0].text_o_vision  ) || "SubscriptionDataHere" }</code>
 <br /><br /><br />
 <button on:click={testRequest}>Test GET Request</button>
-<p>health: {health || "pending test"}</p>
+<!-- <p>health: {health || "pending test"}</p> -->
