@@ -3,7 +3,6 @@
   import { torii_client } from "$lib/queries";
   import { getEntityIdFromKeys } from "$lib/utils";
   import { onMount } from "svelte";
-  // import { systemCalls } from "$lib";
 
   const ENTITY_ID = 23;
   export let data: PageData;
@@ -15,14 +14,13 @@
 
   // subscription to katana (client)
   $: torii_client.listen({ id: getEntityIdFromKeys(ENTITY_ID) });
-  // console.log($torii_client);
-  var res : EntityModel$result = $torii_client.data;
-  console.log("RES", res);
 
+  // TODO: types for Gql we JSON.stringify right now
   // $: stream = $torii_client.data || "waiting for transaction";
 
   // POST input data to /api endpoint
   async function dispatch(event: Event) {
+    console.log('DISPATCH')
     const form = event.target as HTMLFormElement;
     const body = new FormData(form);
     console.log(body.get('entry'));
@@ -43,7 +41,7 @@
 </script>
 
 <h1>The Trial Trail</h1>
-<!-- <code>{results || "pending"}</code> -->
+<code>{results || "pending initial query: fetch models"}</code>
 <hr />
 <form on:submit|preventDefault={dispatch}>
   <input type="text" name="entry" />

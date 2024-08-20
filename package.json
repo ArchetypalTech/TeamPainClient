@@ -11,7 +11,7 @@
         "build:dojo": "../tot/scripts/build_manifest.sh",
         "deploy:cp_abis": "./scripts/cp_abis.sh ../tot",
         "deploy:cleanup": "../tot/scripts/dev_deploy.sh cleanup",
-        "deploy:dojo": "../tot/scripts/dev_deploy.sh run"
+        "deploy:dojo": "../tot/scripts/dev_deploy.sh run; ./scripts/cp_abis.sh"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",

@@ -25,17 +25,18 @@ const MANIFEST = setFilePath('../manifest/systems_outputter.json')
 // POST on route /api
 export const POST: RequestHandler = async (event) => {
     console.log("===", event.request.url);
-    const data = await event.request.formData()
+    const data = await event.request.formData();
     // TODO: this needs to be split on whitespace
-    const command = data.get('entry') as string
+    const command = data.get('entry') as string;
     // log recieving POST
-    console.log("Send message to katana", command)
-    return systemCalls.sendMessage(command)
+    console.log("Send message to katana", command);
+    return systemCalls.sendMessage(command);
 }
 
 /** 
  * make get request from client
- * TODO -- deprecate
+ * TODO -- deprecate as we arent using this right now
+ * kept in here for unknown fear mainly
  * */
 export const GET: RequestHandler = async () => {
     console.log('----------------> GET',)
@@ -59,18 +60,18 @@ export const GET: RequestHandler = async () => {
     // call it baby
     const calldata = CallData.compile([byteArray.byteArrayFromString('foobar')]);
 
-    const res2 = await theOutputter.updateOutput(calldata)
+    // const res2 = await theOutputter.updateOutput(calldata)
     //console.log("+++++++++++++++++++++++++++++++++")
     //console.log(res2, calldata)
     //console.log("+++++++++++++++++++++++++++++++++")
-    // let response = await theOutputter.invoke("updateOutput", [calldata])
+    let response = await theOutputter.invoke("updateOutput", [calldata]);
     // console.log(`-----> res: ${res2}`)
 
     // pray for rain
     // await katanaProvider.waitForTransaction(res2.transaction_hash);
-    // await katanaProvider.waitForTransaction(response.transaction_hash);
-    console.log("==================================")
-    console.log(res2.transaction_hash)
+    await katanaProvider.waitForTransaction(response.transaction_hash);
+    console.log("==================================");
+    console.log(response.transaction_hash);
 
     return new Response(JSON.stringify({ message: "test transaction made: OK" }), {
         headers: {
