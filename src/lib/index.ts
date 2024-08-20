@@ -41,27 +41,35 @@ export const systemCalls = {
     sendMessage
 }
 
-
 // MUTATATION | ACTION | POST
+/**
+ * This should take a msg type that we parse out from the
+ * contract abi's but right now we dont: FIXME!!
+ * 
+ * @param message 
+ * @returns 
+ */
 export async function sendMessage(message: string) {
 
     console.log("MSG: ", message );
     // set up the provider and account. Writes are not free
+    /** 
+     * NO! this need to be passed the endpoint form the env or somewhere
+     * worth remebering that `katana` doesnt listen on `localhost:*`
+     */
     const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
     const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
 
-    console.log('send');
     // now get the contract abi's from the manifest and make a starknet contract
     const contractAbi = json.parse(fs.readFileSync(MANIFEST()).toString('ascii'));
     const theOutputter: Contract = new Contract(contractAbi.abi, ENTITY_ADDRESS, katanaProvider);
-    // console.log(theOutputter);
+
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
     // create message as readable contract data
     const calldata = CallData.compile([byteArray.byteArrayFromString(message)]);
     console.log('sen-dd');
-    // call it baby
-    // const response = await theOutputter.updateOutput(calldata);
+    // ionvoke the contract as we are doing a write
     let response = await theOutputter.invoke("updateOutput", [calldata])
     console.log('sen-ddd');
     // pray for rain
@@ -70,7 +78,7 @@ export async function sendMessage(message: string) {
 
     // scream shout, let it all out, cmon
     console.log("success", response);
-    // const data = await response.json();
+
     return new Response(JSON.stringify(response), {
         headers: {
             'Content-Type': "application/json"
@@ -81,7 +89,6 @@ export async function sendMessage(message: string) {
 // How we expect to use a standard RPC call
 async function standardRPC() {
     // get bacon. shoot laser. win
-
     const params = {
         contractName: "outputter",
         entrypoint: "updateOutput",
