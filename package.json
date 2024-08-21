@@ -11,7 +11,7 @@
         "build:dojo": "../tot/scripts/build_manifest.sh",
         "deploy:cp_abis": "./scripts/cp_abis.sh ../tot",
         "deploy:cleanup": "../tot/scripts/dev_deploy.sh cleanup",
-        "deploy:dojo": "../tot/scripts/dev_deploy.sh run; ./scripts/cp_abis.sh"
+        "deploy:dojo": "../tot/scripts/dev_deploy.sh run; ./scripts/cp_abis.sh ../tot"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",
@@ -20,6 +20,7 @@
         "@testing-library/jest-dom": "^6.4.8",
         "@testing-library/svelte": "^5.2.1",
         "@types/three": "^0.165.0",
+        "autoprefixer": "^10.4.20",
         "extend-expect": "link:@testing-library/jest-dom/extend-expect",
         "houdini": "^1.2.47",
         "houdini-svelte": "^1.2.47",
