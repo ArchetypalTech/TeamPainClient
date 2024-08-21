@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from "svelte";
-	// import { sendCommand } from "../api/terminal";
-	// import { sendCreatePlayer } from "../api/terminal";
+	import { sendCommand } from "../api/terminal";
 
 	let headerText = [
 		"Archetypal Tech. Innovation in frustration",
