@@ -47,33 +47,27 @@ export function setupThree() {
 
 	effect.setSize(window.innerWidth, window.innerHeight);
 
-	    // Modify the OrbitControls setup
-		controls = new OrbitControls(camera, effect.domElement);
-		controls.enableZoom = false;
-		controls.enablePan = false;
-		controls.rotateSpeed = 1;
-	
-		// Add event listeners for logging
-		window.addEventListener('keydown', (event) => {
-			if (event.key === 'l' || event.key === 'L') {
-				isLogging = !isLogging;
-				console.log(isLogging ? 'Logging started' : 'Logging stopped');
-				if (!isLogging) {
-					console.log('Logged positions:', loggedPositions);
-				}
+	// Add event listeners for logging
+	window.addEventListener('keydown', (event) => {
+		if (event.key === 'l' || event.key === 'L') {
+			isLogging = !isLogging;
+			console.log(isLogging ? 'Logging started' : 'Logging stopped');
+			if (!isLogging) {
+				console.log('Logged positions:', loggedPositions);
 			}
-		});
-	
-		controls.addEventListener('change', () => {
-			if (isLogging) {
-				loggedPositions.push({
-					x: camera.position.x,
-					y: camera.position.y,
-					z: camera.position.z
-				});
-				console.log('Current position:', camera.position);
-			}
-		});
+		}
+	});
+
+	controls.addEventListener('change', () => {
+		if (isLogging) {
+			loggedPositions.push({
+				x: camera.position.x,
+				y: camera.position.y,
+				z: camera.position.z
+			});
+			console.log('Current position:', camera.position);
+		}
+	});
 
 	// This object holds the scenes that are loaded and is cleared when a new scene is loaded.
 	scene.add(sceneHolder);
@@ -151,18 +145,20 @@ function loadScene(index: number, firstRun: boolean = false) {
 		);
 	}
 	// once the scene is loaded, update the sceneHolder and camera.
+	// set the intial position via the scene json
 	function finishLoading() {
 		sceneHolder.clear();
 		sceneHolder.add(loadedScene);
-		loadedScene.position.y = -0.5;
+		loadedScene.position.y = -0.6;
 		// camera and controls.
 		camera.position.x = sceneData[index].position.x;
 		camera.position.y = sceneData[index].position.y;
 		camera.position.z = sceneData[index].position.z;
+		// we get moves via the + 0.01
 		if (controls) {
 			controls.target = new THREE.Vector3(
-				camera.position.x,
-				camera.position.y + 0.01,
+				camera.position.x + 0.01,
+				camera.position.y,// + 0.01,
 				camera.position.z
 			);
 		}

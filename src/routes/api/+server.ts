@@ -26,7 +26,6 @@ const MANIFEST = setFilePath('../manifest/systems_outputter.json')
 export const POST: RequestHandler = async (event) => {
     console.log("===", event.request.url);
     const data = await event.request.formData();
-    // TODO: this needs to be split on whitespace
     const command = data.get('entry') as string;
     // log recieving POST
     console.log("Send message to katana", command);

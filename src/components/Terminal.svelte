@@ -19,7 +19,7 @@
 	let terminalInput: HTMLInputElement;
 
 
-	let step = 0;
+	let step = 1;
   	let username = "";
   	let roomID = 0;
 
@@ -75,33 +75,33 @@
 		if (command === "") return;
 		
 		// Handle Create Player sequence
-		if (step === 0) {			
-			username = command;
-			// Return the player's name
-			terminalContent = [...terminalContent, `You are now ${username}`];
+		// if (step === 0) {			
+		// 	username = command;
+		// 	// Return the player's name
+		// 	terminalContent = [...terminalContent, `You are now ${username}`];
 			
 	
-			// Create the player, the roomID will alwayas be 1 if needed.
-			roomID = Number(1);	
-			try {
-					const response = await sendCreatePlayer(username, roomID);
-					// Display the room description
-					terminalContent = [...terminalContent, response];
-				} catch (e) {
-				console.error(e);
-			}
+		// 	// Create the player, the roomID will alwayas be 1 if needed.
+		// 	roomID = Number(1);	
+		// 	try {
+		// 			// const response = await sendCreatePlayer(username, roomID);
+		// 			// Display the room description
+		// 			terminalContent = [...terminalContent, response];
+		// 		} catch (e) {
+		// 		console.error(e);
+		// 	}
 
-			await tick();
-			// Last message from us	
-			terminalContent = [...terminalContent, `You have been summoned now ${username}. What will you do now? I hope you don't die soon. Farewell`];
-			step = 1;
+		// 	await tick();
+		// 	// Last message from us	
+		// 	terminalContent = [...terminalContent, `You have been summoned now ${username}. What will you do now? I hope you don't die soon. Farewell`];
+		// 	step = 1;
 				
-			inputValue = "";
-			await tick();
-			terminalForm.scrollTo({ left: 0, top: terminalForm.scrollHeight, behavior: "smooth" });
-			return; // Exit early to prevent further command processing		
+		// 	inputValue = "";
+		// 	await tick();
+		// 	terminalForm.scrollTo({ left: 0, top: terminalForm.scrollHeight, behavior: "smooth" });
+		// 	return; // Exit early to prevent further command processing		
 			
-		}
+		// }
 
 		inputValue = "";
 		await tick();
