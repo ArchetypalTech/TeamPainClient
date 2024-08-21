@@ -4,7 +4,7 @@
 	// import { sendCreatePlayer } from "../api/terminal";
 
 	let headerText = [
-		"Archetypal Tech. Inovation in frustration",
+		"Archetypal Tech. Innovation in frustration",
 		"",
 		"\n",
 		"The O'Ruggin Trail, no:23",

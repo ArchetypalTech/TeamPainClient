@@ -11,6 +11,18 @@ let controls: OrbitControls;
 let currentSceneIndex = 0;
 let sceneList: Map<string, THREE.Group<THREE.Object3DEventMap>> = new Map();
 
+// Add logging variables
+let isLogging = false;
+let loggedPositions: { x: number; y: number; z: number }[] = [];
+
+
+// some initial camera positions
+// {
+//   "x": 21.032591928875927,
+//   "y": 14.41961834520001,
+//   "z": -8.31687056072661
+// }
+
 /**
  * Setup the Three.js scene and load the first scene.
  */
@@ -32,7 +44,36 @@ export function setupThree() {
 	controls.enableZoom = false;
 	controls.enablePan = false;
 	controls.rotateSpeed = 1;
+
 	effect.setSize(window.innerWidth, window.innerHeight);
+
+	    // Modify the OrbitControls setup
+		controls = new OrbitControls(camera, effect.domElement);
+		controls.enableZoom = false;
+		controls.enablePan = false;
+		controls.rotateSpeed = 1;
+	
+		// Add event listeners for logging
+		window.addEventListener('keydown', (event) => {
+			if (event.key === 'l' || event.key === 'L') {
+				isLogging = !isLogging;
+				console.log(isLogging ? 'Logging started' : 'Logging stopped');
+				if (!isLogging) {
+					console.log('Logged positions:', loggedPositions);
+				}
+			}
+		});
+	
+		controls.addEventListener('change', () => {
+			if (isLogging) {
+				loggedPositions.push({
+					x: camera.position.x,
+					y: camera.position.y,
+					z: camera.position.z
+				});
+				console.log('Current position:', camera.position);
+			}
+		});
 
 	// This object holds the scenes that are loaded and is cleared when a new scene is loaded.
 	scene.add(sceneHolder);
