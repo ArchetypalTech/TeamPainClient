@@ -64,20 +64,9 @@
   <code>{ JSON.stringify($torii_client.data?.entityUpdated.models[0].text_o_vision  ) || "SubscriptionDataHere" }</code>
 <br /><br /><br />
 <button on:click={testRequest}>Test GET Request</button> -->
-<!-- <div class="test-style">
-  Hello, Tailwind in SvelteKit!
-</div> -->
-<!-- <div class="text-red-500 text-2xl font-bold">
-  This should be red, large, and bold if Tailwind is working.
-</div> -->
+
 
 <div class="w-screen h-screen relative bg-black">
-  <!-- <div class="bg-blue-500 text-white p-4 rounded-lg">
-    Hello, Tailwind!
-  </div> -->
-<!-- <h1>The Trial Trail</h1> -->
-<!-- <code>{results || "pending initial query: fetch models"}</code> -->
-<!-- <hr /> -->
 	<div
 		class="absolute w-1/3 h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
 		<Wallet />

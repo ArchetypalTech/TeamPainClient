@@ -65,7 +65,7 @@
 	}
 
 	onMount(async () => {
-		terminalContent = [...terminalContent, "How will you be known as, MORTAL?"];
+		terminalContent = [...terminalContent, "Shoggoth enters the room"];
 	});
 
 	async function submitForm(e: SubmitEvent) {
@@ -118,6 +118,7 @@
 			inputHistory = [...inputHistory, command];
 			terminalContent = [...terminalContent, command];
 			try {
+				// FIXME add the correct call
 				const response = await sendCommand(command);
 				terminalContent = [...terminalContent, response];
 			} catch (e) {
