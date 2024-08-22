@@ -13,34 +13,21 @@
 	];
 	let inputValue = "";
 	let originalInputValue = "";
-	// let terminalContent: { text: string; isHash: boolean }[] = [];
 	let inputHistory: string[] = [];
 	let inputHistoryIndex = 0;
 	let terminalForm: HTMLFormElement;
 	let terminalInput: HTMLInputElement;
 
 
+	/**
+	 * we actually have no concept of a user at this point
+	 * but this will be a combination of address and some guid we will
+	 * generate from somewhere
+	 */
 	let step = 1;
   	let username = "";
   	let roomID = 0;
-
-	// let isLoggedIn = false;
-
-	// onMount(async () => {
-	// 	if (!isLoggedIn) {
-	// 		if (localStorage.getItem("@MyApp:deviceKey") != null) {
-	// 			await authenticateUser(localStorage.getItem("@MyApp:deviceKey")!, 0); // room number does not matter on login, only on creation.
-	// 			isLoggedIn = true;
-	// 			terminalContent = [
-	// 				...terminalContent,
-	// 				"You have been logged in as " + localStorage.getItem("username") + "!",
-	// 			];
-	// 			return;
-	// 		}
-	// 	}
-	// 	terminalContent = [...terminalContent, "Please enter your username to login."];
-	// });
-
+	
 	function handleKeyDown(e: KeyboardEvent) {
 		// up down cycle through prevInputs or back to originalInputValue
 		if (e.key === "ArrowUp") {
@@ -66,8 +53,7 @@
 	}
 
 	onMount(async () => {
-		addTerminalContent({ text: "Shoggoth enters the room", isHash: false });
-		// terminalContent = [...terminalContent, { text: "Shoggoth enters the room", isHash: false } ];
+		addTerminalContent({ text: "Shoggoth enters the room", format: 'shog' });
 	});
 
 	async function submitForm(e: SubmitEvent) {
@@ -90,15 +76,15 @@
 		// Regular command execution
 		if (step === 1) {
 			inputHistory = [...inputHistory, command];
-			addTerminalContent({ text: command, isHash: false });
-			// terminalContent = [...terminalContent, { text: command, isHash: false }];
+			addTerminalContent({ text: command, format: 'input',  });
 			try {
 				const response = await sendCommand(command);
-				// just for dbg output right now	
-				const formattedHash = 'tx: ' + response;
-				addTerminalContent({ text: formattedHash, isHash: true });
-				// terminalContent = [...terminalContent, { text: formattedHash, isHash: true }];
-			} catch (e) {
+				/**
+				 * we dont actually do anything now as we wait on the GQL subscription
+				 * to actually return us bacon, via the `ToriiSub` component which updates
+				 * the store and thus the UI
+				 * */			
+				} catch (e) {
 				console.error(e);
 			}
 		} 
@@ -114,8 +100,6 @@
 	bind:this={terminalForm}
 	on:submit={async (e) => {
 		terminalInput.disabled = true;
-		// TODO: this need to await the update from the
-		// gql subscription not the rpc call
 		await submitForm(e);
 		terminalInput.disabled = false;
 		terminalInput.focus();
@@ -138,8 +122,7 @@
 	<br />
 	<ul class="w-full">
 		{#each $terminalContent as content}
-			<li class="break-words" class:hash-style={content.isHash}>{content.text}</li>
-			<!-- <li class="break-words">{content}</li> -->
+		<li class="break-words {content.format}-style">{content.text}</li>
 		{/each}
 	</ul>
 	<div class="w-full flex flex-row gap-2">
@@ -158,8 +141,23 @@
 		outline: none;
 	}
 	.hash-style {
-		color: #ffd700; /* Gold color for hash lines */
+		color: #ffd700; 
 		font-weight: bold;
-		font-size: 0.7em; /* 0.5 times the size of regular text */
+		font-size: 0.7em; 
+	}
+	.out-style {
+		color: #309810; 
+		/* font-weight: bold; */
+		font-size: 1.1em; 
+	}
+	.shog-style {
+		color: #309810; 
+		/* font-weight: bold; */
+		font-size: 1.1em; 
+	}
+	.input-style {
+		color: #25642a; 
+		/* font-weight: bold; */
+		font-size: 0.9em; 
 	}
 </style>

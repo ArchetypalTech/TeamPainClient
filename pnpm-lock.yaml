@@ -50,7 +50,7 @@ devDependencies:
     specifier: ^1.2.47
     version: 1.2.50
   houdini-svelte:
-    specifier: ^1.2.47
+    specifier: ^1.2.50
     version: 1.2.50(@types/node@20.14.12)
   jsdom:
     specifier: ^24.1.1

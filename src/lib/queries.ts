@@ -9,7 +9,7 @@ export const updates = graphql(`
   }
 `);
 
-export const torii_client = graphql(`
+export const torii_gql = graphql(`
   subscription EntityModel($id: ID!) {
     entityUpdated(id: $id) {
       id

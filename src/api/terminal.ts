@@ -16,9 +16,12 @@ export function sendCommand(command: string): Promise<string> {
 				body: formData,
 			});
 
-			const details = await response.json();
-			console.log('TA: --- katana says', details.transaction_hash);
-			resolve(details.transaction_hash);
+			/**
+			 * right now we dont do anything as the data goes
+			 * cli --> katana --> event --> torii --> gql --> cli
+			 * so here we are just using a JSON RPC call
+			 */
+			resolve('');
 		} catch( error ) {
 			reject(error);
 		}

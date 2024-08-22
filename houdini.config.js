@@ -1,25 +1,25 @@
-/// <references types="houdini-svelte">
+/// <reference types="houdini-svelte">
 
 /** @type {import('houdini').ConfigFile} */
 const config = {
-    "watchSchema": {
-        "url": "http://127.0.0.1:8080/graphql"
+    watchSchema: {
+        url: "http://127.0.0.1:8080/graphql"
     },
-    "plugins": {
+    plugins: {
         "houdini-svelte": {}
     },
-
-    "scalars": {
-        /* in your case, something like */
-        "felt252": {                  // <- The GraphQL Scalar
-            "type": "YourType_felt252"  // <-  The TypeScript type
+    scalars: {
+        felt252: {
+            type: "YourType_felt252"
         },
-        "ByteArray": {                  // <- The GraphQL Scalar
-            "type": "YourType_ByteArray"  // <-  The TypeScript type
+        ByteArray: {
+            type: "YourType_ByteArray"
         }
-    }
+    },
+    schemaPath: './schema.graphql',
+    sourceGlob: 'src/**/*.{svelte,ts,js}',
+    module: 'esm',
+    framework: 'svelte',
+};
 
-
-}
-
-export default config
+export default config;

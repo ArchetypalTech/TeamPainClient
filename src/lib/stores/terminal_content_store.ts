@@ -1,8 +1,9 @@
 import { writable } from 'svelte/store';
+export type FormatType = 'input' | 'hash' | 'error' | 'out' | 'shog' ;
 
 export type TerminalContentItem = {
   text: string;
-  isHash: boolean;
+  format: FormatType;
 };
 
 export const terminalContent = writable<TerminalContentItem[]>([]);
