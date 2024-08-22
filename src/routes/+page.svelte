@@ -1,53 +1,31 @@
 <script lang="ts">
-  import type { PageData } from "./$houdini";
-  import { torii_client } from "$lib/queries";
+  import { Terminal, Wallet, ToriiSub } from "$components";
+
+  import { setupThree } from "../three";
+  
   import { getEntityIdFromKeys } from "$lib/utils";
+  
   import { onMount } from "svelte";
 
+  // DANK_MODE
+  // errm not ideal, we really need to attach an ID per registed player
+  // and then tie the output to that id but right now we dont have any form of
+  //unique p[layer at all
   const ENTITY_ID = 23;
-  export let data: PageData;
-  let health = "";
+  const entityId = getEntityIdFromKeys(ENTITY_ID);
 
-  // basic initial graph query (from +page.gql)
-  $: ({ Nodes } = data || {});
-  $: results = JSON.stringify($Nodes?.data?.models?.edges?.[1]?.node);
+  onMount(() => {
+		setupThree();
+	});
 
-  // subscription to katana (client)
-  $: torii_client.listen({ id: getEntityIdFromKeys(ENTITY_ID) });
-
-  // TODO: types for Gql we JSON.stringify right now
-  // $: stream = $torii_client.data || "waiting for transaction";
-
-  // POST input data to /api endpoint
-  async function dispatch(event: Event) {
-    console.log('DISPATCH')
-    const form = event.target as HTMLFormElement;
-    const body = new FormData(form);
-    console.log(body.get('entry'));
-    const response = await fetch("/api", {
-      method: "POST",
-      body,
-    });
-    const details = await response.json();
-    console.log("katana says:", details);
-  }
-
-  async function testRequest() {
-    console.log('test req')
-    const call = await fetch("/api", { method: "GET" });
-    const status = await call.json();
-    health = JSON.stringify(status);
-  }
 </script>
 
-<h1>The Trial Trail</h1>
-<code>{results || "pending initial query: fetch models"}</code>
-<hr />
-<form on:submit|preventDefault={dispatch}>
-  <input type="text" name="entry" />
-  <button>Submit</button>
-</form>
-  <code>{ JSON.stringify($torii_client.data?.entityUpdated.models[0].text_o_vision  ) || "SubscriptionDataHere" }</code>
-<br /><br /><br />
-<button on:click={testRequest}>Test GET Request</button>
-<p>health: {health || "pending test"}</p>
+<div class="w-screen h-screen relative bg-black">
+	<div
+		class="absolute w-1/3 h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
+		<Wallet />
+		<Terminal />
+    <ToriiSub {entityId} />
+	</div>
+	<div id="viewport"></div>
+</div>
