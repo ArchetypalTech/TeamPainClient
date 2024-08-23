@@ -78,7 +78,8 @@ function set_env() {
         echo "DOJO_PROJ is not set and no dojo project path passed"
         echo "Searching for project @ $(pwd)/../tot/"
         dojo_targ=$(find ../tot -type d -name "target")
-        DOJO_PROJ=$(find "$dojo_targ" -type d -name "dev")
+        dojo_dep=$(find "$dojo_targ" -type d -name "dev")
+        DOJO_PROJ=$(find "$dojo_dep" -type d -name "dev")
     fi
 
     if [[ ! -z "$DOJO_PROJ" ]]; then
@@ -137,7 +138,7 @@ function mv_manifest() {
 # we assume dev as the traget, this may need to be amended
 function mv_systems() {
     echo "Searching for abi root at $1"
-    readarray -t systems < <(find "$1/target/dev" -type f -name "*::systems::*.json")
+    readarray -t systems < <(find "$1/target/dev/contracts" -type f -name "the_oruggin_trail-*-*.json")
 
     # set the local path
     set_local_dest
@@ -146,10 +147,21 @@ function mv_systems() {
     for file in "${systems[@]}"; do
         echo "Process file: $file"
         f_path="${file##*/}"
-        f_name="systems_${f_path##*::}"
+        f_name=$(transform_filename "$file")
         # copy the files into the local project
         cp "${file}" "${FE_DEST}/${f_name}"
     done
+}
+
+function transform_filename() {
+    local file="$1"
+    # Extract the base name
+    local base=$(basename "$file")
+    # Remove the prefix and hash
+    local name=${base#the_oruggin_trail-}
+    name=${name%-*}
+    # Construct the new filename
+    echo "system_${name}.json"
 }
 
 
