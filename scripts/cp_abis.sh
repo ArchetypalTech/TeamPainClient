@@ -133,9 +133,9 @@ function mv_manifest() {
 
 
 # we dont interact directly with models because the world store takes
-# care of that so we only need systesm for the front end to be able to
+# care of that so we only need systems for the front end to be able to
 # use the contract ABI's
-# we assume dev as the traget, this may need to be amended
+# we assume dev as the target, this may need to be amended
 function mv_systems() {
     echo "Searching for abi root at $1"
     readarray -t systems < <(find "$1/target/dev/contracts" -type f -name "the_oruggin_trail-*-*.json")
