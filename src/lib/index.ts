@@ -21,13 +21,14 @@ export const setFilePath = (target: string) => {
 
 
 // make this go away into a setup function
-const MANIFEST = setFilePath('../manifest/systems_outputter.json')
+const MANIFEST = setFilePath('../manifest/systems_meatpuppet.json')
 
 // fish this from an env file if in local mode
 const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
 
 // fish this from the manifest file also we need all of them
-const ENTITY_ADDRESS = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146'
+// meatpuppet
+const ENTITY_ADDRESS = '0x48a75af79de26bd265c05d82043ba29b30cbf5e15963bd9ebfc641b1cecc824'
 const WORLD_ADDRESS = "0x5112adeb35112eccb3f3bc823bac1bfe73693a0872f7a579045e510e9219b49";
 // this should come from somewhere not quite so bad, i.e it needs to be passed into the setup functions
 // should we be using `controller`at this point in the astartup logic
@@ -54,6 +55,9 @@ export const systemCalls = {
 export async function sendMessage(message: string) {
 
     console.log("MSG: ", message );
+    const cmds_raw = message.split(/\s+/);
+    const cmds = cmds_raw.filter(word => word !== "");
+    console.log(cmds); // Output: ["Hello", "world", "!"]
     // set up the provider and account. Writes are not free
     /** 
      * NO! this need to be passed the endpoint form the env or somewhere
@@ -69,10 +73,15 @@ export async function sendMessage(message: string) {
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
     // create message as readable contract data
-    const calldata = CallData.compile([byteArray.byteArrayFromString(message)]);
+    const cmd_array = cmds.map(cmd => {
+        return byteArray.byteArrayFromString(cmd);
+    });
+    // console.log(cmd_array);
+    const calldata = CallData.compile([cmd_array]);
     console.log('sen-dd');
+    console.log(calldata);
     // ionvoke the contract as we are doing a write
-    let response = await theOutputter.invoke("updateOutput", [calldata])
+    let response = await theOutputter.invoke("listen", [calldata]);
     console.log('sen-ddd');
     // pray for rain
     console.log('calling katana....');
