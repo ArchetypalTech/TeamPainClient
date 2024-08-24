@@ -10,7 +10,7 @@
   
     $: if ($torii_gql.data?.entityUpdated?.models) {
         const outputModel = $torii_gql.data.entityUpdated.models.find(
-        model => model.__typename === 'Output'
+        model => model.__typename === 'the_oruggin_trail_Output'
     );
     if (outputModel) {
       text_o = outputModel.text_o_vision;

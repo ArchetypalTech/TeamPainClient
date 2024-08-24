@@ -16,7 +16,7 @@ export const torii_gql = graphql(`
       keys
       models {
         __typename,
-        ... on Output {
+        ... on the_oruggin_trail_Output {
           text_o_vision
         }
       }
