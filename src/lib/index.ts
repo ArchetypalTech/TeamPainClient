@@ -77,7 +77,7 @@ export async function sendMessage(message: string) {
         return byteArray.byteArrayFromString(cmd);
     });
     // console.log(cmd_array);
-    const calldata = CallData.compile([cmd_array]);
+    const calldata = CallData.compile([cmd_array, 23]);
     console.log('sen-dd');
     console.log(calldata);
     // ionvoke the contract as we are doing a write
