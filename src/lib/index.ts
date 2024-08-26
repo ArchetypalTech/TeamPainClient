@@ -57,8 +57,7 @@ export async function sendMessage(message: string) {
     console.log("MSG: ", message );
     const cmds_raw = message.split(/\s+/);
     const cmds = cmds_raw.filter(word => word !== "");
-    console.log(cmds); // Output: ["Hello", "world", "!"]
-    // set up the provider and account. Writes are not free
+    console.log(cmds); 
     /** 
      * NO! this need to be passed the endpoint form the env or somewhere
      * worth remebering that `katana` doesnt listen on `localhost:*`
@@ -78,17 +77,10 @@ export async function sendMessage(message: string) {
     });
     // console.log(cmd_array);
     const calldata = CallData.compile([cmd_array, 23]);
-    console.log('sen-dd');
+    console.log('sending');
     console.log(calldata);
     // ionvoke the contract as we are doing a write
     let response = await theOutputter.invoke("listen", [calldata]);
-    console.log('sen-ddd');
-    // pray for rain
-    console.log('calling katana....');
-    await katanaProvider.waitForTransaction(response.transaction_hash);
-
-    // scream shout, let it all out, cmon
-    console.log("success", response);
 
     return new Response(JSON.stringify(response), {
         headers: {

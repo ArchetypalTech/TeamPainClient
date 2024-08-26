@@ -3,14 +3,18 @@ export function sendCommand(command: string): Promise<string> {
 		try {
 			// we have a string here so we probably want to split and process
 			// further pre throwing it at the contracts wall
-			// but for now: TODO
-			console.log('TA-DISPATCH');
-			console.log('TA-Input:', command);
+			// but for now we do this in the src/lib/index.ts where we make the calls
+
+			// console.log('TA-DISPATCH');
+			// console.log('TA-Input:', command);
 
 			const formData = new FormData();
 			formData.append('entry', command);
-
-			console.log("TA-calling");
+			
+			// console.log("TA-calling");
+			
+			// right now this forwards to lib/index.ts
+			// via api/routes/+server
 			const response = await fetch("/api", {
 				method: "POST",
 				body: formData,
