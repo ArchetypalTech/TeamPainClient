@@ -1230,8 +1230,8 @@
       }
     ],
     "address": "0x1d6ab7a11c6729cb00cf4f6bc3dcc03178eab9cb47cbfad3ecac0808ed4d3c8",
-    "transaction_hash": "0x5ead22da1e4f9fbe4ed7ca8359720bbf8ae6e2fcc96b7029c2e8621c7b3fd25",
-    "block_number": 3,
+    "transaction_hash": "0x1f423655923e3af093708eb7f2133fc56eed8308c76f1258f111d5cb5bdbb07",
+    "block_number": 24,
     "seed": "the_oruggin_trail",
     "metadata": {
       "profile_name": "dev",
@@ -1251,8 +1251,8 @@
     {
       "kind": "DojoContract",
       "address": "0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9",
-      "class_hash": "0xc2ab74f16044bf18554d4db439d87ebf559a981243b1bb5814d8004d3eb344",
-      "original_class_hash": "0xc2ab74f16044bf18554d4db439d87ebf559a981243b1bb5814d8004d3eb344",
+      "class_hash": "0x6762b3222c50381f2c242808a9a6774e491a425e70727292e568dfc85a42583",
+      "original_class_hash": "0x6762b3222c50381f2c242808a9a6774e491a425e70727292e568dfc85a42583",
       "base_class_hash": "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2",
       "abi": [
         {
@@ -1384,6 +1384,24 @@
         },
         {
           "type": "impl",
+          "name": "IDojoInitImpl",
+          "interface_name": "the_oruggin_trail::systems::meatpuppet::meatpuppet::IDojoInit"
+        },
+        {
+          "type": "interface",
+          "name": "the_oruggin_trail::systems::meatpuppet::meatpuppet::IDojoInit",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_init",
+              "inputs": [],
+              "outputs": [],
+              "state_mutability": "external"
+            }
+          ]
+        },
+        {
+          "type": "impl",
           "name": "ListenImpl",
           "interface_name": "the_oruggin_trail::systems::meatpuppet::IListener"
         },
@@ -1398,28 +1416,34 @@
                 {
                   "name": "cmd",
                   "type": "core::array::Array::<core::byte_array::ByteArray>"
+                },
+                {
+                  "name": "p_id",
+                  "type": "core::felt252"
                 }
               ],
               "outputs": [],
               "state_mutability": "external"
-            }
-          ]
-        },
-        {
-          "type": "impl",
-          "name": "IDojoInitImpl",
-          "interface_name": "the_oruggin_trail::systems::meatpuppet::meatpuppet::IDojoInit"
-        },
-        {
-          "type": "interface",
-          "name": "the_oruggin_trail::systems::meatpuppet::meatpuppet::IDojoInit",
-          "items": [
+            },
             {
               "type": "function",
-              "name": "dojo_init",
-              "inputs": [],
-              "outputs": [],
-              "state_mutability": "view"
+              "name": "command_shoggoth",
+              "inputs": [
+                {
+                  "name": "victim",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "wish",
+                  "type": "core::array::Array::<core::byte_array::ByteArray>"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "state_mutability": "external"
             }
           ]
         },
