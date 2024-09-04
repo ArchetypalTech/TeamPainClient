@@ -4,7 +4,7 @@
 
 	export let entityId: string;
 
-    let text_o: string | null;
+    let text_o: string[] = [];
   
     $: torii_gql.listen({ id: entityId });
   
@@ -13,9 +13,13 @@
         model => model.__typename === 'the_oruggin_trail_Output'
     );
     if (outputModel) {
+      // text_o = ["shoggoth opens its eyes", "and stares into the void", "the void is staring back"];
       text_o = outputModel.text_o_vision;
       console.log("BACON: ", text_o);
-      addTerminalContent({ text: text_o, format: 'out' });
+      for (const line of text_o) {
+        console.log("LINE: ", line);
+        addTerminalContent({ text: line, format: 'out' });
+      }
     }
   }	
 </script>

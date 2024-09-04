@@ -1230,8 +1230,8 @@
       }
     ],
     "address": "0x1d6ab7a11c6729cb00cf4f6bc3dcc03178eab9cb47cbfad3ecac0808ed4d3c8",
-    "transaction_hash": "0x1f423655923e3af093708eb7f2133fc56eed8308c76f1258f111d5cb5bdbb07",
-    "block_number": 24,
+    "transaction_hash": "0x5ead22da1e4f9fbe4ed7ca8359720bbf8ae6e2fcc96b7029c2e8621c7b3fd25",
+    "block_number": 3,
     "seed": "the_oruggin_trail",
     "metadata": {
       "profile_name": "dev",
@@ -1251,8 +1251,8 @@
     {
       "kind": "DojoContract",
       "address": "0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9",
-      "class_hash": "0x6762b3222c50381f2c242808a9a6774e491a425e70727292e568dfc85a42583",
-      "original_class_hash": "0x6762b3222c50381f2c242808a9a6774e491a425e70727292e568dfc85a42583",
+      "class_hash": "0x65316454a7ce3eb65d1d97b30ee9074940d685d282581efa2a87b01d7a86ef9",
+      "original_class_hash": "0x65316454a7ce3eb65d1d97b30ee9074940d685d282581efa2a87b01d7a86ef9",
       "base_class_hash": "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2",
       "abi": [
         {
@@ -1440,7 +1440,7 @@
               ],
               "outputs": [
                 {
-                  "type": "core::byte_array::ByteArray"
+                  "type": "core::array::Array::<core::byte_array::ByteArray>"
                 }
               ],
               "state_mutability": "external"
@@ -1519,8 +1519,8 @@
     {
       "kind": "DojoContract",
       "address": "0x25232e77654f18fa7a760b141ba9d60cc51d8ec6fddc02777b5eaf6c439dfd2",
-      "class_hash": "0xd37f3b2b98f553be5031512cc7226e588477a7a9406423817a3a273e0e93d5",
-      "original_class_hash": "0xd37f3b2b98f553be5031512cc7226e588477a7a9406423817a3a273e0e93d5",
+      "class_hash": "0x6dbe3428833a74f3379f4c1f31c73f2dba127b83ab43855fa401ebaea363f74",
+      "original_class_hash": "0x6dbe3428833a74f3379f4c1f31c73f2dba127b83ab43855fa401ebaea363f74",
       "base_class_hash": "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2",
       "abi": [
         {
@@ -3162,12 +3162,12 @@
         },
         {
           "name": "text_o_vision",
-          "type": "ByteArray",
+          "type": "Array<ByteArray>",
           "key": false
         }
       ],
-      "class_hash": "0x268c55acb7eb6b574d6980ab412337b786fd8e3f7375176b679314c558bec6e",
-      "original_class_hash": "0x268c55acb7eb6b574d6980ab412337b786fd8e3f7375176b679314c558bec6e",
+      "class_hash": "0x42021c20314671ee29961651b561f37c88e2f8c2164dcc2b44e10d39e1f9ac1",
+      "original_class_hash": "0x42021c20314671ee29961651b561f37c88e2f8c2164dcc2b44e10d39e1f9ac1",
       "abi": [
         {
           "type": "impl",
@@ -3546,7 +3546,7 @@
             },
             {
               "name": "text_o_vision",
-              "type": "core::byte_array::ByteArray"
+              "type": "core::array::Array::<core::byte_array::ByteArray>"
             }
           ]
         },
