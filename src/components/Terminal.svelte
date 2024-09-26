@@ -53,7 +53,7 @@
 	}
 
 	onMount(async () => {
-		addTerminalContent({ text: "Shoggoth enters the room", format: 'shog' });
+		addTerminalContent({ text: "type \"spawn\" to create a world, or \"help\"", format: 'shog' });
 	});
 
 	async function submitForm(e: SubmitEvent) {

@@ -1,10 +1,10 @@
 [world]
 kind = "WorldContract"
-class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
-original_class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
+class_hash = "0xa349b743d361ce4567361475a89b84a386bb383448c6926954e5fe0b525597"
+original_class_hash = "0xa349b743d361ce4567361475a89b84a386bb383448c6926954e5fe0b525597"
 abi = "manifests/dev/deployment/abis/dojo-world.json"
-address = "0x1d6ab7a11c6729cb00cf4f6bc3dcc03178eab9cb47cbfad3ecac0808ed4d3c8"
-transaction_hash = "0x5ead22da1e4f9fbe4ed7ca8359720bbf8ae6e2fcc96b7029c2e8621c7b3fd25"
+address = "0x7b378a92d7c10143413760513c1cded0024a02793971c8250e7ebd6531d4a58"
+transaction_hash = "0x52bab86d87fc1667b189d5e61183659df97ff3f2f6b171bfb39643363688f8f"
 block_number = 3
 seed = "the_oruggin_trail"
 manifest_name = "dojo-world"
@@ -23,9 +23,9 @@ manifest_name = "dojo-base"
 
 [[contracts]]
 kind = "DojoContract"
-address = "0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9"
-class_hash = "0xc2ab74f16044bf18554d4db439d87ebf559a981243b1bb5814d8004d3eb344"
-original_class_hash = "0xc2ab74f16044bf18554d4db439d87ebf559a981243b1bb5814d8004d3eb344"
+address = "0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e"
+class_hash = "0x7aecea7d11924bafd51578226bc3d5b4a6b1c5496a7d2db0ff36593d27cff99"
+original_class_hash = "0x7aecea7d11924bafd51578226bc3d5b4a6b1c5496a7d2db0ff36593d27cff99"
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/the_oruggin_trail-meatpuppet-37b6ac73.json"
 reads = []
@@ -37,9 +37,9 @@ manifest_name = "the_oruggin_trail-meatpuppet-37b6ac73"
 
 [[contracts]]
 kind = "DojoContract"
-address = "0x25232e77654f18fa7a760b141ba9d60cc51d8ec6fddc02777b5eaf6c439dfd2"
-class_hash = "0xd37f3b2b98f553be5031512cc7226e588477a7a9406423817a3a273e0e93d5"
-original_class_hash = "0xd37f3b2b98f553be5031512cc7226e588477a7a9406423817a3a273e0e93d5"
+address = "0x255c9c8a1d4b17d757c35f26781a021924c277aa40667db762b6be3f21fbfe1"
+class_hash = "0x1348220d4002bc7ebb343516ce32a46cd7f23126b71619db2332b47580196a3"
+original_class_hash = "0x1348220d4002bc7ebb343516ce32a46cd7f23126b71619db2332b47580196a3"
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/the_oruggin_trail-outputter-1a960edf.json"
 reads = []
@@ -54,22 +54,25 @@ manifest_name = "the_oruggin_trail-outputter-1a960edf"
 
 [[contracts]]
 kind = "DojoContract"
-address = "0x5e48f3b345d64e8787b11e43f68dd4a272a9dadc5b0d1503af17b84492f1aaa"
-class_hash = "0x104f6b48cb3b0e837f191416863b22b48f58ecca98b04f6b9fd1cc9632ee61a"
-original_class_hash = "0x104f6b48cb3b0e837f191416863b22b48f58ecca98b04f6b9fd1cc9632ee61a"
+address = "0x1411192a670179a5744dc1003f47d4ad515a91dab187bc21a94444783c833d7"
+class_hash = "0x4ff741837b6dfdf654f2b270c9635f5eb0e7dad0b9e5bedd4c11d46696dffe5"
+original_class_hash = "0x4ff741837b6dfdf654f2b270c9635f5eb0e7dad0b9e5bedd4c11d46696dffe5"
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
 abi = "manifests/dev/deployment/abis/contracts/the_oruggin_trail-spawner-25ff96bc.json"
 reads = []
 writes = []
 init_calldata = []
 tag = "the_oruggin_trail-spawner"
-systems = ["setup"]
+systems = [
+    "setup",
+    "spawn_player",
+]
 manifest_name = "the_oruggin_trail-spawner-25ff96bc"
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x6c62226067ab06da2ba3d4310a9b8e5a222061e95235c8da7c2d18f46993d7c"
-original_class_hash = "0x6c62226067ab06da2ba3d4310a9b8e5a222061e95235c8da7c2d18f46993d7c"
+class_hash = "0x7a3f13f878a5f931d1567d8d9b08ee59c196c001ca20570d207445c0cf0eb3e"
+original_class_hash = "0x7a3f13f878a5f931d1567d8d9b08ee59c196c001ca20570d207445c0cf0eb3e"
 abi = "manifests/dev/deployment/abis/models/the_oruggin_trail-Action-73074e1e.json"
 tag = "the_oruggin_trail-Action"
 qualified_path = "the_oruggin_trail::models::action::action"
@@ -117,8 +120,27 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x53667de5ad05cb831d1587e1b9b8d9db1cbe8c891e22c42715a23158374121e"
-original_class_hash = "0x53667de5ad05cb831d1587e1b9b8d9db1cbe8c891e22c42715a23158374121e"
+class_hash = "0x12194d5aa61fc79f225864afe79fbfb291478363f869f215f221f83d4fc2a99"
+original_class_hash = "0x12194d5aa61fc79f225864afe79fbfb291478363f869f215f221f83d4fc2a99"
+abi = "manifests/dev/deployment/abis/models/the_oruggin_trail-Inventory-39e2daf9.json"
+tag = "the_oruggin_trail-Inventory"
+qualified_path = "the_oruggin_trail::models::inventory::inventory"
+manifest_name = "the_oruggin_trail-Inventory-39e2daf9"
+
+[[models.members]]
+name = "owner_id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "items"
+type = "Array<felt252>"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x26a9df9d86e540facdbf6778b2cacfd64ccc0c8086a1848f146371d55b42da3"
+original_class_hash = "0x26a9df9d86e540facdbf6778b2cacfd64ccc0c8086a1848f146371d55b42da3"
 abi = "manifests/dev/deployment/abis/models/the_oruggin_trail-Object-4fb4d030.json"
 tag = "the_oruggin_trail-Object"
 qualified_path = "the_oruggin_trail::models::object::object"
@@ -180,8 +202,8 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x79629a5f4a9108e002f7df6c27a9e973fcba6fc32d70a21cdaf83c78a08315f"
-original_class_hash = "0x79629a5f4a9108e002f7df6c27a9e973fcba6fc32d70a21cdaf83c78a08315f"
+class_hash = "0x64320194e888fef620377ff8db5fa02732701b8c8efc8b3f242cfd77e3541c4"
+original_class_hash = "0x64320194e888fef620377ff8db5fa02732701b8c8efc8b3f242cfd77e3541c4"
 abi = "manifests/dev/deployment/abis/models/the_oruggin_trail-Player-320049d3.json"
 tag = "the_oruggin_trail-Player"
 qualified_path = "the_oruggin_trail::models::player::player"
@@ -189,7 +211,7 @@ manifest_name = "the_oruggin_trail-Player-320049d3"
 
 [[models.members]]
 name = "player_id"
-type = "u32"
+type = "felt252"
 key = true
 
 [[models.members]]
@@ -202,10 +224,15 @@ name = "location"
 type = "felt252"
 key = false
 
+[[models.members]]
+name = "inventory"
+type = "felt252"
+key = false
+
 [[models]]
 kind = "DojoModel"
-class_hash = "0x571e231aab116f84c39932ca17842df0d2cfbd4c3a607c4be799242854356c2"
-original_class_hash = "0x571e231aab116f84c39932ca17842df0d2cfbd4c3a607c4be799242854356c2"
+class_hash = "0x5a3c0fb2018a19f41f5d514a8a109d02b8a010d3f40ab01a5b746892d320681"
+original_class_hash = "0x5a3c0fb2018a19f41f5d514a8a109d02b8a010d3f40ab01a5b746892d320681"
 abi = "manifests/dev/deployment/abis/models/the_oruggin_trail-Room-29e011fc.json"
 tag = "the_oruggin_trail-Room"
 qualified_path = "the_oruggin_trail::models::room::room"
@@ -219,6 +246,11 @@ key = true
 [[models.members]]
 name = "roomType"
 type = "zrk::RoomType"
+key = false
+
+[[models.members]]
+name = "biomeType"
+type = "zrk::BiomeType"
 key = false
 
 [[models.members]]
