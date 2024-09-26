@@ -13,7 +13,7 @@ scalar DateTime
 
 scalar Enum
 
-union ModelUnion = the_oruggin_trail_Action | the_oruggin_trail_Object | the_oruggin_trail_Output | the_oruggin_trail_Player | the_oruggin_trail_Room | the_oruggin_trail_Spawnroom | the_oruggin_trail_Txtdef
+union ModelUnion = the_oruggin_trail_Action | the_oruggin_trail_Inventory | the_oruggin_trail_Object | the_oruggin_trail_Output | the_oruggin_trail_Player | the_oruggin_trail_Room | the_oruggin_trail_Spawnroom | the_oruggin_trail_Txtdef
 
 enum OrderDirection {
   ASC
@@ -121,6 +121,7 @@ type World__Model {
   executedAt: DateTime
   id: ID
   name: String
+  namespace: String
   transactionHash: felt252
 }
 
@@ -162,6 +163,7 @@ type World__Query {
   model(id: ID!): World__Model!
   models(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: World__ModelOrder): World__ModelConnection
   theOrugginTrailActionModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_ActionOrder, where: the_oruggin_trail_ActionWhereInput): the_oruggin_trail_ActionConnection
+  theOrugginTrailInventoryModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_InventoryOrder, where: the_oruggin_trail_InventoryWhereInput): the_oruggin_trail_InventoryConnection
   theOrugginTrailObjectModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_ObjectOrder, where: the_oruggin_trail_ObjectWhereInput): the_oruggin_trail_ObjectConnection
   theOrugginTrailOutputModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_OutputOrder, where: the_oruggin_trail_OutputWhereInput): the_oruggin_trail_OutputConnection
   theOrugginTrailPlayerModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_PlayerOrder, where: the_oruggin_trail_PlayerWhereInput): the_oruggin_trail_PlayerConnection
@@ -302,6 +304,48 @@ input the_oruggin_trail_ActionWhereInput {
   revertable: bool
 }
 
+type the_oruggin_trail_Inventory {
+  entity: World__Entity
+  eventMessage: World__EventMessage
+  items: [felt252]
+  owner_id: felt252
+}
+
+type the_oruggin_trail_InventoryConnection {
+  edges: [the_oruggin_trail_InventoryEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type the_oruggin_trail_InventoryEdge {
+  cursor: Cursor
+  node: the_oruggin_trail_Inventory
+}
+
+input the_oruggin_trail_InventoryOrder {
+  direction: OrderDirection!
+  field: the_oruggin_trail_InventoryOrderField!
+}
+
+enum the_oruggin_trail_InventoryOrderField {
+  ITEMS
+  OWNER_ID
+}
+
+input the_oruggin_trail_InventoryWhereInput {
+  owner_id: felt252
+  owner_idEQ: felt252
+  owner_idGT: felt252
+  owner_idGTE: felt252
+  owner_idIN: [felt252]
+  owner_idLIKE: felt252
+  owner_idLT: felt252
+  owner_idLTE: felt252
+  owner_idNEQ: felt252
+  owner_idNOTIN: [felt252]
+  owner_idNOTLIKE: felt252
+}
+
 type the_oruggin_trail_Object {
   destId: felt252
   dirType: Enum
@@ -435,9 +479,10 @@ input the_oruggin_trail_OutputWhereInput {
 type the_oruggin_trail_Player {
   entity: World__Entity
   eventMessage: World__EventMessage
+  inventory: felt252
   location: felt252
   player_adr: ContractAddress
-  player_id: u32
+  player_id: felt252
 }
 
 type the_oruggin_trail_PlayerConnection {
@@ -457,12 +502,24 @@ input the_oruggin_trail_PlayerOrder {
 }
 
 enum the_oruggin_trail_PlayerOrderField {
+  INVENTORY
   LOCATION
   PLAYER_ADR
   PLAYER_ID
 }
 
 input the_oruggin_trail_PlayerWhereInput {
+  inventory: felt252
+  inventoryEQ: felt252
+  inventoryGT: felt252
+  inventoryGTE: felt252
+  inventoryIN: [felt252]
+  inventoryLIKE: felt252
+  inventoryLT: felt252
+  inventoryLTE: felt252
+  inventoryNEQ: felt252
+  inventoryNOTIN: [felt252]
+  inventoryNOTLIKE: felt252
   location: felt252
   locationEQ: felt252
   locationGT: felt252
@@ -485,20 +542,21 @@ input the_oruggin_trail_PlayerWhereInput {
   player_adrNEQ: ContractAddress
   player_adrNOTIN: [ContractAddress]
   player_adrNOTLIKE: ContractAddress
-  player_id: u32
-  player_idEQ: u32
-  player_idGT: u32
-  player_idGTE: u32
-  player_idIN: [u32]
-  player_idLIKE: u32
-  player_idLT: u32
-  player_idLTE: u32
-  player_idNEQ: u32
-  player_idNOTIN: [u32]
-  player_idNOTLIKE: u32
+  player_id: felt252
+  player_idEQ: felt252
+  player_idGT: felt252
+  player_idGTE: felt252
+  player_idIN: [felt252]
+  player_idLIKE: felt252
+  player_idLT: felt252
+  player_idLTE: felt252
+  player_idNEQ: felt252
+  player_idNOTIN: [felt252]
+  player_idNOTLIKE: felt252
 }
 
 type the_oruggin_trail_Room {
+  biomeType: Enum
   dirObjIds: [felt252]
   entity: World__Entity
   eventMessage: World__EventMessage
@@ -527,6 +585,7 @@ input the_oruggin_trail_RoomOrder {
 }
 
 enum the_oruggin_trail_RoomOrderField {
+  BIOMETYPE
   DIROBJIDS
   OBJECTIDS
   PLAYERS
@@ -537,6 +596,7 @@ enum the_oruggin_trail_RoomOrderField {
 }
 
 input the_oruggin_trail_RoomWhereInput {
+  biomeType: Enum
   roomId: felt252
   roomIdEQ: felt252
   roomIdGT: felt252

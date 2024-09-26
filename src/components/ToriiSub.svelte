@@ -13,26 +13,6 @@
 
     let text_o: string | string[] = [];
 
-    // function processCustomTags(input: string): string[] {
-    //     const tagRegex = /<([^>]+)>/g;
-    //     let result = input;
-    //     let match;
-
-    //     while ((match = tagRegex.exec(input)) !== null) {
-    //         const tag = match[1];
-    //         switch (tag) {
-    //             case '\\n':
-    //                 result = result.replace(match[0], '\n');
-    //                 break;
-    //             // Add more cases here for future tags
-    //             default:
-    //                 console.warn(`Unknown tag: ${tag}`);
-    //         }
-    //     }
-
-    //     return result.split('\n');
-    // }
-
     function processWhitespaceTags(input: string): string[] {
         const tagRegex = /\\([nrt])/g;
         const replacements: { [key: string]: string } = {

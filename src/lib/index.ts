@@ -28,8 +28,10 @@ const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
 
 // fish this from the manifest file also we need all of them
 // meatpuppet
-const ENTITY_ADDRESS = '0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9'
-const WORLD_ADDRESS = "0x1d6ab7a11c6729cb00cf4f6bc3dcc03178eab9cb47cbfad3ecac0808ed4d3c8";
+0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e
+// const ENTITY_ADDRESS = '0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9'
+const ENTITY_ADDRESS = '0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e';
+const WORLD_ADDRESS = "0x7b378a92d7c10143413760513c1cded0024a02793971c8250e7ebd6531d4a58";
 // this should come from somewhere not quite so bad, i.e it needs to be passed into the setup functions
 // should we be using `controller`at this point in the astartup logic
 const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
