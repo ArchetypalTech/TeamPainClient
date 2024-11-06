@@ -21,22 +21,21 @@ export const setFilePath = (target: string) => {
 
 
 // make this go away into a setup function
-const MANIFEST = setFilePath('../manifest/system_meatpuppet.json')
+const MANIFEST = setFilePath('../manifest/system_meatpuppet_rc0.json')
 
 // fish this from an env file if in local mode
 const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
 
 // fish this from the manifest file also we need all of them
 // meatpuppet 
-// const ENTITY_ADDRESS = '0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9'
-// const ENTITY_ADDRESS = '0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e';
-const ENTITY_ADDRESS = '0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e';
-// const WORLD_ADDRESS = "0x7b378a92d7c10143413760513c1cded0024a02793971c8250e7ebd6531d4a58";
+const ENTITY_ADDRESS = '0xa4bd32fc6f55e07e4405423ab2cf5cbbb01910e4d3c1b45993af3a58e0d1d6';
+// the world
 const WORLD_ADDRESS ="0x7f50de543f4d1093b7e9119f204849a75663a2b040ec45e5dc71e469ef5232b";
+
 // this should come from somewhere not quite so bad, i.e it needs to be passed into the setup functions
 // should we be using `controller`at this point in the astartup logic
+const addr = '0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7';
 const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
-const addr = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114';
 
 
 

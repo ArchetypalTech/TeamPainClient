@@ -11,7 +11,7 @@ export function sendCommand(command: string): Promise<string> {
 			const formData = new FormData();
 			formData.append('entry', command);
 			
-			// console.log("TA-calling");
+			console.log("TA-calling");
 			
 			// right now this forwards to lib/index.ts
 			// via api/routes/+server
