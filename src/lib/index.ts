@@ -27,11 +27,12 @@ const MANIFEST = setFilePath('../manifest/system_meatpuppet.json')
 const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
 
 // fish this from the manifest file also we need all of them
-// meatpuppet
-0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e
+// meatpuppet 
 // const ENTITY_ADDRESS = '0x39866b4c1b158743e06f0d415bac5f179a0eb9355e6f85362a48eeba191dac9'
+// const ENTITY_ADDRESS = '0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e';
 const ENTITY_ADDRESS = '0x49939a695c84c8a457f866d3955e84a5a13c2524812c19a199944b6582582e';
-const WORLD_ADDRESS = "0x7b378a92d7c10143413760513c1cded0024a02793971c8250e7ebd6531d4a58";
+// const WORLD_ADDRESS = "0x7b378a92d7c10143413760513c1cded0024a02793971c8250e7ebd6531d4a58";
+const WORLD_ADDRESS ="0x7f50de543f4d1093b7e9119f204849a75663a2b040ec45e5dc71e469ef5232b";
 // this should come from somewhere not quite so bad, i.e it needs to be passed into the setup functions
 // should we be using `controller`at this point in the astartup logic
 const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
