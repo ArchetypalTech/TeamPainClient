@@ -13,6 +13,7 @@
   //unique p[layer at all
   const ENTITY_ID = 23;
   const entityId = getEntityIdFromKeys(ENTITY_ID);
+  console.log(entityId);
 
   onMount(() => {
 		setupThree();
