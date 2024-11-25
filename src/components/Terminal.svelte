@@ -2,6 +2,8 @@
 	import { onMount, tick } from "svelte";
 	import { sendCommand } from "../api/terminal";
 	import { terminalContent, addTerminalContent, clearTerminalContent, type TerminalContentItem } from "$lib/stores/terminal_content_store";
+    import Typewriter from "$components/Typewriter.svelte";
+    import { windowsStore, WindowType } from '$lib/stores/windows_store';
 
 
 	let headerText = [
@@ -53,7 +55,10 @@
 	}
 
 	onMount(async () => {
-		addTerminalContent({ text: "type \"spawn\" to create a world, or \"help\"", format: 'shog' });
+		addTerminalContent({ 
+			text: "type \"spawn\" to create a world, or \"help\"", 
+			format: 'shog', 
+			useTypewriter: true });
 	});
 
 	async function submitForm(e: SubmitEvent) {
@@ -73,11 +78,24 @@
 			return;
 		}
 		
+		// Handle debug command
+		if (command === "debug") {
+			windowsStore.toggle(WindowType.DEBUG);
+			addTerminalContent({ 
+				text: `Debug window ${windowsStore.get(WindowType.DEBUG) ? 'enabled' : 'disabled'}`, 
+				format: 'out', 
+				useTypewriter: false 
+			});
+			return;
+		}
+		
 		// Regular command execution
 		if (step === 1) {
 			inputHistory = [...inputHistory, command];
-			addTerminalContent({ text: command, format: 'input',  });
+			addTerminalContent({ text: command, format: 'input', useTypewriter: false });
 			try {
+				// TODO: add handlers for help type commands
+				// that dont need to be onchain at all
 				const response = await sendCommand(command);
 				/**
 				 * we dont actually do anything now as we wait on the GQL subscription
@@ -122,7 +140,16 @@
 	<br />
 	<ul class="w-full">
 		{#each $terminalContent as content}
-		<li class="break-words {content.format}-style">{content.text}</li>
+			{#if content.useTypewriter}
+				<Typewriter
+					text={content.text} 
+					sentenceDelay={1000}
+					minTypingDelay={30}
+					maxTypingDelay={100}
+					/>
+			{:else}
+				<li class="break-words {content.format}-style">{content.text}</li>
+			{/if}
 		{/each}
 	</ul>
 	<div class="w-full flex flex-row gap-2">

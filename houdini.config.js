@@ -3,7 +3,16 @@
 /** @type {import('houdini').ConfigFile} */
 const config = {
     watchSchema: {
-        url: "http://127.0.0.1:8080/graphql"
+        url: "http://127.0.0.1:8080/graphql",
+        interval: 1000,  // Consider increasing this in development
+        maxRetries: 3,   // Fixed typo
+        quiet: true,
+        // Add error handler for schema watching
+        onError: (err) => {
+            console.warn('Schema watching failed:', err);
+            return null;  // Prevents crash
+        }
+
     },
     plugins: {
         "houdini-svelte": {}
