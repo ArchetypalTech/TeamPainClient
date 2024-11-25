@@ -5,7 +5,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import sceneData from "$lib/three_scene_definition.json";
 
 let scene: THREE.Scene;
-let camera: THREE.PerspectiveCamera;
+export let camera: THREE.PerspectiveCamera;
 let sceneHolder: THREE.Object3D = new THREE.Object3D();
 let controls: OrbitControls;
 let currentSceneIndex = 0;
