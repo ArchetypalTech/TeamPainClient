@@ -83,7 +83,7 @@
 			windowsStore.toggle(WindowType.DEBUG);
 			addTerminalContent({ 
 				text: `Debug window ${windowsStore.get(WindowType.DEBUG) ? 'enabled' : 'disabled'}`, 
-				format: 'out', 
+				format: 'input', 
 				useTypewriter: false 
 			});
 			return;
