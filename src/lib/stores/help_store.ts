@@ -49,19 +49,24 @@ function createHelpStore() {
                 return {
                     ...state,
                     currentText: helpText,
-                    isVisible: true
+                    isVisible: true,
+                    topic: command
                 };
             });
         },
         hide: () => {
             update(state => ({ ...state, isVisible: false }));
         },
-        toggle: (topic?: string) => {
-            update(state => ({
-                ...state,
-                isVisible: !state.isVisible,
-                topic: topic || state.topic
-            }));
+        toggle: (command?: string) => {
+            update(state => {
+                const newIsVisible = !state.isVisible;
+                return {
+                    ...state,
+                    isVisible: newIsVisible,
+                    currentText: newIsVisible ? getHelpText(state.commands, command) : state.currentText,
+                    topic: command || state.topic
+                };
+            });
         }
     };
 }

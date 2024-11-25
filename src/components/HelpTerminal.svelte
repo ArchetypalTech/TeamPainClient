@@ -22,8 +22,9 @@
     <div class="content">
         <Typewriter
             text={$helpStore.currentText}
-            minTypingDelay={20}
-            maxTypingDelay={100}
+            minTypingDelay={0}
+            maxTypingDelay={0}
+            sentenceDelay={0}
         />
     </div>
 </div>
