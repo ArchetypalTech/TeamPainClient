@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     
     let messages: string[] = [];
+    let terminalElement: HTMLDivElement;
     
     // Intercept console.log
     onMount(() => {
@@ -18,6 +19,11 @@
             console.log = originalConsoleLog;
         };
     });
+    
+    // Auto scroll when content changes
+    $: if (terminalElement) {
+        terminalElement.scrollTop = terminalElement.scrollHeight;
+    }
 </script>
 
 <div class="debug-terminal">

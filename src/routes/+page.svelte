@@ -34,15 +34,17 @@
 
 </script>
 
-<DebugTerminal />
-
 <div class="w-screen h-screen relative bg-black">
   {#if !hasError}
+      {#if $windowsStore[WindowType.DEBUG]}
+          <div class="absolute top-5 left-[calc(16.666667%+1rem)] z-50">
+              <div class="border border-green-500 rounded-md">
+                  <DebugTerminal />
+              </div>
+          </div>
+      {/if}
       <div class="absolute w-1/3 h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
           <Wallet />
-          {#if $windowsStore[WindowType.DEBUG]}
-              <Debug />
-          {/if}
           <Terminal />
           <ToriiSub {entityId} />
       </div>
