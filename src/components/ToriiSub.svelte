@@ -19,12 +19,11 @@
     const RETRY_DELAY = 5000;
 
     async function initializeConnection() {
-        console.log('---------> XXX');
+        console.log('---------> start torii subscription');
         try {
              await torii_gql.listen({ id: entityId });
             isConnected = true;
             connError = null;
-            console.log('Connected to server...');
         } catch (error: any) {
             console.log('ERR: ----------> *');
             let err_msg = 'Unknown error occurred';
