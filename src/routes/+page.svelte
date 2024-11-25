@@ -29,27 +29,31 @@
 
 <style>
     :global(:root) {
-        --terminal-width: 33.333%;
-        --available-space: 33.333%;
-        --debug-width: calc(var(--available-space) * 0.6);
-        --debug-margin: calc((var(--available-space) - var(--debug-width)) / 2);
+        --terminal-width: 30%;
+        --available-space: calc(100% - var(--terminal-width));
+        --debug-width: calc(var(--terminal-width) * 0.8);
+        --debug-margin: 2rem;
     }
 </style>
 
 <div class="w-screen h-screen relative bg-black">
   {#if !hasError}
-      <div id="viewport"></div>
-      <div class="absolute w-1/3 h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
-          <Wallet />
-          <Terminal />
-          <ToriiSub {entityId} />
-      </div>
-      {#if $windowsStore[WindowType.DEBUG]}
-          <div class="absolute top-5 z-50" 
-               style="width: var(--debug-width); left: var(--debug-margin)">
-                  <DebugTerminal />
+      <div id="viewport" class="absolute inset-0 z-0"></div>
+      
+      <div class="relative z-10 w-full h-full">
+          <div class="absolute w-[30%] h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
+              <Wallet />
+              <Terminal />
+              <ToriiSub {entityId} />
           </div>
-      {/if}
+
+          {#if $windowsStore[WindowType.DEBUG]}
+              <div class="absolute top-5" 
+                   style="width: var(--debug-width); left: var(--debug-margin);">
+                  <DebugTerminal />
+              </div>
+          {/if}
+      </div>
   {:else}
       <div class="flex items-center justify-center h-full">
           <div class="text-red-500 p-4">

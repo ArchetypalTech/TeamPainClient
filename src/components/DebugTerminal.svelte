@@ -34,10 +34,8 @@
 
 <style>
     .debug-terminal {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        width: 33vw;
+        position: relative;
+        width: 100%;
         max-height: 200px;
         background: rgba(0, 0, 0, 0.8);
         color: #00ff00;
@@ -46,7 +44,6 @@
         padding: 10px;
         border-radius: 5px;
         overflow-y: auto;
-        z-index: 1000;
     }
     
     .message {
