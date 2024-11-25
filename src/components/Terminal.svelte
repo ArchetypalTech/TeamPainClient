@@ -4,6 +4,8 @@
 	import { terminalContent, addTerminalContent, clearTerminalContent, type TerminalContentItem } from "$lib/stores/terminal_content_store";
     import Typewriter from "$components/Typewriter.svelte";
     import { windowsStore, WindowType } from '$lib/stores/windows_store';
+    import { helpStore } from '$lib/stores/help_store';
+    import HelpTerminal from './HelpTerminal.svelte';
 
 
 	let headerText = [
@@ -70,46 +72,49 @@
 		inputValue = "";
 		await tick();
 
-		// Handle clear command
-		if (command === "clear") {
-			clearTerminalContent();
-			// terminalContent = [];
-			inputValue = "";
-			return;
-		}
-		
-		// Handle debug command
-		if (command === "debug") {
-			windowsStore.toggle(WindowType.DEBUG);
-			addTerminalContent({ 
-				text: `Debug window ${windowsStore.get(WindowType.DEBUG) ? 'enabled' : 'disabled'}`, 
-				format: 'input', 
-				useTypewriter: false 
-			});
-			return;
-		}
-		
-		// Regular command execution
-		if (step === 1) {
-			inputHistory = [...inputHistory, command];
-			addTerminalContent({ text: command, format: 'input', useTypewriter: false });
-			try {
-				// TODO: add handlers for help type commands
-				// that dont need to be onchain at all
-				const response = await sendCommand(command);
-				/**
-				 * we dont actually do anything now as we wait on the GQL subscription
-				 * to actually return us bacon, via the `ToriiSub` component which updates
-				 * the store and thus the UI
-				 * */			
-				} catch (e) {
-				console.error(e);
-			}
-		} 
+		// Add command to history and display
+		inputHistory = [...inputHistory, command];
+		addTerminalContent({ text: command, format: 'input', useTypewriter: false });
 
-		inputValue = "";
-		await tick();
-		terminalForm.scrollTo({ left: 0, top: terminalForm.scrollHeight, behavior: "smooth" });
+		// Parse command and arguments
+		const [cmd, ...args] = command.trim().toLowerCase().split(/\s+/);
+
+		// Handle built-in commands
+		switch (cmd) {
+			case 'clear':
+				clearTerminalContent();
+				return;
+
+			case 'debug':
+				windowsStore.toggle(WindowType.DEBUG);
+				addTerminalContent({ 
+					text: `Debug window ${windowsStore.get(WindowType.DEBUG) ? 'enabled' : 'disabled'}`, 
+					format: 'out', 
+					useTypewriter: false 
+				});
+				return;
+
+			case 'help':
+				helpStore.toggle(args[0]);
+				addTerminalContent({ 
+					text: `Help window ${helpStore.isVisible ? 'enabled' : 'disabled'}`, 
+					format: 'out', 
+					useTypewriter: false 
+				});
+				return;
+		}
+
+		// Handle other commands via GQL
+		try {
+			const response = await sendCommand(command);
+			/**
+			 * we dont actually do anything now as we wait on the GQL subscription
+			 * to actually return us bacon, via the `ToriiSub` component which updates
+			 * the store and thus the UI
+			 * */			
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 </script>

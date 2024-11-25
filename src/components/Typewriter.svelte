@@ -1,8 +1,8 @@
 <script lang="ts">
     export let text: string;
     export let sentenceDelay: number = 2000;
-    export let minTypingDelay: number = 50;
-    export let maxTypingDelay: number = 150;
+    export let minTypingDelay: number = 30;
+    export let maxTypingDelay: number = 200;
   
     let displayText: string = '';
     let currentIndex: number = 0;
@@ -12,8 +12,12 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
   
-    function getRandomDelay(min: number, max: number) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    function getRandomDelay(min: number, max: number, char: string) {
+        const extraDelay = /[,.!?]/.test(char) ? 200 : 
+                          /[ ]/.test(char) ? 100 :
+                          0;
+        
+        return Math.floor(Math.random() * (max - min + 1)) + min + extraDelay;
     }
   
     async function typeText() {
@@ -29,8 +33,7 @@
           if (char === '.') {
             isPaused = true;
           } else {
-            // Add a random delay between characters
-            await sleep(getRandomDelay(minTypingDelay, maxTypingDelay));
+            await sleep(getRandomDelay(minTypingDelay, maxTypingDelay, char));
           }
         }
       }

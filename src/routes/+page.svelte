@@ -1,10 +1,11 @@
 <script lang="ts">
 
-  import { Terminal, Wallet, ToriiSub, DebugTerminal } from "$components";
+  import { Terminal, Wallet, ToriiSub, DebugTerminal, HelpTerminal } from "$components";
   import { setupThree } from "../three";
   import { getEntityIdFromKeys } from "$lib/utils";
   import { onMount } from "svelte";
   import { windowsStore, WindowType } from "$lib/stores/windows_store";
+  import { helpStore } from '$lib/stores/help_store';
 
   const ENTITY_ID = 23;
   const entityId = getEntityIdFromKeys(ENTITY_ID);
@@ -51,6 +52,12 @@
               <div class="absolute top-5" 
                    style="width: var(--debug-width); left: var(--debug-margin);">
                   <DebugTerminal />
+              </div>
+          {/if}
+
+          {#if $helpStore.isVisible}
+              <div class="absolute top-5 right-8" style="width: var(--debug-width);">
+                  <HelpTerminal />
               </div>
           {/if}
       </div>
