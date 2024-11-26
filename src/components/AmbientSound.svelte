@@ -81,17 +81,51 @@
         noiseGain = audioContext.createGain();
         oscillatorGain = audioContext.createGain();
         
-        // Set initial volumes with much more subtle variations
+        // Set initial volumes
         noiseGain.gain.setValueAtTime(noiseVolume, audioContext.currentTime);
         oscillatorGain.gain.setValueAtTime(tonalVolume, audioContext.currentTime);
+
+        // Connect volume modulation only to tonal element
+        volumeLfoNode.connect(oscillatorGain.gain);
+        // Don't connect volumeLfoNode to noiseGain anymore
+
+        // Separate interval for very subtle noise variations
+        setInterval(() => {
+            if (isActive) {
+                // Extremely subtle noise volume variations (only ±5%)
+                const randomNoiseVol = noiseVolume * (0.98 + Math.random() * 0.04);
+                
+                // Very slow, smooth transition
+                noiseGain.gain.linearRampToValueAtTime(
+                    randomNoiseVol, 
+                    audioContext.currentTime + 3
+                );
+            }
+        }, 3000); // Longer interval for more stability
+
+        // Separate interval for tonal variations
+        setInterval(() => {
+            if (isActive) {
+                // Frequency modulation changes
+                const randomRate = modulationRate + (Math.random() * 0.1 - 0.05);
+                lfoNode.frequency.setValueAtTime(randomRate, audioContext.currentTime);
+                
+                const randomDepth = modulationDepth + (Math.random() * 0.5 - 0.25);
+                lfoGain.gain.setValueAtTime(randomDepth, audioContext.currentTime);
+
+                // More dramatic tonal volume variations
+                const randomTonalVol = tonalVolume * (0.7 + Math.random() * 0.6);
+                
+                oscillatorGain.gain.linearRampToValueAtTime(
+                    randomTonalVol, 
+                    audioContext.currentTime + 2
+                );
+            }
+        }, 2000);
 
         // Connect frequency modulation
         lfoNode.connect(lfoGain);
         lfoGain.connect(oscillatorNode.frequency);
-
-        // Connect volume modulation
-        volumeLfoNode.connect(noiseGain.gain);
-        volumeLfoNode.connect(oscillatorGain.gain);
 
         // Connect audio nodes
         noiseNode.connect(noiseGain);
@@ -104,49 +138,6 @@
         oscillatorNode.start();
         lfoNode.start();
         volumeLfoNode.start();
-
-        // Add subtle random variations
-        setInterval(() => {
-            if (isActive) {
-                // Frequency modulation changes (unchanged)
-                const randomRate = modulationRate + (Math.random() * 0.1 - 0.05);
-                lfoNode.frequency.setValueAtTime(randomRate, audioContext.currentTime);
-                
-                const randomDepth = modulationDepth + (Math.random() * 0.5 - 0.25);
-                lfoGain.gain.setValueAtTime(randomDepth, audioContext.currentTime);
-
-                // Very subtle volume variations for noise (only ±15% max)
-                const randomNoiseVol = noiseVolume * (0.95 + Math.random() * 0.3); // 95-125% of base
-                const randomTonalVol = tonalVolume * (0.9 + Math.random() * 0.2); // 90-110% of base
-                
-                // Longer, smoother transitions
-                const transitionTime = 2 + Math.random() * 3; // 2-5 seconds
-
-                noiseGain.gain.linearRampToValueAtTime(
-                    randomNoiseVol, 
-                    audioContext.currentTime + transitionTime
-                );
-                oscillatorGain.gain.linearRampToValueAtTime(
-                    randomTonalVol, 
-                    audioContext.currentTime + transitionTime
-                );
-
-                // Occasional very gentle gusts
-                if (Math.random() < 0.05) { // 5% chance every 2 seconds
-                    const gustVolume = noiseVolume * (1.1 + Math.random() * 0.2); // 110-130% burst
-                    const gustDuration = 1 + Math.random() * 1; // 1-2 second gentle gust
-                    
-                    noiseGain.gain.linearRampToValueAtTime(
-                        gustVolume,
-                        audioContext.currentTime + 0.5
-                    );
-                    noiseGain.gain.linearRampToValueAtTime(
-                        randomNoiseVol,
-                        audioContext.currentTime + gustDuration
-                    );
-                }
-            }
-        }, 2000);
 
         debugStatus = "Audio running";
     }
