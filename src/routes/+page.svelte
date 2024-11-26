@@ -7,11 +7,13 @@
   import { windowsStore, WindowType } from "$lib/stores/windows_store";
   import { helpStore } from '$lib/stores/help_store';
   import CameraShake from "$components/CameraShake.svelte";
+  import AmbientSound from "$components/AmbientSound.svelte";
 
   const ENTITY_ID = 23;
   const entityId = getEntityIdFromKeys(ENTITY_ID);
 
   let hasError = false;
+  let ambientSoundComponent: { switchTone: () => void };
 
     function handleError(error: any) {
         hasError = true;
@@ -20,9 +22,7 @@
 
     onMount(() => {
         try {
-		        console.log("PAGE::ONMOUNT----------->");
             setupThree();
-            console.log("setup:page");
         } catch (error) {
             handleError(error);
         }
@@ -42,6 +42,12 @@
   {#if !hasError}
       <div id="viewport" class="absolute inset-0 z-0"></div>
       <CameraShake />
+      <AmbientSound 
+          bind:this={ambientSoundComponent}
+          tonalFrequency={220}
+          tonalFrequency2={330}
+          transitionTime={2}
+      />
       
       <div class="relative z-10 w-full h-full">
           <div class="absolute w-[30%] h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
@@ -71,3 +77,7 @@
       </div>
   {/if}
 </div>
+
+<button on:click={() => ambientSoundComponent?.switchTone()}>
+    Switch Tone
+</button>

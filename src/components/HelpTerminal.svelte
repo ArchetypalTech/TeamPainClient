@@ -33,7 +33,7 @@
     .help-terminal {
         position: relative;
         width: 100%;
-        max-height: 300px;
+        max-height: 400px;
         background: rgba(0, 0, 0, 0.8);
         color: #ffd700;  /* Gold color for help text */
         font-family: monospace;
