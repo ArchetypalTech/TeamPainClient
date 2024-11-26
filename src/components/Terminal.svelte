@@ -96,6 +96,7 @@
 				return;
 
 			case 'help':
+			case 'help-close':
 				handleHelp(command);
 				addTerminalContent({ 
 					text: `Help window ${$helpStore.isVisible ? 'enabled' : 'disabled'}`, 

@@ -255,9 +255,19 @@ function createHelpStore() {
         isVisible: false,
         commands: {
             'help': {
-                description: 'Display available commands and their usage. Try help list',
-                usage: 'help [command]',
+                description: 'Open the help window.',
+                usage: 'help [command]\nwhere [command] is passed will print long form.',
+                examples: ['help', 'help jump']
+            },
+            'help list': {
+                description: 'Show the list of verbs',
+                usage: 'help list',
                 examples: ['help', 'help list']
+            },
+            'help-close': {
+                description: 'Close the help window.',
+                usage: 'help-close',
+                examples: ['help-close']
             },
             'spawn': {
                 description: 'Create a new world instance',
@@ -314,6 +324,12 @@ function getHelpText(commands: Record<string, HelpContent>, command?: string): s
         }\n\nType 'help <command>' for more information about a specific command.`;
     }
 
+    // Check helpTexts first for long-form help
+    if (helpTexts[command]) {
+        return helpTexts[command];
+    }
+
+    // Fall back to commands for basic help
     const helpContent = commands[command];
     if (!helpContent) {
         return `Unknown command: '${command}'\nType 'help' to see available commands.`;
@@ -338,21 +354,20 @@ function getHelpText(commands: Record<string, HelpContent>, command?: string): s
 export function handleHelp(command: string) {
     const parts = command.split(' ');
     const topic = parts.length > 1 ? parts[1].toLowerCase() : 'default';
-    
+
     // If help is typed alone, show default help
     if (command.trim().toLowerCase() === 'help') {
         helpStore.showHelp();
         return;
     }
 
-    // If "help close" is typed, close the window
-    if (topic === 'close') {
+    // If "help close" or "help-close" is typed, close the window
+    if (command.trim().toLowerCase() === 'help-close' || topic === 'close') {
         helpStore.hide();
         return;
     }
 
     // Show help for specific verb
-    // const helpText = helpTexts[topic] || "No help available for that topic. Type 'help' for a list of topics.";
     helpStore.showHelp(topic);
 }
 
