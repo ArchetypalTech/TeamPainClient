@@ -78,6 +78,3 @@
   {/if}
 </div>
 
-<button on:click={() => ambientSoundComponent?.switchTone()}>
-    Switch Tone
-</button>

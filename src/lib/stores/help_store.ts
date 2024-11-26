@@ -48,7 +48,8 @@ const helpTexts: Record<string, string> = {
             //   'block       - Block an attack\n' +
               'soak        - Soak an object\n' +
               'empty       - Empty a container\n' +
-              'close       - Close this help window',
+              'close       - Close this help window\n' +
+              'hear        - Control ambient sounds',
     'close': 'Close command:\nUse "help close" to close this help window.',
     'go': 'Move command:\nUse "go <direction>" to move in that direction.\nValid directions are north, south, east, west, up, down.',
     'look': 'Look command:\nUse "look [around]" to examine your surroundings.\nUse "look at <object>" to examine specific things.',
@@ -231,7 +232,21 @@ const helpTexts: Record<string, string> = {
                    '  "disintegrate the box"\n' +
                    '  "I want to disintegrate this"\n' +
                    'Warning:\n' +
-                   '  Permanent and complete destruction - cannot be undone'
+                   '  Permanent and complete destruction - cannot be undone',
+    'hear': 'HEAR\n\n' +
+           'Description:\n' +
+           '  Control the ambient sound system\n\n' +
+           'Syntax:\n' +
+           '  hear wind [on|off] - Control wind sound\n' +
+           '  hear tone [on|off] - Control tonal sound\n' +
+           '  hear help         - Show this help\n\n' +
+           'Examples:\n' +
+           '  "hear wind off"   - Disable wind sound\n' +
+           '  "hear wind on"    - Enable wind sound\n' +
+           '  "hear tone off"   - Disable tonal sound\n' +
+           '  "hear tone on"    - Enable tonal sound\n\n' +
+           'Note:\n' +
+           '  Changes are applied smoothly with a short fade'
 };
 
 function createHelpStore() {

@@ -6,6 +6,7 @@
     import { windowsStore, WindowType } from '$lib/stores/windows_store';
     import { helpStore } from '$lib/stores/help_store';
     import HelpTerminal from './HelpTerminal.svelte';
+    import { audioStore } from '$lib/stores/audio_store';
 
 
 	let headerText = [
@@ -97,10 +98,44 @@
 			case 'help':
 				helpStore.toggle(args[0]);
 				addTerminalContent({ 
-					text: `Help window ${helpStore.isVisible ? 'enabled' : 'disabled'}`, 
+					text: `Help window ${$helpStore.isVisible ? 'enabled' : 'disabled'}`, 
 					format: 'out', 
 					useTypewriter: false 
 				});
+				return;
+
+			case 'hear':
+				if (args.length === 0 || args[0] === 'help') {
+					helpStore.showHelp('hear');
+					return;
+				}
+
+				const [target, state] = args;
+				if (target === 'wind') {
+					console.log("-----------> wind off");
+					audioStore.toggleWind();
+					addTerminalContent({ 
+						text: state === 'off' ? 'Wind sound disabled' : 'Wind sound enabled', 
+						format: 'out', 
+						useTypewriter: false 
+					});
+				} else if (target === 'tone') {
+					console.log("-----------> tone off");
+					audioStore.toggleTone();
+					addTerminalContent({ 
+						text: state === 'off' ? 'Tonal sound disabled' : 'Tonal sound enabled', 
+						format: 'out', 
+						useTypewriter: false 
+					});
+				} else if (target === 'cricket') {
+					console.log("-----------> cricket off");
+					audioStore.toggleCricket();
+					addTerminalContent({ 
+						text: state === 'off' ? 'Cricket sound disabled' : 'Cricket sound enabled', 
+						format: 'out', 
+						useTypewriter: false 
+					});
+				}
 				return;
 		}
 

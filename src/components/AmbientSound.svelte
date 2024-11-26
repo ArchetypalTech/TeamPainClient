@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
+    import { audioStore } from '$lib/stores/audio_store';
 
     // Configurable parameters
     export let tonalVolume: number = 0.03;
@@ -14,7 +15,7 @@
 
     let audioContext: AudioContext;
     let noiseNode: AudioBufferSourceNode;
-    let oscillatorNode: OscillatorNode;
+    let oscillatorNode: OscillatorNode | null;
     let lfoNode: OscillatorNode;
     let lfoGain: GainNode;
     let volumeLfoNode: OscillatorNode;
@@ -23,6 +24,8 @@
     let isActive: boolean = true;
     let debugStatus: string = "Initializing...";
     let currentFrequencyIndex: number = 0; // 0 for base frequency, 1 for second
+    let isWindActive: boolean = true;
+    let isToneActive: boolean = true;
 
     // Create pink noise buffer
     function createPinkNoise(bufferSize: number) {
@@ -95,6 +98,21 @@
         const volumeLfoOffset = audioContext.createConstantSource();
         volumeLfoOffset.offset.setValueAtTime(0.575, audioContext.currentTime); // Centers between 0.15 and 1.0
 
+        // Create similar modulation for pink noise
+        const noiseLfoNode = audioContext.createOscillator();
+        const noiseLfoGain = audioContext.createGain();
+        const noiseLfoOffset = audioContext.createConstantSource();
+
+        noiseLfoNode.type = 'sine';
+        noiseLfoNode.frequency.setValueAtTime(volumeModRate * 0.7, audioContext.currentTime); // Slightly slower
+        noiseLfoGain.gain.setValueAtTime(0.425, audioContext.currentTime); // Same depth
+        noiseLfoOffset.offset.setValueAtTime(0.575, audioContext.currentTime); // Same offset
+
+        // Connect noise modulation chain
+        noiseLfoNode.connect(noiseLfoGain);
+        noiseLfoGain.connect(noiseGain.gain);
+        noiseLfoOffset.connect(noiseGain.gain);
+
         // Add subtle random variations to the tonal signal
         setInterval(() => {
             if (isActive) {
@@ -118,6 +136,21 @@
             }
         }, 100); // Quick variations every 100ms
 
+        // Add separate subtle variations to the noise
+        setInterval(() => {
+            if (isActive) {
+                // Very subtle volume variation (±2%)
+                const currentNoiseVol = noiseGain.gain.value;
+                const noiseVariation = currentNoiseVol * (0.98 + Math.random() * 0.04);
+                
+                // Smooth transition
+                noiseGain.gain.linearRampToValueAtTime(
+                    noiseVariation,
+                    audioContext.currentTime + 0.2
+                );
+            }
+        }, 150); // Slightly different interval to avoid synchronization
+
         // Connect frequency modulation
         lfoNode.connect(lfoGain);
         lfoGain.connect(oscillatorNode.frequency);
@@ -139,6 +172,8 @@
         lfoNode.start();
         volumeLfoNode.start();
         volumeLfoOffset.start();
+        noiseLfoNode.start();
+        noiseLfoOffset.start();
 
         debugStatus = "Audio running";
     }
@@ -166,16 +201,75 @@
         debugStatus = `Transitioning to ${targetFreq}Hz`;
     }
 
+    // Subscribe to store changes
+    $: if (noiseGain && audioContext) {
+        if ($audioStore.windEnabled) {
+            let needsNewNode = true;
+            if (noiseNode) {
+                try {
+                    noiseNode.stop();
+                    needsNewNode = true;
+                } catch {
+                    needsNewNode = true;
+                }
+            }
+            
+            if (needsNewNode) {
+                noiseNode = audioContext.createBufferSource();
+                noiseNode.buffer = createPinkNoise(audioContext.sampleRate * 5);
+                noiseNode.loop = true;
+                noiseNode.connect(noiseGain);
+                noiseNode.start();
+            }
+            noiseGain.gain.linearRampToValueAtTime(noiseVolume, audioContext.currentTime + 1);
+        } else {
+            // Fade out and then stop the node
+            noiseGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+            if (noiseNode) {
+                setTimeout(() => {
+                    try {
+                        noiseNode.stop();
+                    } catch {}
+                }, 1000);
+            }
+        }
+    }
+
+    $: if (oscillatorGain && audioContext) {
+        if ($audioStore.toneEnabled) {
+            let needsNewNode = true;
+            if (oscillatorNode) {
+                try {
+                    oscillatorNode.stop();
+                } catch {}
+            }
+            
+            oscillatorNode = audioContext.createOscillator();
+            oscillatorNode.type = 'sine';
+            oscillatorNode.frequency.setValueAtTime(tonalFrequency, audioContext.currentTime);
+            oscillatorNode.connect(oscillatorGain);
+            oscillatorNode.start();
+            oscillatorGain.gain.linearRampToValueAtTime(tonalVolume, audioContext.currentTime + 1);
+        } else {
+            oscillatorGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1);
+            if (oscillatorNode) {
+                setTimeout(() => {
+                    try {
+                        if (oscillatorNode) {
+                            oscillatorNode.stop();
+                            oscillatorNode = null;
+                        }
+                    } catch {}
+                }, 1000);
+            }
+        }
+    }
+
     // Export the switch function for external use
     export const switchTone = () => switchFrequency();
 
     onMount(() => {
         console.log("AmbientSound: Mounting component");
-        // Make the function globally accessible
-        if (typeof window !== 'undefined') {
-            (window as any).switchTone = switchFrequency;
-        }
-        
         setupAudio();
     });
 
@@ -187,21 +281,5 @@
         if (lfoNode) lfoNode.stop();
         if (volumeLfoNode) volumeLfoNode.stop();
         if (audioContext) audioContext.close();
-        // Clean up the global reference
-        if (typeof window !== 'undefined') {
-            delete (window as any).switchTone;
-        }
     });
 </script>
-
-{#if import.meta.env.DEV}
-    <div class="fixed bottom-8 left-0 bg-black/50 text-green-500 p-2 font-mono text-sm z-50">
-        AmbientSound Status: {debugStatus}
-        <button 
-            class="ml-4 px-2 border border-green-500 hover:bg-green-500/20"
-            on:click={switchFrequency}
-        >
-            Switch Tone
-        </button>
-    </div>
-{/if} 
