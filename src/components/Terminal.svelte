@@ -4,7 +4,7 @@
 	import { terminalContent, addTerminalContent, clearTerminalContent, type TerminalContentItem } from "$lib/stores/terminal_content_store";
     import Typewriter from "$components/Typewriter.svelte";
     import { windowsStore, WindowType } from '$lib/stores/windows_store';
-    import { helpStore } from '$lib/stores/help_store';
+    import { helpStore, handleHelp } from '$lib/stores/help_store';
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
 
@@ -96,7 +96,7 @@
 				return;
 
 			case 'help':
-				helpStore.toggle(args[0]);
+				handleHelp(command);
 				addTerminalContent({ 
 					text: `Help window ${$helpStore.isVisible ? 'enabled' : 'disabled'}`, 
 					format: 'out', 

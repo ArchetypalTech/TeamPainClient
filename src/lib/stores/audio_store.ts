@@ -3,14 +3,12 @@ import { writable } from 'svelte/store';
 interface AudioState {
     windEnabled: boolean;
     toneEnabled: boolean;
-    cricketEnabled: boolean;
 }
 
 function createAudioStore() {
     const { subscribe, update } = writable<AudioState>({
-        windEnabled: true,
-        toneEnabled: true,
-        cricketEnabled: true
+        windEnabled: false,
+        toneEnabled: false,
     });
 
     return {
@@ -25,12 +23,8 @@ function createAudioStore() {
             const newState = { ...state, toneEnabled: !state.toneEnabled };
             console.log('🎵 Tone toggled:', { previous: state.toneEnabled, new: newState.toneEnabled });
             return newState;
-        }),
-        toggleCricket: () => update(state => {
-            const newState = { ...state, cricketEnabled: !state.cricketEnabled };
-            console.log('🦗 Cricket toggled:', { previous: state.cricketEnabled, new: newState.cricketEnabled });
-            return newState;
         })
+        
     };
 }
 

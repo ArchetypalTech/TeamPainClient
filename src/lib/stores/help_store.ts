@@ -255,9 +255,9 @@ function createHelpStore() {
         isVisible: false,
         commands: {
             'help': {
-                description: 'Display available commands and their usage',
+                description: 'Display available commands and their usage. Try help list',
                 usage: 'help [command]',
-                examples: ['help', 'help spawn']
+                examples: ['help', 'help list']
             },
             'spawn': {
                 description: 'Create a new world instance',
@@ -280,15 +280,12 @@ function createHelpStore() {
     return {
         subscribe,
         showHelp: (command?: string) => {
-            update(state => {
-                const helpText = getHelpText(state.commands, command);
-                return {
-                    ...state,
-                    currentText: helpText,
-                    isVisible: true,
-                    topic: command
-                };
-            });
+            update(state => ({
+                ...state,
+                currentText: getHelpText(state.commands, command),
+                isVisible: true,
+                topic: command
+            }));
         },
         hide: () => {
             update(state => ({ ...state, isVisible: false }));
@@ -344,31 +341,19 @@ export function handleHelp(command: string) {
     
     // If help is typed alone, show default help
     if (command.trim().toLowerCase() === 'help') {
-        helpStore.set({ 
-            isVisible: true, 
-            currentText: helpTexts['default'],
-            commands: {} 
-        });
+        helpStore.showHelp();
         return;
     }
 
     // If "help close" is typed, close the window
     if (topic === 'close') {
-        helpStore.set({ 
-            isVisible: false, 
-            currentText: '',
-            commands: {} 
-        });
+        helpStore.hide();
         return;
     }
 
     // Show help for specific verb
-    const helpText = helpTexts[topic] || "No help available for that topic. Type 'help' for a list of topics.";
-    helpStore.set({ 
-        isVisible: true, 
-        currentText: helpText,
-        commands: {} 
-    });
+    // const helpText = helpTexts[topic] || "No help available for that topic. Type 'help' for a list of topics.";
+    helpStore.showHelp(topic);
 }
 
 export const helpStore = createHelpStore(); 

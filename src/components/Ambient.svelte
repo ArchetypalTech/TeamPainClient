@@ -104,12 +104,12 @@
         noiseNode.buffer = noiseBuffer;
         noiseNode.loop = true;
         noiseGain = audioContext.createGain();
-        smoothTransition(noiseGain.gain, noiseVolume, 0);
+        noiseGain.gain.setValueAtTime(0, audioContext.currentTime);
 
         // Setup tonal chain
         oscillatorNode = setupTonalOscillator(tonalFrequency);
         oscillatorGain = audioContext.createGain();
-        smoothTransition(oscillatorGain.gain, tonalVolume, 0);
+        oscillatorGain.gain.setValueAtTime(0, audioContext.currentTime);
 
         // Setup modulations
         const freqMod = createModulationChain(audioContext, oscillatorNode.frequency, modulationRate, modulationDepth);
@@ -120,18 +120,17 @@
         noiseNode.connect(noiseGain).connect(audioContext.destination);
         oscillatorNode.connect(oscillatorGain).connect(audioContext.destination);
 
-        // Start all nodes
-        [noiseNode, oscillatorNode, 
-         freqMod.lfoNode, freqMod.lfoOffset,
+        // Only start modulation nodes - actual sound nodes will start when enabled
+        [freqMod.lfoNode, freqMod.lfoOffset,
          tonalVolMod.lfoNode, tonalVolMod.lfoOffset,
          noiseVolMod.lfoNode, noiseVolMod.lfoOffset
         ].forEach(node => node.start());
 
-        // Add variations
+        // Add variations (but they'll have no effect until gain is increased)
         addRandomVariations(oscillatorGain, oscillatorNode);
         addRandomVariations(noiseGain, null, 150);
 
-        debugStatus = "Audio running";
+        debugStatus = "Audio initialized (muted)";
     }
 
     // Function to switch frequencies
