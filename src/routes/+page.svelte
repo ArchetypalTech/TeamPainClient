@@ -7,7 +7,7 @@
   import { windowsStore, WindowType } from "$lib/stores/windows_store";
   import { helpStore } from '$lib/stores/help_store';
   import CameraShake from "$components/CameraShake.svelte";
-  import AmbientSound from "$components/AmbientSound.svelte";
+  import Ambient from "$components/Ambient.svelte";
 
   const ENTITY_ID = 23;
   const entityId = getEntityIdFromKeys(ENTITY_ID);
@@ -42,7 +42,7 @@
   {#if !hasError}
       <div id="viewport" class="absolute inset-0 z-0"></div>
       <CameraShake />
-      <AmbientSound 
+      <Ambient 
           bind:this={ambientSoundComponent}
           tonalFrequency={220}
           tonalFrequency2={330}
