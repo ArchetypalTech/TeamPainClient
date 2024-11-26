@@ -4,11 +4,13 @@
     // Configurable parameters
     export let tonalVolume: number = 0.03;
     export let noiseVolume: number = 0.008;
-    export let tonalFrequency: number = 220; // Base frequency in Hz
+    export let tonalFrequency: number = 220; // Base frequency in Hz (lower tone)
     export let modulationRate: number = 0.1; // Speed of frequency modulation in Hz
     export let modulationDepth: number = 1.5; // How much the frequency varies
     export let volumeModRate: number = 0.05; // Speed of volume modulation in Hz
     export let volumeModDepth: number = 0.7; // How much the volume varies (0-1)
+    export let tonalFrequency2: number = 330; // Second frequency in Hz (higher tone)
+    export let transitionTime: number = 2; // Time to transition in seconds
 
     let audioContext: AudioContext;
     let noiseNode: AudioBufferSourceNode;
@@ -20,6 +22,7 @@
     let oscillatorGain: GainNode;
     let isActive: boolean = true;
     let debugStatus: string = "Initializing...";
+    let currentFrequencyIndex: number = 0; // 0 for base frequency, 1 for second
 
     // Create pink noise buffer
     function createPinkNoise(bufferSize: number) {
@@ -72,7 +75,7 @@
         lfoGain = audioContext.createGain();
         lfoGain.gain.setValueAtTime(modulationDepth, audioContext.currentTime);
 
-        // Create LFO for volume modulation
+        // Create LFO for volume modulation with offset
         volumeLfoNode = audioContext.createOscillator();
         volumeLfoNode.type = 'sine';
         volumeLfoNode.frequency.setValueAtTime(volumeModRate, audioContext.currentTime);
@@ -85,49 +88,46 @@
         noiseGain.gain.setValueAtTime(noiseVolume, audioContext.currentTime);
         oscillatorGain.gain.setValueAtTime(tonalVolume, audioContext.currentTime);
 
-        // Connect volume modulation only to tonal element
-        volumeLfoNode.connect(oscillatorGain.gain);
-        // Don't connect volumeLfoNode to noiseGain anymore
+        // Create gain and offset nodes to control LFO depth and minimum
+        const volumeLfoGain = audioContext.createGain();
+        volumeLfoGain.gain.setValueAtTime(0.425, audioContext.currentTime); // Controls depth (85% range)
+        
+        const volumeLfoOffset = audioContext.createConstantSource();
+        volumeLfoOffset.offset.setValueAtTime(0.575, audioContext.currentTime); // Centers between 0.15 and 1.0
 
-        // Separate interval for very subtle noise variations
+        // Add subtle random variations to the tonal signal
         setInterval(() => {
             if (isActive) {
-                // Extremely subtle noise volume variations (only ±5%)
-                const randomNoiseVol = noiseVolume * (0.98 + Math.random() * 0.04);
+                // Tiny random volume adjustment (±3%)
+                const currentVol = oscillatorGain.gain.value;
+                const smallVariation = currentVol * (0.97 + Math.random() * 0.06);
                 
-                // Very slow, smooth transition
-                noiseGain.gain.linearRampToValueAtTime(
-                    randomNoiseVol, 
-                    audioContext.currentTime + 3
-                );
-            }
-        }, 3000); // Longer interval for more stability
-
-        // Separate interval for tonal variations
-        setInterval(() => {
-            if (isActive) {
-                // Frequency modulation changes
-                const randomRate = modulationRate + (Math.random() * 0.1 - 0.05);
-                lfoNode.frequency.setValueAtTime(randomRate, audioContext.currentTime);
+                // Small random frequency variation (±2 Hz)
+                const currentFreq = oscillatorNode.frequency.value;
+                const freqVariation = currentFreq + (Math.random() * 4 - 2);
                 
-                const randomDepth = modulationDepth + (Math.random() * 0.5 - 0.25);
-                lfoGain.gain.setValueAtTime(randomDepth, audioContext.currentTime);
-
-                // More dramatic tonal volume variations
-                const randomTonalVol = tonalVolume * (0.7 + Math.random() * 0.6);
-                
+                // Smooth transitions
                 oscillatorGain.gain.linearRampToValueAtTime(
-                    randomTonalVol, 
-                    audioContext.currentTime + 2
+                    smallVariation,
+                    audioContext.currentTime + 0.1
+                );
+                oscillatorNode.frequency.linearRampToValueAtTime(
+                    freqVariation,
+                    audioContext.currentTime + 0.1
                 );
             }
-        }, 2000);
+        }, 100); // Quick variations every 100ms
 
         // Connect frequency modulation
         lfoNode.connect(lfoGain);
         lfoGain.connect(oscillatorNode.frequency);
 
-        // Connect audio nodes
+        // Connect volume modulation chain
+        volumeLfoNode.connect(volumeLfoGain);
+        volumeLfoGain.connect(oscillatorGain.gain);
+        volumeLfoOffset.connect(oscillatorGain.gain);
+
+        // Connect audio nodes to destination
         noiseNode.connect(noiseGain);
         oscillatorNode.connect(oscillatorGain);
         noiseGain.connect(audioContext.destination);
@@ -138,12 +138,44 @@
         oscillatorNode.start();
         lfoNode.start();
         volumeLfoNode.start();
+        volumeLfoOffset.start();
 
         debugStatus = "Audio running";
     }
 
+    // Function to switch frequencies
+    function switchFrequency() {
+        if (!oscillatorNode || !audioContext) return;
+
+        // Always switch to tonalFrequency2 if we're at base, and back to base if we're not
+        const targetFreq = currentFrequencyIndex === 0 ? tonalFrequency2 : tonalFrequency;
+        
+        console.log('Switching from index:', currentFrequencyIndex);
+        console.log('Target frequency:', targetFreq);
+        
+        // Smooth transition to new frequency
+        oscillatorNode.frequency.linearRampToValueAtTime(
+            targetFreq,
+            audioContext.currentTime + transitionTime
+        );
+
+        // Update state
+        currentFrequencyIndex = currentFrequencyIndex === 0 ? 1 : 0;
+        console.log('New index:', currentFrequencyIndex);
+        
+        debugStatus = `Transitioning to ${targetFreq}Hz`;
+    }
+
+    // Export the switch function for external use
+    export const switchTone = () => switchFrequency();
+
     onMount(() => {
         console.log("AmbientSound: Mounting component");
+        // Make the function globally accessible
+        if (typeof window !== 'undefined') {
+            (window as any).switchTone = switchFrequency;
+        }
+        
         setupAudio();
     });
 
@@ -155,11 +187,21 @@
         if (lfoNode) lfoNode.stop();
         if (volumeLfoNode) volumeLfoNode.stop();
         if (audioContext) audioContext.close();
+        // Clean up the global reference
+        if (typeof window !== 'undefined') {
+            delete (window as any).switchTone;
+        }
     });
 </script>
 
 {#if import.meta.env.DEV}
     <div class="fixed bottom-8 left-0 bg-black/50 text-green-500 p-2 font-mono text-sm z-50">
         AmbientSound Status: {debugStatus}
+        <button 
+            class="ml-4 px-2 border border-green-500 hover:bg-green-500/20"
+            on:click={switchFrequency}
+        >
+            Switch Tone
+        </button>
     </div>
 {/if} 
