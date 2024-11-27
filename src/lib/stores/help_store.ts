@@ -10,6 +10,7 @@ interface HelpState {
     currentText: string;
     isVisible: boolean;
     commands: Record<string, HelpContent>;
+    helpTexts: Record<string, string>;
     topic?: string;
 }
 
@@ -209,30 +210,30 @@ const helpTexts: Record<string, string> = {
             '  "empty chest"\n' +
             '  "empty the bag"\n' +
             '  "I want to empty this"',
-    'explode': 'EXPLODE\n\n' +
-              'Description:\n' +
-              '  Cause violent destruction - be very careful!\n\n' +
-              'Syntax:\n' +
-              '  Long form: "I want to explode the barrel" or "blow up the wall"\n' +
-              '  Short form: "explode barrel", "blow wall"\n\n' +
-              'Examples:\n' +
-              '  "explode barrel"\n' +
-              '  "blow up the wall"\n' +
-              '  "I want to explode this"\n' +
-              'Warning:\n' +
-              '  Extremely dangerous - maintain safe distance!',
-    'disintegrate': 'DISINTEGRATE\n\n' +
-                   'Description:\n' +
-                   '  Completely destroy objects - no remains\n\n' +
-                   'Syntax:\n' +
-                   '  Long form: "I want to disintegrate the evidence" or "disintegrate that completely"\n' +
-                   '  Short form: "disintegrate evidence", "disintegrate box"\n\n' +
-                   'Examples:\n' +
-                   '  "disintegrate evidence"\n' +
-                   '  "disintegrate the box"\n' +
-                   '  "I want to disintegrate this"\n' +
-                   'Warning:\n' +
-                   '  Permanent and complete destruction - cannot be undone',
+    // 'explode': 'EXPLODE\n\n' +
+    //           'Description:\n' +
+    //           '  Cause violent destruction - be very careful!\n\n' +
+    //           'Syntax:\n' +
+    //           '  Long form: "I want to explode the barrel" or "blow up the wall"\n' +
+    //           '  Short form: "explode barrel", "blow wall"\n\n' +
+    //           'Examples:\n' +
+    //           '  "explode barrel"\n' +
+    //           '  "blow up the wall"\n' +
+    //           '  "I want to explode this"\n' +
+    //           'Warning:\n' +
+    //           '  Extremely dangerous - maintain safe distance!',
+    // 'disintegrate': 'DISINTEGRATE\n\n' +
+    //                'Description:\n' +
+    //                '  Completely destroy objects - no remains\n\n' +
+    //                'Syntax:\n' +
+    //                '  Long form: "I want to disintegrate the evidence" or "disintegrate that completely"\n' +
+    //                '  Short form: "disintegrate evidence", "disintegrate box"\n\n' +
+    //                'Examples:\n' +
+    //                '  "disintegrate evidence"\n' +
+    //                '  "disintegrate the box"\n' +
+    //                '  "I want to disintegrate this"\n' +
+    //                'Warning:\n' +
+    //                '  Permanent and complete destruction - cannot be undone',
     'hear': 'HEAR\n\n' +
            'Description:\n' +
            '  Control the ambient sound system\n\n' +
@@ -246,13 +247,26 @@ const helpTexts: Record<string, string> = {
            '  "hear tone off"   - Disable tonal sound\n' +
            '  "hear tone on"    - Enable tonal sound\n\n' +
            'Note:\n' +
-           '  Changes are applied smoothly with a short fade'
+           '  Changes are applied smoothly with a short fade',
+    'spawn': 'SPAWN\n\n' +
+            'Description:\n' +
+            '  Create a new world instance with a fresh environment\n\n' +
+            'Syntax:\n' +
+            '  Long form: "I want to spawn a new world" or "create new instance"\n' +
+            '  Short form: "spawn", "spawn world"\n\n' +
+            'Examples:\n' +
+            '  "spawn"\n' +
+            '  "spawn world"\n' +
+            '  "I want to spawn a new instance"\n\n' +
+            'Note:\n' +
+            '  This will create a fresh world instance. Any unsaved progress in the current world will be lost.'
 };
 
 function createHelpStore() {
     const initialState: HelpState = {
         currentText: '',
         isVisible: false,
+        helpTexts: helpTexts,
         commands: {
             'help': {
                 description: 'Open the help window.',
@@ -262,7 +276,7 @@ function createHelpStore() {
             'help list': {
                 description: 'Show the list of verbs',
                 usage: 'help list',
-                examples: ['help', 'help list']
+                examples: ['help list']
             },
             'help-close': {
                 description: 'Close the help window.',
@@ -292,7 +306,7 @@ function createHelpStore() {
         showHelp: (command?: string) => {
             update(state => ({
                 ...state,
-                currentText: getHelpText(state.commands, command),
+                currentText: getHelpText(state, command),
                 isVisible: true,
                 topic: command
             }));
@@ -300,39 +314,40 @@ function createHelpStore() {
         hide: () => {
             update(state => ({ ...state, isVisible: false }));
         },
-        toggle: (command?: string) => {
-            update(state => {
-                const newIsVisible = !state.isVisible;
-                return {
-                    ...state,
-                    isVisible: newIsVisible,
-                    currentText: newIsVisible ? getHelpText(state.commands, command) : state.currentText,
-                    topic: command || state.topic
-                };
-            });
-        }
     };
 }
 
-function getHelpText(commands: Record<string, HelpContent>, command?: string): string {
+function getHelpText(state: HelpState, command?: string): string {
+    // If no command, show basic help with commands
     if (!command) {
-        return `Available commands:\n\n${
-            Object.entries(commands)
+        return `Available basic commands for main terminal:\n\n${
+            Object.entries(state.commands)
                 .map(([cmd, content]) => 
                     `${cmd.padEnd(10)} - ${content.description}`)
                 .join('\n')
         }\n\nType 'help <command>' for more information about a specific command.`;
     }
 
-    // Check helpTexts first for long-form help
-    if (helpTexts[command]) {
-        return helpTexts[command];
+    // If "help list", show all available verbs from helpTexts
+    if (command.toLowerCase() === 'list') {
+        const verbs = Object.keys(state.helpTexts)
+            .filter(key => key !== 'default')
+            .sort();
+        
+        return 'Available verbs:\n\n' + 
+               verbs.map(verb => `${verb.padEnd(15)}`).join('\n') +
+               '\n\nUse "help <verb>" for detailed information about each verb.';
     }
 
-    // Fall back to commands for basic help
-    const helpContent = commands[command];
+    // Check helpTexts for detailed verb help
+    if (state.helpTexts[command]) {
+        return state.helpTexts[command];
+    }
+
+    // Check commands for basic help
+    const helpContent = state.commands[command];
     if (!helpContent) {
-        return `Unknown command: '${command}'\nType 'help' to see available commands.`;
+        return `Unknown command: '${command}'\nType 'help' to see available commands or 'help list' to see all verbs.`;
     }
 
     let output = `${command.toUpperCase()}\n`;
@@ -362,7 +377,7 @@ export function handleHelp(command: string) {
     }
 
     // If "help close" or "help-close" is typed, close the window
-    if (command.trim().toLowerCase() === 'help-close' || topic === 'close') {
+    if (command.trim().toLowerCase() === 'help-close') {
         helpStore.hide();
         return;
     }

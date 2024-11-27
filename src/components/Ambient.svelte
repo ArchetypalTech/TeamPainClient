@@ -138,6 +138,7 @@
         if (!oscillatorNode || !audioContext) return;
 
         const targetFreq = currentFrequencyIndex === 0 ? tonalFrequency2 : tonalFrequency;
+        console.log('Target frequency:', targetFreq);
         smoothTransition(oscillatorNode.frequency, targetFreq, transitionTime);
         currentFrequencyIndex = currentFrequencyIndex === 0 ? 1 : 0;
         debugStatus = `Transitioning to ${targetFreq}Hz`;
@@ -209,6 +210,9 @@
     onMount(() => {
         console.log("AmbientSound: Mounting component");
         setupAudio();
+
+        // Expose switchTone to the global window object
+        (window as any).switchTone = switchTone;
     });
 
     onDestroy(() => {
@@ -217,5 +221,7 @@
         if (noiseNode) noiseNode.stop();
         if (oscillatorNode) oscillatorNode.stop();
         if (audioContext) audioContext.close();
+         // Clean up the global reference
+        // delete (window as any).switchTone;
     });
 </script> 

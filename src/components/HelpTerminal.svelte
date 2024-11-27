@@ -8,6 +8,7 @@
     function scrollToBottom() {
         if (!terminalElement) return;
         setTimeout(() => {
+            if (!terminalElement) return;
             terminalElement.scrollTop = terminalElement.scrollHeight;
         }, 0);
     }
@@ -18,7 +19,7 @@
 </script>
 
 <div class="help-terminal" bind:this={terminalElement}>
-    <div class="title">HELP SYSTEM v1.0</div>
+    <div class="title">HELP SYSTEM n23</div>
     <div class="content">
         <Typewriter
             text={$helpStore.currentText}
