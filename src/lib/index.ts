@@ -28,7 +28,9 @@ const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
 
 // fish this from the manifest file also we need all of them
 // meatpuppet 
-const ENTITY_ADDRESS = '0xa4bd32fc6f55e07e4405423ab2cf5cbbb01910e4d3c1b45993af3a58e0d1d6';
+const ENTITY_ADDRESS = '0x4e81c9dad08d1d27e4ae9fd9dd560de124b6e913729604cbf4d9c867e2eacdd';
+// 0x4e81c9dad08d1d27e4ae9fd9dd560de124b6e913729604cbf4d9c867e2eacdd
+// 0x4860714976a121641e38bc8d12d14130d7437f35e2b092ee6a5b37ffd7dff5d
 // the world
 const WORLD_ADDRESS ="0x7f50de543f4d1093b7e9119f204849a75663a2b040ec45e5dc71e469ef5232b";
 

@@ -1,47 +1,51 @@
 <script lang="ts">
+    import { onDestroy } from 'svelte';
     export let text: string;
     export let sentenceDelay: number = 2000;
-    export let minTypingDelay: number = 50;
-    export let maxTypingDelay: number = 150;
+    export let minTypingDelay: number = 30;
+    export let maxTypingDelay: number = 200;
   
     let displayText: string = '';
-    let currentIndex: number = 0;
-    let isPaused: boolean = false;
-  
-    function sleep(ms: number) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    let interval: ReturnType<typeof setInterval>;
+    
+    function getRandomDelay(min: number, max: number, char: string) {
+        if (min < 1) return min;
+        const extraDelay = /[,.!?]/.test(char) ? 20 : 
+                          /[ ]/.test(char) ? 10 :
+                          0;
+        return Math.floor(Math.random() * (max - min + 1)) + min + extraDelay;
     }
   
-    function getRandomDelay(min: number, max: number) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-  
-    async function typeText() {
-      while (currentIndex < text.length) {
-        if (isPaused) {
-          await sleep(sentenceDelay);
-          isPaused = false;
-        } else {
-          const char = text[currentIndex];
-          displayText += char === '\n' ? '<br>' : char === '\t' ? '&emsp;' : char;
-          currentIndex++;
-  
-          if (char === '.') {
-            isPaused = true;
-          } else {
-            // Add a random delay between characters
-            await sleep(getRandomDelay(minTypingDelay, maxTypingDelay));
-          }
+    function typeText() {
+        // Fast mode - instant display
+        if (minTypingDelay === 0 && maxTypingDelay === 0 && sentenceDelay === 0) {
+            displayText = text.replace(/\n/g, '<br>').replace(/\t/g, '&emsp;');
+            return;
         }
-      }
+
+        let currentIndex = 0;
+        clearInterval(interval);
+        
+        interval = setInterval(() => {
+            if (currentIndex >= text.length) {
+                clearInterval(interval);
+                return;
+            }
+            
+            const char = text[currentIndex];
+            displayText += char === '\n' ? '<br>' : char === '\t' ? '&emsp;' : char;
+            currentIndex++;
+        }, minTypingDelay);
     }
   
     $: {
-      displayText = '';
-      currentIndex = 0;
-      isPaused = false;
-      typeText();
+        displayText = '';
+        typeText();
     }
-  </script>
+
+    onDestroy(() => {
+        clearInterval(interval);
+    });
+</script>
   
-  <div>{@html displayText}</div>
+<div>{@html displayText}</div>

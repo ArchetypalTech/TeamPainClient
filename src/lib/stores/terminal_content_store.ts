@@ -4,6 +4,7 @@ export type FormatType = 'input' | 'hash' | 'error' | 'out' | 'shog' ;
 export type TerminalContentItem = {
   text: string;
   format: FormatType;
+  useTypewriter?: boolean;
 };
 
 export const terminalContent = writable<TerminalContentItem[]>([]);

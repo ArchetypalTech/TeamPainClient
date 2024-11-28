@@ -2,6 +2,11 @@
 	import { onMount, tick } from "svelte";
 	import { sendCommand } from "../api/terminal";
 	import { terminalContent, addTerminalContent, clearTerminalContent, type TerminalContentItem } from "$lib/stores/terminal_content_store";
+    import Typewriter from "$components/Typewriter.svelte";
+    import { windowsStore, WindowType } from '$lib/stores/windows_store';
+    import { helpStore, handleHelp } from '$lib/stores/help_store';
+    import HelpTerminal from './HelpTerminal.svelte';
+    import { audioStore } from '$lib/stores/audio_store';
 
 
 	let headerText = [
@@ -53,7 +58,10 @@
 	}
 
 	onMount(async () => {
-		addTerminalContent({ text: "type \"spawn\" to create a world, or \"help\"", format: 'shog' });
+		addTerminalContent({ 
+			text: "type \"spawn\" to create a world, or \"help\"", 
+			format: 'shog', 
+			useTypewriter: true });
 	});
 
 	async function submitForm(e: SubmitEvent) {
@@ -65,33 +73,84 @@
 		inputValue = "";
 		await tick();
 
-		// Handle clear command
-		if (command === "clear") {
-			clearTerminalContent();
-			// terminalContent = [];
-			inputValue = "";
-			return;
-		}
-		
-		// Regular command execution
-		if (step === 1) {
-			inputHistory = [...inputHistory, command];
-			addTerminalContent({ text: command, format: 'input',  });
-			try {
-				const response = await sendCommand(command);
-				/**
-				 * we dont actually do anything now as we wait on the GQL subscription
-				 * to actually return us bacon, via the `ToriiSub` component which updates
-				 * the store and thus the UI
-				 * */			
-				} catch (e) {
-				console.error(e);
-			}
-		} 
+		// Add command to history and display
+		inputHistory = [...inputHistory, command];
+		addTerminalContent({ text: command, format: 'input', useTypewriter: false });
 
-		inputValue = "";
-		await tick();
-		terminalForm.scrollTo({ left: 0, top: terminalForm.scrollHeight, behavior: "smooth" });
+		// Parse command and arguments
+		const [cmd, ...args] = command.trim().toLowerCase().split(/\s+/);
+
+		// Handle built-in commands
+		switch (cmd) {
+			case 'clear':
+				clearTerminalContent();
+				return;
+
+			case 'debug':
+				windowsStore.toggle(WindowType.DEBUG);
+				addTerminalContent({ 
+					text: `Debug window ${windowsStore.get(WindowType.DEBUG) ? 'enabled' : 'disabled'}`, 
+					format: 'out', 
+					useTypewriter: false 
+				});
+				return;
+
+			case 'help':
+			case 'help-close':
+				handleHelp(command);
+				addTerminalContent({ 
+					text: `Help window ${$helpStore.isVisible ? 'enabled' : 'disabled'}`, 
+					format: 'input', 
+					useTypewriter: false 
+				});
+				return;
+
+			case 'hear':
+				if (args.length === 0 || args[0] === 'help') {
+					helpStore.showHelp('hear');
+					return;
+				}
+
+				const [target, state] = args;
+				if (target === 'wind') {
+					console.log("-----------> wind off");
+					audioStore.toggleWind();
+					addTerminalContent({ 
+						text: state === 'off' ? 'Wind sound disabled' : 'Wind sound enabled', 
+						format: 'out', 
+						useTypewriter: false 
+					});
+				} else if (target === 'tone') {
+					console.log("-----------> tone off");
+					audioStore.toggleTone();
+					addTerminalContent({ 
+						text: state === 'off' ? 'Tonal sound disabled' : 'Tonal sound enabled', 
+						format: 'out', 
+						useTypewriter: false 
+					});
+				} else if (target === 'cricket') {
+					console.log("-----------> cricket off");
+					audioStore.toggleCricket();
+					addTerminalContent({ 
+						text: state === 'off' ? 'Cricket sound disabled' : 'Cricket sound enabled', 
+						format: 'out', 
+						useTypewriter: false 
+					});
+				}
+				return;
+		}
+
+		// Handle other commands via GQL
+		try {
+			const response = await sendCommand(command);
+			/**
+			 * we dont actually do anything now as we wait on the GQL subscription
+			 * to actually return us bacon, via the `ToriiSub` component which updates
+			 * the store and thus the UI
+			 * */			
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 </script>
@@ -122,7 +181,16 @@
 	<br />
 	<ul class="w-full">
 		{#each $terminalContent as content}
-		<li class="break-words {content.format}-style">{content.text}</li>
+			{#if content.useTypewriter}
+				<Typewriter
+					text={content.text} 
+					sentenceDelay={1000}
+					minTypingDelay={30}
+					maxTypingDelay={100}
+					/>
+			{:else}
+				<li class="break-words {content.format}-style">{content.text}</li>
+			{/if}
 		{/each}
 	</ul>
 	<div class="w-full flex flex-row gap-2">
