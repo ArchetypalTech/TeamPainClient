@@ -4,6 +4,7 @@
     import Typewriter from './Typewriter.svelte';
     
     let terminalElement: HTMLDivElement;
+    let currentText: string;
     
     function scrollToBottom() {
         if (!terminalElement) return;
@@ -13,20 +14,27 @@
         }, 0);
     }
     
-    $: if (terminalElement) {
+    // Watch for changes in the help store and create a new string reference
+    $: currentText = $helpStore.currentText ? String($helpStore.currentText) : '';
+    $: isDefaultHelp = $helpStore.topic === 'default';
+    
+    // Scroll when text changes, but only for non-default help
+    $: if (currentText && terminalElement && !isDefaultHelp) {
         scrollToBottom();
     }
 </script>
 
-<div class="help-terminal" bind:this={terminalElement}>
+<div class="help-terminal" class:scrollable={isDefaultHelp} class:default={isDefaultHelp} bind:this={terminalElement}>
     <div class="title">HELP SYSTEM n23</div>
     <div class="content">
-        <Typewriter
-            text={$helpStore.currentText}
-            minTypingDelay={0}
-            maxTypingDelay={0}
-            sentenceDelay={0}
-        />
+        {#key currentText}
+            <Typewriter
+                text={currentText}
+                minTypingDelay={0}
+                maxTypingDelay={0}
+                sentenceDelay={0}
+            />
+        {/key}
     </div>
 </div>
 
@@ -34,33 +42,35 @@
     .help-terminal {
         position: relative;
         width: 100%;
-        max-height: 400px;
+        height: 300px;  /* Default smaller height */
         background: rgba(0, 0, 0, 0.8);
-        color: #ffd700;  /* Gold color for help text */
+        color: #ffd700;
         font-family: monospace;
         font-size: 12px;
         padding: 10px;
         border-radius: 5px;
-        overflow-y: auto;
-        scrollbar-width: none;
+        overflow: hidden;
         -ms-overflow-style: none;
         border: 1px solid #ffd700;
     }
     
-    .help-terminal::-webkit-scrollbar {
-        display: none;
+    .help-terminal.default {
+        height: 600px;  /* Larger height for default help */
     }
     
-    .help-terminal:hover::-webkit-scrollbar {
-        display: block;
+    .help-terminal.scrollable {
+        overflow-y: auto;
+    }
+    
+    .help-terminal.scrollable::-webkit-scrollbar {
         width: 8px;
     }
     
-    .help-terminal:hover::-webkit-scrollbar-track {
+    .help-terminal.scrollable::-webkit-scrollbar-track {
         background: rgba(0, 0, 0, 0.2);
     }
     
-    .help-terminal:hover::-webkit-scrollbar-thumb {
+    .help-terminal.scrollable::-webkit-scrollbar-thumb {
         background-color: rgba(255, 215, 0, 0.3);
         border-radius: 4px;
     }

@@ -3,15 +3,20 @@
     import { audioStore } from '$lib/stores/audio_store';
 
     // Configurable parameters
-    export let tonalVolume: number = 0.03;
+    export let tonalVolume: number = 0.004;
     export let noiseVolume: number = 0.008;
-    export let tonalFrequency: number = 220; // Base frequency in Hz (lower tone)
+    export let tonalFrequency: number = 220; // Lower frequency bound
     export let modulationRate: number = 0.1; // Speed of frequency modulation in Hz
-    export let modulationDepth: number = 1.5; // How much the frequency varies
+    export let modulationDepth: number = 1.8; // Reduced for smoother variations
     export let volumeModRate: number = 0.05; // Speed of volume modulation in Hz
     export let volumeModDepth: number = 0.7; // How much the volume varies (0-1)
-    export let tonalFrequency2: number = 330; // Second frequency in Hz (higher tone)
-    export let transitionTime: number = 2; // Time to transition in seconds
+    export let tonalFrequency2: number = 330; // Upper frequency bound
+    export let transitionTime: number = 5; // Longer transition time for more gradual changes
+    export let secondaryModRate: number = 0.233; // Slightly offset from main mod rate for complexity
+    export let secondaryModDepth: number = 0.7;  // Less intense than primary modulation
+    export let ultraLowModRate: number = 0.017;  // Very slow modulation for gradual changes
+    export let ultraLowModDepth: number = 0.3;   // Subtle but noticeable depth
+    export let autoSwitchInterval: number = 15000; // Time between automatic tone switches (15 seconds)
 
     let audioContext: AudioContext;
     let noiseNode: AudioBufferSourceNode;
@@ -37,7 +42,54 @@
         lfoGain.connect(targetNode);
         lfoOffset.connect(targetNode);
 
-        return { lfoNode, lfoGain, lfoOffset };
+        // Add a secondary modulator for more complexity
+        const secondaryLfo = ctx.createOscillator();
+        const secondaryGain = ctx.createGain();
+        secondaryLfo.type = 'sine';
+        secondaryLfo.frequency.setValueAtTime(rate * 1.618, ctx.currentTime); // Golden ratio offset
+        secondaryGain.gain.setValueAtTime(depth * 0.5, ctx.currentTime);
+
+        // Modify the ultra-low frequency modulator for gradual pitch wandering
+        const ultraLowLfo = ctx.createOscillator();
+        const ultraLowGain = ctx.createGain();
+        ultraLowLfo.type = 'sine';
+        ultraLowLfo.frequency.setValueAtTime(rate * 0.05, ctx.currentTime); // Much slower rate
+        ultraLowGain.gain.setValueAtTime(depth * 0.6, ctx.currentTime); // Stronger effect
+
+        // Add random walk modulator
+        const randomWalkLfo = ctx.createOscillator();
+        const randomWalkGain = ctx.createGain();
+        randomWalkLfo.type = 'sawtooth'; // More jagged waveform
+        randomWalkLfo.frequency.setValueAtTime(rate * 0.33, ctx.currentTime); // Slower rate
+        randomWalkGain.gain.setValueAtTime(depth * 0.4, ctx.currentTime);
+
+        // Add noise modulator
+        const noiseOsc = ctx.createOscillator();
+        const noiseGain = ctx.createGain();
+        noiseOsc.type = 'sine';
+        noiseOsc.frequency.setValueAtTime(rate * 2.1, ctx.currentTime); // Faster rate
+        noiseGain.gain.setValueAtTime(depth * 0.25, ctx.currentTime);
+
+        // Connect new modulators
+        randomWalkLfo.connect(randomWalkGain);
+        randomWalkGain.connect(targetNode);
+        noiseOsc.connect(noiseGain);
+        noiseGain.connect(targetNode);
+
+        secondaryLfo.connect(secondaryGain);
+        secondaryGain.connect(targetNode);
+        ultraLowLfo.connect(ultraLowGain);
+        ultraLowGain.connect(targetNode);
+
+        return { 
+            lfoNode, 
+            lfoGain, 
+            lfoOffset,
+            secondaryLfo,
+            ultraLowLfo,
+            randomWalkLfo,
+            noiseOsc
+        };
     }
 
     function smoothTransition(param: AudioParam, value: number, time: number = 1) {
@@ -111,24 +163,65 @@
         oscillatorGain = audioContext.createGain();
         oscillatorGain.gain.setValueAtTime(0, audioContext.currentTime);
 
-        // Setup modulations
-        const freqMod = createModulationChain(audioContext, oscillatorNode.frequency, modulationRate, modulationDepth);
-        const tonalVolMod = createModulationChain(audioContext, oscillatorGain.gain, volumeModRate);
-        const noiseVolMod = createModulationChain(audioContext, noiseGain.gain, volumeModRate * 0.7);
+        // Setup modulations with enhanced complexity
+        const freqMod = createModulationChain(
+            audioContext, 
+            oscillatorNode.frequency, 
+            modulationRate, 
+            modulationDepth
+        );
+        
+        const tonalVolMod = createModulationChain(
+            audioContext, 
+            oscillatorGain.gain, 
+            volumeModRate,
+            volumeModDepth
+        );
+
+        // Add frequency drift modulation
+        const driftMod = createModulationChain(
+            audioContext,
+            oscillatorNode.frequency,
+            ultraLowModRate,
+            ultraLowModDepth
+        );
 
         // Connect audio chains
         noiseNode.connect(noiseGain).connect(audioContext.destination);
         oscillatorNode.connect(oscillatorGain).connect(audioContext.destination);
 
-        // Only start modulation nodes - actual sound nodes will start when enabled
-        [freqMod.lfoNode, freqMod.lfoOffset,
-         tonalVolMod.lfoNode, tonalVolMod.lfoOffset,
-         noiseVolMod.lfoNode, noiseVolMod.lfoOffset
+        // Start all oscillators
+        [
+            freqMod.lfoNode, 
+            freqMod.lfoOffset,
+            freqMod.secondaryLfo,
+            freqMod.ultraLowLfo,
+            freqMod.randomWalkLfo,
+            freqMod.noiseOsc,
+            tonalVolMod.lfoNode, 
+            tonalVolMod.lfoOffset,
+            tonalVolMod.secondaryLfo,
+            tonalVolMod.ultraLowLfo,
+            tonalVolMod.randomWalkLfo,
+            tonalVolMod.noiseOsc,
+            driftMod.lfoNode,
+            driftMod.lfoOffset,
+            driftMod.secondaryLfo,
+            driftMod.ultraLowLfo,
+            driftMod.randomWalkLfo,
+            driftMod.noiseOsc
         ].forEach(node => node.start());
 
         // Add variations (but they'll have no effect until gain is increased)
         addRandomVariations(oscillatorGain, oscillatorNode);
         addRandomVariations(noiseGain, null, 150);
+
+        // Add automatic tone switching
+        setInterval(() => {
+            if (isActive && $audioStore.toneEnabled && Math.random() > 0.3) { // 70% chance to switch
+                switchFrequency();
+            }
+        }, autoSwitchInterval);
 
         debugStatus = "Audio initialized (muted)";
     }
@@ -137,11 +230,17 @@
     function switchFrequency() {
         if (!oscillatorNode || !audioContext) return;
 
-        const targetFreq = currentFrequencyIndex === 0 ? tonalFrequency2 : tonalFrequency;
+        const randomPoint = Math.random(); // Random point between 0 and 1
+        const targetFreq = getInterpolatedFrequency(randomPoint);
+        
         console.log('Target frequency:', targetFreq);
-        smoothTransition(oscillatorNode.frequency, targetFreq, transitionTime);
-        currentFrequencyIndex = currentFrequencyIndex === 0 ? 1 : 0;
-        debugStatus = `Transitioning to ${targetFreq}Hz`;
+        smoothTransition(oscillatorNode.frequency, targetFreq, transitionTime * 20);
+        debugStatus = `Gradually moving to ${Math.round(targetFreq)}Hz`;
+    }
+
+    // Add new function for frequency interpolation
+    function getInterpolatedFrequency(ratio: number): number {
+        return tonalFrequency + (tonalFrequency2 - tonalFrequency) * ratio;
     }
 
     // Subscribe to store changes

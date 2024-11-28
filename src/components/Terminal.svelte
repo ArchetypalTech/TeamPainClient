@@ -100,7 +100,7 @@
 				handleHelp(command);
 				addTerminalContent({ 
 					text: `Help window ${$helpStore.isVisible ? 'enabled' : 'disabled'}`, 
-					format: 'out', 
+					format: 'input', 
 					useTypewriter: false 
 				});
 				return;
