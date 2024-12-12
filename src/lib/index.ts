@@ -21,23 +21,26 @@ export const setFilePath = (target: string) => {
 
 
 // make this go away into a setup function
-const MANIFEST = setFilePath('../manifest/system_meatpuppet_rc0.json')
+const MANIFEST = setFilePath('../manifest/the_oruggin_trail_meatpuppet.contract_class.json');
 
 // fish this from an env file if in local mode
 const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
 
 // fish this from the manifest file also we need all of them
-// meatpuppet 
-const ENTITY_ADDRESS = '0x4e81c9dad08d1d27e4ae9fd9dd560de124b6e913729604cbf4d9c867e2eacdd';
-// 0x4e81c9dad08d1d27e4ae9fd9dd560de124b6e913729604cbf4d9c867e2eacdd
-// 0x4860714976a121641e38bc8d12d14130d7437f35e2b092ee6a5b37ffd7dff5d
+// meatpuppet
+//  cat manifest_dev.json | jq -r '.contracts[0].address' 
+const ENTITY_ADDRESS = '0x6f758cfd367ac46b8cae5b74770503253f0fd090097cfb0d8772ce275ea1376';
 // the world
+// cat manifest_dev.json | jq -r '.world.address'
 const WORLD_ADDRESS ="0x7f50de543f4d1093b7e9119f204849a75663a2b040ec45e5dc71e469ef5232b";
 
-// this should come from somewhere not quite so bad, i.e it needs to be passed into the setup functions
-// should we be using `controller`at this point in the astartup logic
-const addr = '0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7';
-const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
+
+// Account address |  0x6677fe62ee39c7b07401f754138502bab7fac99d2d3c5d37df7d1c6fab10819
+// Private key     |  0x3e3979c1ed728490308054fe357a9f49cf67f80f9721f44cc57235129e090f4
+// we be using `controller`at this point in the astartup logic
+// but right now this is in dev mode and comes direct from katana as its default accounts
+const addr = '0x6677fe62ee39c7b07401f754138502bab7fac99d2d3c5d37df7d1c6fab10819';
+const pKey = '0x3e3979c1ed728490308054fe357a9f49cf67f80f9721f44cc57235129e090f4';
 
 
 
