@@ -41,6 +41,7 @@
     }
 
     function handleConnectionError(error: string) {
+        console.log("err hndl");
         isConnected = false;
         connError = error;
         console.log('Subscription error:', error);
@@ -79,14 +80,17 @@
         };
     });
 
-    $: if ($torii_gql.errors) {
-        const error = $torii_gql.errors[0].message;
-        if (isConnected) {
-            handleConnectionError(error);
+    $: if (($torii_gql.errors?.length ?? 0) > 0) {
+        console.log("check err ", $torii_gql.errors);
+        const err = $torii_gql.errors?.[0];
+        console.log("ERR ", err);
+        if (isConnected && err) {
+            handleConnectionError(err.message);
         }
     }
 
     $: if ($torii_gql.data?.entityUpdated?.models) {
+        console.log(":------------> UPDATE");
         // Reset connection attempts on successful data
         connectionAttempts = 0;
         

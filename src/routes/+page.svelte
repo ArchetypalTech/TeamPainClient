@@ -11,6 +11,7 @@
 
   const ENTITY_ID = 23;
   const entityId = getEntityIdFromKeys(ENTITY_ID);
+  console.log("ID:------------> ", entityId);
 
   let hasError = false;
   let ambientSoundComponent: { switchTone: () => void };
