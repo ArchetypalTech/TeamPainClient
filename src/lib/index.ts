@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from 'url';
 
 export * from './system';
+import { Katana, Manifest_Addresses } from '../be_fe_constants';
 
 
 
@@ -19,31 +20,8 @@ export const setFilePath = (target: string) => {
     }
 }
 
-
 // make this go away into a setup function
 const MANIFEST = setFilePath('../manifest/the_oruggin_trail_meatpuppet.contract_class.json');
-
-// fish this from an env file if in local mode
-const KATANA_ENDPOINT = 'http://127.0.0.1:5050';
-
-// fish this from the manifest file also we need all of them
-// meatpuppet
-//  cat manifest_dev.json | jq -r '.contracts[0].address' 
-const ENTITY_ADDRESS = '0x6f758cfd367ac46b8cae5b74770503253f0fd090097cfb0d8772ce275ea1376';
-// the world
-// cat manifest_dev.json | jq -r '.world.address'
-const WORLD_ADDRESS ="0x7f50de543f4d1093b7e9119f204849a75663a2b040ec45e5dc71e469ef5232b";
-
-
-// Account address |  0x6677fe62ee39c7b07401f754138502bab7fac99d2d3c5d37df7d1c6fab10819
-// Private key     |  0x3e3979c1ed728490308054fe357a9f49cf67f80f9721f44cc57235129e090f4
-// we be using `controller`at this point in the astartup logic
-// but right now this is in dev mode and comes direct from katana as its default accounts
-const addr = '0x6677fe62ee39c7b07401f754138502bab7fac99d2d3c5d37df7d1c6fab10819';
-const pKey = '0x3e3979c1ed728490308054fe357a9f49cf67f80f9721f44cc57235129e090f4';
-
-
-
 
 // SYSTEM CALLS
 // import these based on the contract abi's
@@ -69,12 +47,12 @@ export async function sendMessage(message: string) {
      * NO! this need to be passed the endpoint form the env or somewhere
      * worth remebering that `katana` doesnt listen on `localhost:*`
      */
-    const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
-    const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
+    const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: Katana.KATANA_ENDPOINT });
+    const burnerAccount: Account = new Account(katanaProvider, Katana.addr, Katana.pKey);
 
     // now get the contract abi's from the manifest and make a starknet contract
     const contractAbi = json.parse(fs.readFileSync(MANIFEST()).toString('ascii'));
-    const theOutputter: Contract = new Contract(contractAbi.abi, ENTITY_ADDRESS, katanaProvider);
+    const theOutputter: Contract = new Contract(contractAbi.abi, Manifest_Addresses.ENTITY_ADDRESS, katanaProvider);
 
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
@@ -112,7 +90,7 @@ async function standardRPC() {
         id: 1
     });
 
-    const response = await fetch(KATANA_ENDPOINT, {
+    const response = await fetch(Katana.KATANA_ENDPOINT, {
         method: 'POST',
         headers: {
             "Content-Type": 'application/json'
