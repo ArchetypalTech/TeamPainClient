@@ -1,13 +1,10 @@
-import { Katana, Username } from '../be_fe_constants';
-import Controller from "@cartridge/controller";
+import { writable } from 'svelte/store';
 
-// Export the functions to be imported elsewhere
-export function setAccountAddress(accountController: Controller): any {
-    let acc_cont = accountController;
-    return acc_cont;
-}
+// Store for account address
+export const account = writable<any>(null); // Initial value is null
 
-export function setUsername(username: string): any {
-   let user_name = username;
-   return user_name;
-}
+// Store for username
+export const username = writable<any>(null); // Initial value is null
+
+// Store for connection status
+export const connected = writable(false); // Initial value is a boolean false

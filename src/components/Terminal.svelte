@@ -7,7 +7,8 @@
     import { helpStore, handleHelp } from '$lib/stores/help_store';
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
-
+	import {connected} from '../gameController/account';
+    import { get } from "svelte/store";
 
 	let headerText = [
 		"Archetypal Tech. Innovation in frustration",
@@ -142,12 +143,19 @@
 
 		// Handle other commands via GQL
 		try {
-			const response = await sendCommand(command);
-			/**
-			 * we dont actually do anything now as we wait on the GQL subscription
-			 * to actually return us bacon, via the `ToriiSub` component which updates
-			 * the store and thus the UI
-			 * */			
+			if (get(connected)) {
+				const response = await sendCommand(command);
+				/**
+				 * we dont actually do anything now as we wait on the GQL subscription
+				 * to actually return us bacon, via the `ToriiSub` component which updates
+				 * the store and thus the UI
+				 * */	
+			} else {
+				let warning_text = "shoggoth needs you to be in his realm...";
+				addTerminalContent({text: warning_text, format: 'shog', 
+				useTypewriter: true })
+			}
+					
 		} catch (e) {
 			console.error(e);
 		}

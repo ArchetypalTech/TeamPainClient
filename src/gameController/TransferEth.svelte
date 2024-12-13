@@ -3,7 +3,7 @@
     import { ETH_CONTRACT } from '../be_fe_constants.js';
     export let account: AccountInterface | undefined;
  
-    async function execute(amount: string, manual: boolean) {
+    export async function execute(amount: string, manual: boolean) {
         if (!account) return;
  
         try {
@@ -27,6 +27,6 @@
 </script>
  
 <h2>Transfer Eth</h2>
-<button on:click={() => execute('0x0', false)}>Transfer 0 ETH to self</button>
-<button on:click={() => execute('0x1C6BF52634000', false)}>Transfer 0.005 ETH to self</button>
-<button on:click={() => execute('0x0', true)}>Manual: Transfer 0 ETH to self</button>
+	<button on:click={() => execute('0x0', false)}>Transfer 0 ETH to self</button>
+	<button on:click={() => execute('0x1C6BF52634000', false)}>Transfer 0.005 ETH to self</button>
+	<button on:click={() => execute('0x0', true)}>Manual: Transfer 0 ETH to self</button>	
