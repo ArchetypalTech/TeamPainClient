@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { account, username } from "../gameController/account"; // Import the stores
+    import { account, accountAddress, username } from "../gameController/account"; // Import the stores
 </script>
 
 
@@ -29,7 +29,7 @@
 <h2>Your Information</h2>
 <div class="info-container">
     {#if $account}
-        <p><span class="bold">Account Address:</span> <span class="account-address">{$account}</span></p>
+        <p><span class="bold">Account Address:</span> <span class="account-address">{$accountAddress}</span></p>
     {:else}
         <p><span class="bold">No account connected</span></p>
     {/if}

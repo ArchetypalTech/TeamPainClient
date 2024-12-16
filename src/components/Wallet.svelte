@@ -8,7 +8,7 @@
     import {Manifest_Addresses, ETH_CONTRACT, Katana} from "../be_fe_constants.js";
     import UserInfo from '../gameController/UserInfo.svelte';
     import TransferEth from '../gameController/TransferEth.svelte';
-    import {account, username, connected} from '../gameController/account';
+    import {account, accountAddress, username, connected} from '../gameController/account';
 	
   
 	// States and variables
@@ -66,7 +66,8 @@
     try {
       const res = await controller.connect();
       if (res) {
-        account.set(Katana.addr);
+        account.set(controller);
+        accountAddress.set(Katana.addr);
         username.set(await controller.username());
         connected.set(true);
         showAccount.set(true); // Show the account panel after connection
@@ -82,7 +83,8 @@
 	// Disconnect wallet
 	function disconnect() {
 	  controller.disconnect();
-	  account.set(undefined);
+    account.set(undefined);
+	  accountAddress.set(undefined);
 	  username.set(undefined);
     connected.set(false);
 	}
@@ -279,7 +281,7 @@
     </div>
 
     <div class="account-panel-section { $activeSection === 'profile' ? 'show' : '' }">
-      <UserInfo accountAddress={$account?.address} user_name={$username} />
+      <UserInfo accountAddress={$account?.accountAddress} user_name={$username} />
     </div>
 
     <div class="account-panel-section { $activeSection === 'actions' ? 'show' : '' }">
