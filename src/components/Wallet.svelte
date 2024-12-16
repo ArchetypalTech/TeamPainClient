@@ -4,11 +4,11 @@
   import { writable, get } from "svelte/store";
 
 	// Controller - Cartridge
-    import Controller from "@cartridge/controller";
-    import {Manifest_Addresses, ETH_CONTRACT, Katana} from "../be_fe_constants.js";
+    import Controller, { erc20Metadata } from "@cartridge/controller";
+    import {Manifest_Addresses, ETH_CONTRACT, ETH_CONTRACT2, Katana} from "../be_fe_constants.js";
     import UserInfo from '../gameController/UserInfo.svelte';
     import TransferEth from '../gameController/TransferEth.svelte';
-    import {account, accountAddress, username, connected} from '../gameController/account';
+    import {account, username, connected} from '../gameController/account';
 	
   
 	// States and variables
@@ -22,25 +22,43 @@
 	let controller = new Controller({
 	  policies: [
 		{
-		  target: Manifest_Addresses.ENTITY_ADDRESS,
+		  target: ETH_CONTRACT2,
 		  method: "approve",
 		  description: "Approve submiting transactions to play The Oruggin Trail",
 		},
 		{
-		  target: Manifest_Addresses.ENTITY_ADDRESS,
+		  target: ETH_CONTRACT2,
 		  method: "reject",
 		  description: "Reject submiting transactions to play The Oruggin Trail",
 		},
 		{
-		  target: ETH_CONTRACT.eth_cont,
+		  target:ETH_CONTRACT2,
 		  method: "transfer",
 		  description: "Transfer ETH to yourself. Just for now",
 		},
+    {
+		  target: ETH_CONTRACT2,
+		  method: "mint",
+		  description: "Mint tokens. Just for now",
+		},
+    {
+				target: ETH_CONTRACT2,
+				method: 'burn'
+			},
+			{
+				target: ETH_CONTRACT2,
+				method: 'allowance'
+			}
 	  ],
 	  rpc: "https://api.cartridge.gg/x/starknet/sepolia",
 	});
+
+  // open profile
+  const openUserProfile = () => {
+    controller.openProfile();
+  }; 
   
-	  // Toggle the account panel
+	// Toggle the account panel
     const toggleAccount = () => {
     showAccount.update((value) => !value);
   };
@@ -67,10 +85,9 @@
       const res = await controller.connect();
       if (res) {
         account.set(controller);
-        accountAddress.set(Katana.addr);
         username.set(await controller.username());
         connected.set(true);
-        showAccount.set(true); // Show the account panel after connection
+        //showAccount.set(true); // Show the account panel after connection
       }
     } catch (e) {
       handleError(e);
@@ -84,7 +101,6 @@
 	function disconnect() {
 	  controller.disconnect();
     account.set(undefined);
-	  accountAddress.set(undefined);
 	  username.set(undefined);
     connected.set(false);
 	}
@@ -255,9 +271,10 @@
       <span class="loading-text">Loading...</span>
     {:else}
       {#if $account}
-        <button on:click={toggleAccount}>
+        <button on:click={openUserProfile}>Profile</button>
+        <!-- <button on:click={toggleAccount}>
           {$showAccount ? 'Close Account' : 'My Account'}
-        </button>
+        </button> -->
         <button on:click={disconnect}>Disconnect</button>
       {:else}
         <button on:click={connect}>Connect</button>
@@ -281,7 +298,7 @@
     </div>
 
     <div class="account-panel-section { $activeSection === 'profile' ? 'show' : '' }">
-      <UserInfo accountAddress={$account?.accountAddress} user_name={$username} />
+      <UserInfo accountAddress={$account?.address} username={$username} />
     </div>
 
     <div class="account-panel-section { $activeSection === 'actions' ? 'show' : '' }">
