@@ -18,7 +18,7 @@
   const showAccount = writable(false); // Controls visibility of the account panel
   const activeSection = writable('profile'); // Controls active section ('profile' or 'actions')
 
-	// Controller setup and methods (similar to the ones in +page.svelte)
+	// Controller setup and methods
 	let controller = new Controller({
 	  policies: [
 		{
@@ -112,6 +112,9 @@
     min-height: 75px;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   .button-container {
@@ -121,6 +124,7 @@
     gap: 10px;
     margin-top: 1rem;
     position: relative;
+    flex-wrap: wrap; /* Ensures buttons wrap on smaller screens */
   }
 
   .loading-text {
@@ -129,13 +133,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.85); /* Slightly darker for better contrast */
     color: #FFA500;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1;
-    font-size: 1rem;
+    font-size: 1rem; /* Larger for better visibility */
+    text-align: center;
   }
 
   .account-panel {
@@ -143,7 +148,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
+    width: 500px;
     max-width: 90%;
     background-color: black;
     color: orange;
@@ -154,7 +159,7 @@
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease, visibility 0s 0.3s;
-    pointer-events: all;
+    pointer-events: none;
   }
 
   .account-panel.show {
@@ -167,7 +172,7 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background-color: rgba(255, 166, 0, 0.756);
+    background-color: rgba(255, 166, 0, 0.9); /* Brighter for hover focus */
     color: black;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
@@ -175,18 +180,25 @@
     cursor: pointer;
     font-size: 1rem;
   }
-  
+
   .account-panel .panel-categories-btns {
     position: relative;
     align-items: center;
     justify-content: center;
     padding: 0.5rem 1rem;
-    background-color: rgba(255, 166, 0, 0.756);
+    background-color: rgba(255, 166, 0, 0.9); /* Brighter for hover focus */
     color: black;
     border-radius: 0.375rem;
     border: none;
     cursor: pointer;
     font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .account-panel .panel-categories-btns:hover,
+  .account-panel .close-account-btn:hover {
+    background-color: orange;
+    color: black;
   }
 
   .account-panel-section {
@@ -218,8 +230,19 @@
 
   .error-message {
     color: red;
-    font-size: 0.875rem;
+    font-size: 1rem;
     margin-top: 1rem;
+    text-align: center; /* Center for uniformity */
+  }
+
+  @media (max-width: 768px) {
+    .account-panel {
+      width: 90%;
+    }
+
+    .button-container {
+      gap: 5px;
+    }
   }
 </style>
 
