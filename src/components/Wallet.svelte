@@ -4,11 +4,17 @@
   import { writable, get } from "svelte/store";
 
 	// Controller - Cartridge
-    import Controller, { erc20Metadata } from "@cartridge/controller";
+    import Controller from "@cartridge/controller";
     import {Manifest_Addresses, ETH_CONTRACT, ETH_CONTRACT2, Katana} from "../be_fe_constants.js";
     import UserInfo from '../gameController/UserInfo.svelte';
     import TransferEth from '../gameController/TransferEth.svelte';
     import {account, username, connected} from '../gameController/account';
+
+  // Argent X - Wallet
+    import { connect, disconnect } from "starknetkit";
+    import { WebWalletConnector } from "starknetkit/webwallet";
+    import { InjectedConnector } from "starknetkit/injected";
+    
 	
   
 	// States and variables
@@ -78,8 +84,8 @@
     console.error('Application error:', error);
   }
   
-	// Connect to wallet
-	async function connect() {
+	// Connect to Cartridge Game Controller
+	async function connectCGC() {
     loading = true;
     try {
       const res = await controller.connect();
@@ -96,9 +102,20 @@
     }
   }
 
+  // Connect to Argent X wallet
+  const connectWallet = async () => {
+    const { wallet, connectorData } = await connect({
+      connectors: [
+        new WebWalletConnector(),
+        new InjectedConnector({ options: { id: "argentX" } }),
+      ],
+    });
+
+  }
+
   
-	// Disconnect wallet
-	function disconnect() {
+	// Disconnect from Cartridge Game Controller
+	function disconnectCGC() {
 	  controller.disconnect();
     account.set(undefined);
 	  username.set(undefined);
@@ -108,7 +125,7 @@
 	onMount(async () => {
 	  try {
       if (await controller.probe()) {
-        await connect();
+        await connectCGC();
       }
     } catch (error) {
       handleError(error);
@@ -275,9 +292,9 @@
         <!-- <button on:click={toggleAccount}>
           {$showAccount ? 'Close Account' : 'My Account'}
         </button> -->
-        <button on:click={disconnect}>Disconnect</button>
+        <button on:click={disconnectCGC}>Disconnect</button>
       {:else}
-        <button on:click={connect}>Connect</button>
+        <button on:click={connectWallet}>Connect</button>
       {/if}
     {/if}
   </div>
