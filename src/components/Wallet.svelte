@@ -5,10 +5,10 @@
 
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
-    import {Manifest_Addresses, ETH_CONTRACT, ETH_CONTRACT2, Katana} from "../be_fe_constants.js";
+    import {Katana, ETH_CONTRACT2} from "../be_fe_constants.js";
     import UserInfo from '../gameController/UserInfo.svelte';
     import TransferEth from '../gameController/TransferEth.svelte';
-    import {account, username, connected} from '../gameController/account';
+    import {account, username, accountAddr, connected} from '../gameController/account';
 
   // Argent X - Wallet
     import { connect, disconnect } from "starknetkit";
@@ -26,6 +26,8 @@
 
 	// Controller setup and methods
 	let controller = new Controller({
+    colorMode: 'dark',
+    //theme: "here will go our theme that needs to be designed and added",
 	  policies: [
 		{
 		  target: ETH_CONTRACT2,
@@ -57,7 +59,11 @@
 			}
 	  ],
 	  rpc: "https://api.cartridge.gg/x/starknet/sepolia",
+    tokens: {
+      erc20: ["0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"],
+    },
 	});
+  
 
   // open profile
   const openUserProfile = () => {
@@ -93,6 +99,7 @@
         account.set(controller);
         username.set(await controller.username());
         connected.set(true);
+        accountAddr.set(Katana.addr);
         //showAccount.set(true); // Show the account panel after connection
       }
     } catch (e) {
@@ -119,6 +126,7 @@
 	  controller.disconnect();
     account.set(undefined);
 	  username.set(undefined);
+    accountAddr.set(undefined);
     connected.set(false);
 	}
   
@@ -294,7 +302,8 @@
         </button> -->
         <button on:click={disconnectCGC}>Disconnect</button>
       {:else}
-        <button on:click={connectWallet}>Connect</button>
+        <button on:click={connectCGC}>Connect</button>
+        <!-- <button on:click={connectWallet}>Connect</button> -->
       {/if}
     {/if}
   </div>
@@ -315,7 +324,7 @@
     </div>
 
     <div class="account-panel-section { $activeSection === 'profile' ? 'show' : '' }">
-      <UserInfo accountAddress={$account?.address} username={$username} />
+      <UserInfo accountAddr={$account?.address} username={$username} />
     </div>
 
     <div class="account-panel-section { $activeSection === 'actions' ? 'show' : '' }">

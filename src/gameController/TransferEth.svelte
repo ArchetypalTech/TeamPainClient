@@ -18,6 +18,7 @@
 		account
 			.execute([
 				{
+					// address for now is the pre funded account of local katana, need to change that
 					contractAddress: ETH_CONTRACT.eth_cont,
 					entrypoint: manual ? 'increaseAllowance' : 'approve', // increaseAllowance is not part of policies so controller will prompt confirmation
 					calldata: [account.address, amount, '0x0']
