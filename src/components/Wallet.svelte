@@ -5,7 +5,7 @@
 
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
-    import {Katana, ETH_CONTRACT2} from "../be_fe_constants.js";
+    import {Manifest_Addresses, Katana, ETH_CONTRACT2} from "../be_fe_constants.js";
     import UserInfo from '../gameController/UserInfo.svelte';
     import TransferEth from '../gameController/TransferEth.svelte';
     import {account, username, accountAddr, connected} from '../gameController/account';
@@ -30,31 +30,32 @@
     //theme: "here will go our theme that needs to be designed and added",
 	  policies: [
 		{
-		  target: ETH_CONTRACT2,
+      // target is the meatpuppet system, which is the entry to the world
+		  target: Manifest_Addresses.ENTITY_ADDRESS,
 		  method: "approve",
 		  description: "Approve submiting transactions to play The Oruggin Trail",
 		},
 		{
-		  target: ETH_CONTRACT2,
+		  target: Manifest_Addresses.ENTITY_ADDRESS,
 		  method: "reject",
 		  description: "Reject submiting transactions to play The Oruggin Trail",
 		},
 		{
-		  target:ETH_CONTRACT2,
+		  target: Manifest_Addresses.ENTITY_ADDRESS,
 		  method: "transfer",
 		  description: "Transfer ETH to yourself. Just for now",
 		},
     {
-		  target: ETH_CONTRACT2,
+		  target:  Manifest_Addresses.ENTITY_ADDRESS,
 		  method: "mint",
 		  description: "Mint tokens. Just for now",
 		},
     {
-				target: ETH_CONTRACT2,
+				target:  Manifest_Addresses.ENTITY_ADDRESS,
 				method: 'burn'
 			},
 			{
-				target: ETH_CONTRACT2,
+				target:  Manifest_Addresses.ENTITY_ADDRESS,
 				method: 'allowance'
 			}
 	  ],
