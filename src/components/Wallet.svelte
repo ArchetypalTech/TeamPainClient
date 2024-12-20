@@ -118,9 +118,13 @@
         new InjectedConnector({ options: { id: "argentX" } }),
       ],
     });
-
   }
 
+
+  // Disconnect to Argent X wallet
+  const disconnectWallet = async () => {
+    await disconnect();
+  }
   
 	// Disconnect from Cartridge Game Controller
 	function disconnectCGC() {
