@@ -1,12 +1,12 @@
 <script lang="ts">
-    import {account} from '../gameController/account';
-    export let accountAddr: string | undefined;
+    import {accountAddr} from '../gameController/account';
+    export let accountAddress: string | undefined;
 	export let username: string | undefined;
 </script>
 
-<h2>User Information</h2>
+<!-- <h2>User Information</h2>
 <div>
-	{#if accountAddr}
+	{#if accountAddress}
 		<p>Account Address: {accountAddr}</p>
 	{:else}
 		<p>No account connected</p>
@@ -15,4 +15,4 @@
 	{#if username}
 		<p>Username: {username}</p>
 	{/if}
-</div>
+</div> -->

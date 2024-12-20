@@ -7,7 +7,7 @@
     import { helpStore, handleHelp } from '$lib/stores/help_store';
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
-	import {connected} from '../gameController/account';
+	import {connectedToArX, connectedToCGC} from '../gameController/account';
     import { get } from "svelte/store";
 
 	let headerText = [
@@ -143,7 +143,7 @@
 
 		// Handle other commands via GQL
 		try {
-			if (get(connected)) {
+			if (get(connectedToArX) || get(connectedToCGC) ) {
 				const response = await sendCommand(command);
 				/**
 				 * we dont actually do anything now as we wait on the GQL subscription

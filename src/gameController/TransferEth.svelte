@@ -39,8 +39,8 @@
 	}
 </script>
  
-<h2>Transfer Eth</h2>
-<p>Address: {ETH_CONTRACT}</p>
+<!-- <h2>Transfer Eth</h2>
+<p>Address: {ETH_CONTRACT.eth_cont}</p>
 <div>
 	<h4>Session</h4>
 	<button on:click={() => execute('0x0', false)} disabled={isSubmitted}>
@@ -66,4 +66,4 @@
 	{#if txnHash}
 		<p>Transaction hash: {txnHash}</p>
 	{/if}
-</div>
+</div> -->

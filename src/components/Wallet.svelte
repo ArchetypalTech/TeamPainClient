@@ -8,14 +8,12 @@
     import {Manifest_Addresses, Katana, ETH_CONTRACT2} from "../be_fe_constants.js";
     import UserInfo from '../gameController/UserInfo.svelte';
     import TransferEth from '../gameController/TransferEth.svelte';
-    import {account, username, accountAddr, connected} from '../gameController/account';
+    import {account, username, accountAddr, connectedToArX, connectedToCGC, walletAddress} from '../gameController/account';
 
   // Argent X - Wallet
     import { connect, disconnect } from "starknetkit";
     import { WebWalletConnector } from "starknetkit/webwallet";
-    import { InjectedConnector } from "starknetkit/injected";
-    
-	
+    import { InjectedConnector } from "starknetkit/injected"; 	
   
 	// States and variables
   let loading = true;
@@ -24,6 +22,8 @@
   const showAccount = writable(false); // Controls visibility of the account panel
   const activeSection = writable('profile'); // Controls active section ('profile' or 'actions')
 
+
+  //--------------Cartridge Game Controller--------------//
 	// Controller setup and methods
 	let controller = new Controller({
     colorMode: 'dark',
@@ -64,44 +64,18 @@
       erc20: ["0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"],
     },
 	});
-  
 
-  // open profile
-  const openUserProfile = () => {
-    controller.openProfile();
-  }; 
-  
-	// Toggle the account panel
-    const toggleAccount = () => {
-    showAccount.update((value) => !value);
-  };
-
-  // Close the account panel
-  const closeAccount = () => {
-    showAccount.set(false);
-  };
-
-  // Switch sections
-  const showProfileSection = () => activeSection.set('profile');
-  const showActionsSection = () => activeSection.set('actions');
-
-  // Error handling
-  function handleError(error: any) {
-    errorMessage = 'An error occurred. Please try again.';
-    console.error('Application error:', error);
-  }
-  
-	// Connect to Cartridge Game Controller
+  // Connect to Cartridge Game Controller
 	async function connectCGC() {
     loading = true;
     try {
-      const res = await controller.connect();
+      const res = await controller.connect(); // Get response from the connection 
       if (res) {
-        account.set(controller);
-        username.set(await controller.username());
-        connected.set(true);
-        accountAddr.set(Katana.addr);
-        //showAccount.set(true); // Show the account panel after connection
+        account.set(controller); // Store the controller
+        username.set(await controller.username()); // Store the username
+        connectedToCGC.set(true); // Store the connected status to true
+        accountAddr.set(Katana.addr); // Store the account address. Needed?
+         //showAccount.set(true); // Show the account panel after connection
       }
     } catch (e) {
       handleError(e);
@@ -110,41 +84,80 @@
     }
   }
 
+  // Open the controller's profile
+  const openUserProfile = () => {
+    controller.openProfile();
+  };  
+
+  // Disconnect from Cartridge Game Controller
+	function disconnectCGC() {
+	  controller.disconnect(); // Disconnect the controller
+    account.set(undefined); // Set to undefine the account
+	  username.set(undefined); // Set to undefine the username
+    accountAddr.set(undefined); // Set to undefine the accountAddr
+    connectedToCGC.set(false); // Set to false the connected status
+	}
+
+  // ------ NOT IN USE, WILL BE DELETED AFTER TESTING IS DONE ------ //
+  // Switch sections
+  const showProfileSection = () => activeSection.set('profile');
+  const showActionsSection = () => activeSection.set('actions');
+  // Toggle the account panel
+  
+  const toggleAccount = () => {
+    showAccount.update((value) => !value);
+  };
+
+  // Close the account panel
+  const closeAccount = () => {
+    showAccount.set(false);
+  };
+  // ------ END ------ //
+
+
+  //--------------Argent X Wallet--------------//
   // Connect to Argent X wallet
   const connectWallet = async () => {
     const { wallet, connectorData } = await connect({
+      dappName: "The Oruggin Trail",
+      modalMode: "alwaysAsk",
+      modalTheme: "system",
       connectors: [
         new WebWalletConnector(),
         new InjectedConnector({ options: { id: "argentX" } }),
       ],
     });
+    walletAddress.set(connectorData?.account);
+    if (!get(connectedToArX)) {
+      connectedToArX.set(true);
+    } 
   }
-
 
   // Disconnect to Argent X wallet
   const disconnectWallet = async () => {
     await disconnect();
+    walletAddress.set(null);
+    connectedToArX.set(false);
+  }
+
+  // Error handling
+  function handleError(error: any) {
+    errorMessage = 'An error occurred. Please try again.';
+    console.error('Application error:', error);
   }
   
-	// Disconnect from Cartridge Game Controller
-	function disconnectCGC() {
-	  controller.disconnect();
-    account.set(undefined);
-	  username.set(undefined);
-    accountAddr.set(undefined);
-    connected.set(false);
-	}
-  
 	onMount(async () => {
-	  try {
+	  // Try to connect to a previous cartridge controller
+    try {
       if (await controller.probe()) {
         await connectCGC();
       }
     } catch (error) {
       handleError(error);
     } finally {
-      loading = false;
-    }
+      loading
+      = false;
+    }     
 	});
 </script>
   
@@ -300,21 +313,27 @@
     {#if loading}
       <span class="loading-text">Loading...</span>
     {:else}
+      <!--For Cartride Controller -->
       {#if $account}
         <button on:click={openUserProfile}>Profile</button>
-        <!-- <button on:click={toggleAccount}>
-          {$showAccount ? 'Close Account' : 'My Account'}
-        </button> -->
-        <button on:click={disconnectCGC}>Disconnect</button>
+       
+        <button on:click={disconnectCGC}>Disconnect CGC</button>
       {:else}
-        <button on:click={connectCGC}>Connect</button>
-        <!-- <button on:click={connectWallet}>Connect</button> -->
+        <button on:click={connectCGC}>Connect CGC</button>
       {/if}
+       <!--For Argent x -->
+      {#if $walletAddress}
+      <button on:click={disconnectWallet}>Disconnect AX</button>
+      {:else}
+      <button on:click={connectWallet}>Connect AX</button>
+      {/if}
+
     {/if}
   </div>
 </div>
 
-{#if $account && !loading}
+<!--NOT IN USE, MIGHT NEED TO DELETE -->
+<!-- {#if $account && !loading}
   <div class="account-panel { $showAccount ? 'show' : '' }">
     <div>
       <button class="panel-categories-btns" on:click={showProfileSection}>
@@ -336,15 +355,20 @@
       <TransferEth account={$account} />
     </div>
   </div>
+{/if} -->
+
+{#if $account && !loading}
+    <UserInfo accountAddress={$account.address} username={$username} />
+    <TransferEth account={$account} />
 {/if}
 
-{#if $showAccount}
+<!-- {#if $showAccount}
   <button
     class="overlay show"
     on:click={closeAccount}
     aria-label="Close Account"
   ></button>
-{/if}
+{/if} -->
 
 {#if errorMessage}
   <div class="error-message">{errorMessage}</div>
