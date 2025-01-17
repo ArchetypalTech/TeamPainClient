@@ -1,6 +1,6 @@
 <script lang="ts">
     import { AccountInterface } from 'starknet';
-    import { ETH_CONTRACT } from '../be_fe_constants.js';
+    import { ETH_CONTRACT } from '../../be_fe_constants.js';
 
     export let account: AccountInterface | undefined;
     let txnHash: string | undefined;

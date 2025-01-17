@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {accountAddr} from '../gameController/account';
+    import {walletAddressCont} from '../account';
     export let accountAddress: string | undefined;
 	export let username: string | undefined;
 </script>

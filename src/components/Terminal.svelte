@@ -7,7 +7,8 @@
     import { helpStore, handleHelp } from '$lib/stores/help_store';
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
-	import {connectedToArX, connectedToCGC} from '../gameController/account';
+	import {connectedToArX, connectedToCGC,} from '../Wallets/account';	
+	import {getBalance, getBalance2, mintFerryTicket, transferFerryTicket} from '../FerryTicketToken/FerryTicket_Interaction';
     import { get } from "svelte/store";
 
 	let headerText = [
@@ -33,6 +34,12 @@
 	let step = 1;
   	let username = "";
   	let roomID = 0;
+
+	// State to track if we're waiting for user input for the RecipientAddress, token Id
+	let waitingForRecipientAddress = false;
+	let waitingForTokenId = false;
+	let recipientAddress = '';
+	let token_ID: number | null = null;
 	
 	function handleKeyDown(e: KeyboardEvent) {
 		// up down cycle through prevInputs or back to originalInputValue
@@ -137,14 +144,108 @@
 						format: 'out', 
 						useTypewriter: false 
 					});
-				}
+				}			
 				return;
+			case 'balanceferryticket':
+				if (get(connectedToArX) || get(connectedToCGC)) {
+					try {
+							const result = await getBalance();  // Await the Promise here
+							addTerminalContent({ 
+								text: `${result}`, 
+								format: 'shog', 
+								useTypewriter: true 
+							});
+						} catch (error) {
+							console.error('Error fetching balance:', error);
+							addTerminalContent({
+									text: `Error getting your ticket balance: ${error.message || 'An unknown error occurred.'}`,
+									format: 'error',
+									useTypewriter: true
+								});
+						}
+				return;
+				} else {
+					addTerminalContent({ 
+								text: 'You are not in the realm of shoggoth yet...', 
+								format: 'shog', 
+								useTypewriter: true 
+							});
+					return;
+				}
+			case 'mintferryticket':
+				if (get(connectedToArX) || get(connectedToCGC)) {
+					try {
+							const result = await mintFerryTicket();  // Await the Promise here
+							addTerminalContent({ 
+								text: `${result}`, 
+								format: 'shog', 
+								useTypewriter: true 
+							});
+						} catch (error) {
+							// Handle specific error case for USER_REFUSED_OP
+							if (error.message.includes('USER_REFUSED_OP')) {
+								addTerminalContent({
+									text: `${error.message}`,
+									format: 'error',
+									useTypewriter: true
+								});
+							} else {
+								// Handle general errors
+								addTerminalContent({
+									text: `Error minting a ticket: ${error.message || 'An unknown error occurred.'}`,
+									format: 'error',
+									useTypewriter: true
+								});
+							}
+						}
+				return;
+				} else {
+					addTerminalContent({ 
+								text: 'You are not in the realm of shoggoth yet...', 
+								format: 'shog', 
+								useTypewriter: true 
+							});
+					return;
+				}
+			case 'transferferryticket':
+					if (get(connectedToArX) || get(connectedToCGC)) {
+						// Prompt for the recipient account address
+						addTerminalContent({ 
+							text: `With whom are you sharing your ticket? Please provide the account address.`, 
+							format: 'shog', 
+							useTypewriter: true 
+						});
+
+						// Store the state to await the user's input
+						waitingForRecipientAddress = true; // This is a state variable that you'll manage to track the input request
+						return;
+					} else {
+						addTerminalContent({ 
+							text: 'You are not in the realm of shoggoth yet...', 
+							format: 'shog', 
+							useTypewriter: true 
+						});
+						return;
+					}
+						
 		}
 
 		// Handle other commands via GQL
 		try {
+			// Check if the player is connected to Argent X or to Cartridge controller
 			if (get(connectedToArX) || get(connectedToCGC) ) {
-				const response = await sendCommand(command);
+				// Get the player's balance number and check if he can play or not
+				const tokenBalance = await getBalance2();  // Await the Promise here
+				if (tokenBalance > 0) {
+					const response = await sendCommand(command);
+				} else {
+					addTerminalContent({
+						text: `You have ${tokenBalance} Ferry Tickets and cannot proceed on the journey.`,
+						format: 'error',
+						useTypewriter: true,
+					});
+				}
+				
 				/**
 				 * we dont actually do anything now as we wait on the GQL subscription
 				 * to actually return us bacon, via the `ToriiSub` component which updates
@@ -161,13 +262,94 @@
 		}
 	}
 
+	async function handleRecipientAddressInput(e: SubmitEvent) {
+		e.preventDefault();
+		const address = inputValue.trim();
+
+		if (!address) {
+			addTerminalContent({ 
+				text: "Invalid address. Please provide a valid account address.", 
+				format: 'error', 
+				useTypewriter: true });
+			return;
+		}
+
+		recipientAddress = address;
+		waitingForRecipientAddress = false;
+
+		// Now ask for the token ID
+		addTerminalContent({ 
+			text: 'Please provide the token ID of the Ferry Ticket you want to transfer.',
+			format: 'shog',
+			useTypewriter: true 
+		});
+
+		waitingForTokenId = true; // Enable token ID input state
+		inputValue = "";
+		await tick();
+	}
+
+	async function handleTokenIdInput(e: SubmitEvent) {
+		e.preventDefault();
+		const tokenIdInput = inputValue.trim();
+
+		if (!tokenIdInput || isNaN(Number(tokenIdInput))) {
+			addTerminalContent({ text: "Invalid token ID. Please provide a valid number.", format: 'error', useTypewriter: true });
+			return;
+		}
+
+		token_ID = Number(tokenIdInput);
+		waitingForTokenId = false;
+
+		// Call the transfer function
+		try {
+			const result = await transferFerryTicket(recipientAddress, token_ID);
+
+			// If the transfer was successful, display the result
+			addTerminalContent({
+				text: `${result}.`,
+				format: 'shog',
+				useTypewriter: true
+			});
+		} catch (error) {
+			// Handle specific error case for USER_REFUSED_OP
+			if (error.message.includes('USER_REFUSED_OP')) {
+				addTerminalContent({
+					text: `Transaction rejected by user. Please check your wallet and try again.`,
+					format: 'error',
+					useTypewriter: true
+				});
+			} else {
+				// Handle general errors
+				addTerminalContent({
+					text: `Error transferring ticket: ${error.message || 'An unknown error occurred.'}`,
+					format: 'error',
+					useTypewriter: true
+				});
+			}
+		}
+
+		// Reset state after transfer
+		recipientAddress = '';
+		token_ID = null;
+		waitingForTokenId = false; // Ensure the form is ready for the next input
+		inputValue = "";
+		await tick();
+	}
+
 </script>
 
 <form
 	bind:this={terminalForm}
 	on:submit={async (e) => {
 		terminalInput.disabled = true;
-		await submitForm(e);
+		if (waitingForRecipientAddress) {
+            await handleRecipientAddressInput(e);
+        } else if (waitingForTokenId) {
+            await handleTokenIdInput(e);
+        } else {
+            await submitForm(e); // Normal command processing
+        }
 		terminalInput.disabled = false;
 		terminalInput.focus();
 	}}

@@ -1,19 +1,22 @@
 <script lang="ts">
 	
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
   import { writable, get } from "svelte/store";
 
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
-    import {Manifest_Addresses, Katana, ETH_CONTRACT2} from "../be_fe_constants.js";
-    import UserInfo from '../gameController/UserInfo.svelte';
-    import TransferEth from '../gameController/TransferEth.svelte';
-    import {account, username, accountAddr, connectedToArX, connectedToCGC, walletAddress} from '../gameController/account';
+    import {Manifest_Addresses, Katana} from "../be_fe_constants.js";
+    import UserInfo from '../Wallets/gameController/UserInfo.svelte';
+    import TransferEth from '../Wallets/gameController/TransferEth.svelte';
+    import { addrContract } from '../FerryTicketToken/FerryTicket_constants.js';
+    import {accountController, walletAddressCont, username, connectedToCGC, accountArgentX , walletAddressArX, connectedToArX, providerST} from '../Wallets/account';
 
   // Argent X - Wallet
-    import { connect, disconnect } from "starknetkit";
-    import { WebWalletConnector } from "starknetkit/webwallet";
-    import { InjectedConnector } from "starknetkit/injected"; 	
+    import { connect, disconnect } from "get-starknet";
+      
+  // Starknet.js
+   import { WalletAccount } from 'starknet';
+ 
   
 	// States and variables
   let loading = true;
@@ -22,46 +25,55 @@
   const showAccount = writable(false); // Controls visibility of the account panel
   const activeSection = writable('profile'); // Controls active section ('profile' or 'actions')
 
-
   //--------------Cartridge Game Controller--------------//
 	// Controller setup and methods
 	let controller = new Controller({
     colorMode: 'dark',
     //theme: "here will go our theme that needs to be designed and added",
+    // Policies are required to be defined betther
 	  policies: [
-		{
-      // target is the meatpuppet system, which is the entry to the world
-		  target: Manifest_Addresses.ENTITY_ADDRESS,
-		  method: "approve",
-		  description: "Approve submiting transactions to play The Oruggin Trail",
-		},
-		{
-		  target: Manifest_Addresses.ENTITY_ADDRESS,
-		  method: "reject",
-		  description: "Reject submiting transactions to play The Oruggin Trail",
-		},
-		{
-		  target: Manifest_Addresses.ENTITY_ADDRESS,
-		  method: "transfer",
-		  description: "Transfer ETH to yourself. Just for now",
-		},
-    {
-		  target:  Manifest_Addresses.ENTITY_ADDRESS,
-		  method: "mint",
-		  description: "Mint tokens. Just for now",
-		},
-    {
-				target:  Manifest_Addresses.ENTITY_ADDRESS,
-				method: 'burn'
-			},
-			{
-				target:  Manifest_Addresses.ENTITY_ADDRESS,
-				method: 'allowance'
-			}
+      {
+        // target is the meatpuppet system, which is the entry to the world
+        target: Manifest_Addresses.ENTITY_ADDRESS,
+        method: "approve",
+        description: "Approve submiting transactions to play The Oruggin Trail",
+      },
+      {
+        target: Manifest_Addresses.ENTITY_ADDRESS,
+        method: "reject",
+        description: "Reject submiting transactions to play The Oruggin Trail",
+      },
+      {
+        // Approve minting NFT
+        target: addrContract,
+        method: "approve",
+        description: "Approve minting NFT's",
+      },
+      {
+        // Reject minting NFT
+        target: addrContract,
+        method: "reject",
+        description: "Reject minting NFT's",
+      },
+      {
+        // Approve transfering the NFT
+        target: addrContract,
+        method: "approve",
+        description: "Approve transfering NFT's",
+      },
+      {
+        // Reject transfering NFT
+        target: addrContract,
+        method: "reject",
+        description: "Reject transfering NFT's",
+      },
 	  ],
+    // Network to connect to
+    // Can be mainnet, sepolia, slot
 	  rpc: "https://api.cartridge.gg/x/starknet/sepolia",
+    // List of tokens to follow
     tokens: {
-      erc20: ["0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"],
+      erc721: [addrContract],
     },
 	});
 
@@ -70,12 +82,20 @@
     loading = true;
     try {
       const res = await controller.connect(); // Get response from the connection 
+      console.log("res is", res);
+      
       if (res) {
-        account.set(controller); // Store the controller
+        accountController.set(res); // Store the controller
+        console.log("storedController-controller is ", get(accountController));
+
         username.set(await controller.username()); // Store the username
+        console.log("Username is", get(username));        
+
+        //walletAddressCont.set(Katana.addr); // Store the account address. Needed?
+        walletAddressCont.set(res.address); // Store the account address. 
+        console.log("accountController address 3 is", get(walletAddressCont));
+
         connectedToCGC.set(true); // Store the connected status to true
-        accountAddr.set(Katana.addr); // Store the account address. Needed?
-         //showAccount.set(true); // Show the account panel after connection
       }
     } catch (e) {
       handleError(e);
@@ -86,57 +106,49 @@
 
   // Open the controller's profile
   const openUserProfile = () => {
-    controller.openProfile();
+    controller.openProfile("inventory");
   };  
 
   // Disconnect from Cartridge Game Controller
 	function disconnectCGC() {
 	  controller.disconnect(); // Disconnect the controller
-    account.set(undefined); // Set to undefine the account
+    accountController.set(undefined); // Set to undefine the account
 	  username.set(undefined); // Set to undefine the username
-    accountAddr.set(undefined); // Set to undefine the accountAddr
+    walletAddressCont.set(undefined); // Set to undefine the accountAddr
     connectedToCGC.set(false); // Set to false the connected status
 	}
 
-  // ------ NOT IN USE, WILL BE DELETED AFTER TESTING IS DONE ------ //
-  // Switch sections
-  const showProfileSection = () => activeSection.set('profile');
-  const showActionsSection = () => activeSection.set('actions');
-  // Toggle the account panel
-  
-  const toggleAccount = () => {
-    showAccount.update((value) => !value);
-  };
-
-  // Close the account panel
-  const closeAccount = () => {
-    showAccount.set(false);
-  };
-  // ------ END ------ //
-
-
   //--------------Argent X Wallet--------------//
   // Connect to Argent X wallet
-  const connectWallet = async () => {
-    const { wallet, connectorData } = await connect({
-      dappName: "The Oruggin Trail",
-      modalMode: "alwaysAsk",
-      modalTheme: "system",
-      connectors: [
-        new WebWalletConnector(),
-        new InjectedConnector({ options: { id: "argentX" } }),
-      ],
-    });
-    walletAddress.set(connectorData?.account);
-    if (!get(connectedToArX)) {
-      connectedToArX.set(true);
-    } 
+  const connectWallet = async () => {     
+    // Connect to wallet
+    const selectedWalletSWO = await connect({ modalMode: 'alwaysAsk', modalTheme: 'system' });
+
+    // Define myWalletAccount based on the connected wallet above
+    const myWalletAccount = new WalletAccount({ nodeUrl: providerST }, selectedWalletSWO);
+
+    // If defined
+    if (myWalletAccount) {
+      // Store the wallet and the account address
+      accountArgentX.set(myWalletAccount); 
+      walletAddressArX.set(myWalletAccount.walletProvider?.selectedAddress);
+
+      // If local variable not connected to Argent X
+      if (!get(connectedToArX)) {
+        // Set local variable connected to true
+        connectedToArX.set(true);
+        // Debug
+        console.log("wallet address is:", get(walletAddressArX));
+        console.log("wallet is on:", myWalletAccount );
+      }         
+    }   
   }
 
   // Disconnect to Argent X wallet
   const disconnectWallet = async () => {
     await disconnect();
-    walletAddress.set(null);
+    accountArgentX.set(null);
+    walletAddressArX.set(null);
     connectedToArX.set(false);
   }
 
@@ -314,18 +326,19 @@
       <span class="loading-text">Loading...</span>
     {:else}
       <!--For Cartride Controller -->
-      {#if $account}
-        <button on:click={openUserProfile}>Profile</button>
+      {#if $accountController}
+        <button on:click={openUserProfile}>{get(username)}'s Inventory</button>
        
-        <button on:click={disconnectCGC}>Disconnect CGC</button>
+        <button on:click={disconnectCGC}>Disconnect Controller</button>
       {:else}
-        <button on:click={connectCGC}>Connect CGC</button>
+        <button on:click={connectCGC}>Connect Controller</button>
       {/if}
+      <span class="||"> || </span>
        <!--For Argent x -->
-      {#if $walletAddress}
-      <button on:click={disconnectWallet}>Disconnect AX</button>
+      {#if $walletAddressArX}
+      <button on:click={disconnectWallet}>Disconnect Wallet</button>
       {:else}
-      <button on:click={connectWallet}>Connect AX</button>
+      <button on:click={connectWallet}>Connect Wallet</button>
       {/if}
 
     {/if}
@@ -357,9 +370,9 @@
   </div>
 {/if} -->
 
-{#if $account && !loading}
-    <UserInfo accountAddress={$account.address} username={$username} />
-    <TransferEth account={$account} />
+{#if $accountController && !loading}
+    <UserInfo accountAddress={$accountController.address} username={$username} />
+    <TransferEth account={$accountController} />
 {/if}
 
 <!-- {#if $showAccount}
