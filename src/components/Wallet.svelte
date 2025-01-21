@@ -187,6 +187,8 @@
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+    align-items: center;
+    justify-content: center;
   }
 
   .button-container {
@@ -242,7 +244,7 @@
       <!--For Cartride Controller -->
       {#if $accountController}
         <button on:click={openUserProfile}>{get(username)}'s Inventory</button>
-        <span class="-|-"> || </span>
+        <span class="-|-"> -|-</span>
         <button on:click={disconnectCGC}>Disconnect Controller</button>
       {:else}
         <button on:click={connectCGC}>Connect Controller</button>
@@ -258,44 +260,6 @@
     {/if}
   </div>
 </div>
-
-<!--NOT IN USE, MIGHT NEED TO DELETE -->
-<!-- {#if $account && !loading}
-  <div class="account-panel { $showAccount ? 'show' : '' }">
-    <div>
-      <button class="panel-categories-btns" on:click={showProfileSection}>
-        My Profile
-      </button>
-      <button class="panel-categories-btns" on:click={showActionsSection}>
-        My Actions
-      </button>
-      <button class="close-account-btn" on:click={closeAccount}>
-        Close
-      </button>
-    </div>
-
-    <div class="account-panel-section { $activeSection === 'profile' ? 'show' : '' }">
-      <UserInfo accountAddr={$account?.address} username={$username} />
-    </div>
-
-    <div class="account-panel-section { $activeSection === 'actions' ? 'show' : '' }">
-      <TransferEth account={$account} />
-    </div>
-  </div>
-{/if} -->
-
-<!-- {#if $accountController && !loading}
-    <UserInfo accountAddress={$accountController.address} username={$username} />
-    <TransferEth account={$accountController} />
-{/if} -->
-
-<!-- {#if $showAccount}
-  <button
-    class="overlay show"
-    on:click={closeAccount}
-    aria-label="Close Account"
-  ></button>
-{/if} -->
 
 {#if errorMessage}
   <div class="error-message">{errorMessage}</div>
