@@ -7,7 +7,7 @@
     import { helpStore, handleHelp } from '$lib/stores/help_store';
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
-	import {connectedToArX, connectedToCGC,} from '../Wallets/account';	
+	import {connectedToArX, connectedToCGC,} from '../Wallets/Wallet_constants';	
 	import {getBalance, getBalance2, mintFerryTicket, transferFerryTicket} from '../FerryTicketToken/FerryTicket_Interaction';
     import { get } from "svelte/store";
 
@@ -146,7 +146,7 @@
 					});
 				}			
 				return;
-			case 'balanceferryticket':
+			case 'balance-ferryticket':
 				if (get(connectedToArX) || get(connectedToCGC)) {
 					try {
 							const result = await getBalance();  // Await the Promise here
@@ -172,6 +172,8 @@
 							});
 					return;
 				}
+			// Mint Ferry Ticket logic
+			/*
 			case 'mintferryticket':
 				if (get(connectedToArX) || get(connectedToCGC)) {
 					try {
@@ -207,7 +209,8 @@
 							});
 					return;
 				}
-			case 'transferferryticket':
+			*/
+			case 'transfer-ferryticket':
 					if (get(connectedToArX) || get(connectedToCGC)) {
 						// Prompt for the recipient account address
 						addTerminalContent({ 
@@ -262,6 +265,7 @@
 		}
 	}
 
+	// Handle the Recipient Address introduced
 	async function handleRecipientAddressInput(e: SubmitEvent) {
 		e.preventDefault();
 		const address = inputValue.trim();
@@ -289,6 +293,7 @@
 		await tick();
 	}
 
+	// Handle the Ferry Ticket ID
 	async function handleTokenIdInput(e: SubmitEvent) {
 		e.preventDefault();
 		const tokenIdInput = inputValue.trim();

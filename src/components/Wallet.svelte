@@ -5,11 +5,9 @@
 
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
-    import {Manifest_Addresses, Katana} from "../be_fe_constants.js";
-    import UserInfo from '../Wallets/gameController/UserInfo.svelte';
-    import TransferEth from '../Wallets/gameController/TransferEth.svelte';
+    import {Manifest_Addresses} from "../be_fe_constants.js";
     import { addrContract } from '../FerryTicketToken/FerryTicket_constants.js';
-    import {accountController, walletAddressCont, username, connectedToCGC, accountArgentX , walletAddressArX, connectedToArX, providerST} from '../Wallets/account';
+    import {accountController, walletAddressCont, username, connectedToCGC, accountArgentX , walletAddressArX, connectedToArX, providerST} from '../Wallets/Wallet_constants.js';
 
   // Argent X - Wallet
     import { connect, disconnect } from "get-starknet";
@@ -22,15 +20,12 @@
   let loading = true;
   let errorMessage: string | null = null;
 
-  const showAccount = writable(false); // Controls visibility of the account panel
-  const activeSection = writable('profile'); // Controls active section ('profile' or 'actions')
-
   //--------------Cartridge Game Controller--------------//
 	// Controller setup and methods
 	let controller = new Controller({
     colorMode: 'dark',
     //theme: "here will go our theme that needs to be designed and added",
-    // Policies are required to be defined betther
+    // Policies are required to be defined better
 	  policies: [
       {
         // target is the meatpuppet system, which is the entry to the world
@@ -75,6 +70,7 @@
     tokens: {
       erc721: [addrContract],
     },
+    slot: "theoruggintrailtesting2"
 	});
 
   // Connect to Cartridge Game Controller
@@ -89,13 +85,16 @@
         console.log("storedController-controller is ", get(accountController));
 
         username.set(await controller.username()); // Store the username
-        console.log("Username is", get(username));        
 
-        //walletAddressCont.set(Katana.addr); // Store the account address. Needed?
         walletAddressCont.set(res.address); // Store the account address. 
-        console.log("accountController address 3 is", get(walletAddressCont));
+       
 
-        connectedToCGC.set(true); // Store the connected status to true
+        if (!get(connectedToCGC)){
+          connectedToCGC.set(true); // Store the connected status to true
+          console.log("Username is", get(username));  
+          console.log("accountController address is", get(walletAddressCont));
+        }
+        
       }
     } catch (e) {
       handleError(e);
@@ -148,7 +147,7 @@
   const disconnectWallet = async () => {
     await disconnect();
     accountArgentX.set(null);
-    walletAddressArX.set(null);
+    walletAddressArX.set(undefined);
     connectedToArX.set(false);
   }
 
@@ -216,91 +215,6 @@
     text-align: center;
   }
 
-  .account-panel {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    max-width: 90%;
-    background-color: black;
-    color: orange;
-    padding: 1rem;
-    border: 2px solid orange;
-    border-radius: 0.375rem;
-    z-index: 9999;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease, visibility 0s 0.3s;
-    pointer-events: none;
-  }
-
-  .account-panel.show {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .account-panel .close-account-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background-color: rgba(255, 166, 0, 0.9); /* Brighter for hover focus */
-    color: black;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-
-  .account-panel .panel-categories-btns {
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    background-color: rgba(255, 166, 0, 0.9); /* Brighter for hover focus */
-    color: black;
-    border-radius: 0.375rem;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .account-panel .panel-categories-btns:hover,
-  .account-panel .close-account-btn:hover {
-    background-color: orange;
-    color: black;
-  }
-
-  .account-panel-section {
-    display: none;
-  }
-
-  .account-panel-section.show {
-    display: block;
-  }
-
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 9998;
-    visibility: hidden;
-    pointer-events: none;
-    transition: visibility 0s, opacity 0.3s ease;
-  }
-
-  .overlay.show {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: all;
-  }
-
   .error-message {
     color: red;
     font-size: 1rem;
@@ -328,7 +242,7 @@
       <!--For Cartride Controller -->
       {#if $accountController}
         <button on:click={openUserProfile}>{get(username)}'s Inventory</button>
-       
+        <span class="-|-"> || </span>
         <button on:click={disconnectCGC}>Disconnect Controller</button>
       {:else}
         <button on:click={connectCGC}>Connect Controller</button>
@@ -370,10 +284,10 @@
   </div>
 {/if} -->
 
-{#if $accountController && !loading}
+<!-- {#if $accountController && !loading}
     <UserInfo accountAddress={$accountController.address} username={$username} />
     <TransferEth account={$accountController} />
-{/if}
+{/if} -->
 
 <!-- {#if $showAccount}
   <button

@@ -1,6 +1,6 @@
 // Internals
 import { writable, get } from 'svelte/store';
-import {connectedToArX, walletAddressArX, accountArgentX, connectedToCGC, walletAddressCont, accountController, } from '../Wallets/account';
+import {connectedToArX, walletAddressArX, accountArgentX, connectedToCGC, walletAddressCont, accountController, } from '../Wallets/Wallet_constants';
 import { FerryTicketContract, addrContract } from './FerryTicket_constants.js';
 
 
@@ -148,16 +148,16 @@ export async function mintFerryTicket(): Promise<number | string> {
 // Transfer the Ferry Ticket Token
 export async function transferFerryTicket(recipientAddrss: string, token_id: number): Promise<string> {
     console.log("wallet address connected to controller is", get(walletAddressCont));
-    const wallet2 = get(walletAddressCont);
-            const updatedWallet = wallet2?.replace(/^0x/, '0x0');
-            console.log("updated value of wallet address is", updatedWallet); 
-    if (connectedToArX) {
+    // const wallet2 = get(walletAddressCont);
+    //         const updatedWallet = wallet2?.replace(/^0x/, '0x0');
+    //         console.log("updated value of wallet address is", updatedWallet); 
+    if (get(connectedToArX)) {
         try {
             // Subscribe to the walletAddress store and ensure it's defined
             const wallet = get(walletAddressArX);
     
             if (!wallet) {
-                throw new Error("Wallet address is undefined");
+                throw new Error("Wallet address is undefined");                
             }
     
             console.log('Token ID passed as number is:', token_id);
@@ -208,16 +208,14 @@ export async function transferFerryTicket(recipientAddrss: string, token_id: num
                 return `Error: ${error.message || 'An unknown error occurred.'}`;
             }
         }
-    } else if (connectedToCGC) {
+    } else if (get(connectedToCGC)) {
         console.log("wallet is", get(walletAddressCont));
         try {
             // Subscribe to the walletAddress store and ensure it's defined
             const wallet = get(walletAddressCont);
-            const updatedWallet = wallet?.replace(/^0x/, '0x0');
-            console.log("updated value of wallet address is", updatedWallet); 
     
-            if (!updatedWallet) {
-                throw new Error("Wallet address is undefined");
+            if (!wallet) {
+                throw new Error("Wallet address is undefined");                
             }
     
             console.log('Token ID passed as number is:', token_id);
@@ -237,7 +235,7 @@ export async function transferFerryTicket(recipientAddrss: string, token_id: num
                 contractAddress: addrContract,
                 entrypoint: "transfer_from",
                 calldata: [
-                    updatedWallet,               // 'from' address (wallet address)
+                    wallet,               // 'from' address (wallet address)
                     recipientAddrss,      // 'to' address (recipient address)
                     low,                  // Low 128 bits of token_id
                     high                  // High 128 bits of token_id
@@ -248,7 +246,6 @@ export async function transferFerryTicket(recipientAddrss: string, token_id: num
             const transferFT = await get(accountController)?.execute(transaction);
     
             console.log("Result of transferring is:", transferFT);
-    
             if (transferFT && transferFT.transaction_hash) {
                 // Return the transaction hash upon success
                 return `Successfully transferred ticket with ID ${token_id}. Transaction hash: ${transferFT.transaction_hash}`;
@@ -267,6 +264,9 @@ export async function transferFerryTicket(recipientAddrss: string, token_id: num
                 // Return a generic error message if it's another type of failure
                 return `Error: ${error.message || 'An unknown error occurred.'}`;
             }
+            // console.error("Error transferring token:", error);
+            // // Return a generic error message if it's another type of failure
+            //  return `Error: ${error.message || 'An unknown error occurred.'}`;
         }
     } else {
         return "Your wallet is not supported."

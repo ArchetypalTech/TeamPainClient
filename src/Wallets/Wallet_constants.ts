@@ -1,10 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { ProviderInterface, AccountInterface, constants, type WalletAccount} from "starknet";
 
-// Starknet.js
-import fs from 'fs';
-import { RpcProvider, Contract, Account, ec, json } from 'starknet';
-import type { StarknetWindowObject } from 'get-starknet';
 
 // Store for account for Cartridge Controller
 export const accountController = writable<AccountInterface | undefined>(undefined);
