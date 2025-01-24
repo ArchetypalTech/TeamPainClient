@@ -8,7 +8,7 @@
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
 	import {connectedToArX, connectedToCGC,} from '../Wallets/Wallet_constants';	
-	import {getBalance, getBalance2, mintFerryTicket, transferFerryTicket} from '../FerryTicketToken/FerryTicket_Interaction';
+	import {getBalance, getBalance2, mintFerryTicket, transferToken} from '../TOTToken/tot_NFT_Interaction';
     import { get } from "svelte/store";
 
 	let headerText = [
@@ -146,7 +146,7 @@
 					});
 				}			
 				return;
-			case 'balance-ferryticket':
+			case 'balance-tottokens':
 				if (get(connectedToArX) || get(connectedToCGC)) {
 					try {
 							const result = await getBalance();  // Await the Promise here
@@ -174,7 +174,7 @@
 				}
 			// Mint Ferry Ticket logic
 			/*
-			case 'mintferryticket':
+			case 'mint-totToken':
 				if (get(connectedToArX) || get(connectedToCGC)) {
 					try {
 							const result = await mintFerryTicket();  // Await the Promise here
@@ -210,7 +210,7 @@
 					return;
 				}
 			*/
-			case 'transfer-ferryticket':
+			case 'transfer-tottoken':
 					if (get(connectedToArX) || get(connectedToCGC)) {
 						// Prompt for the recipient account address
 						addTerminalContent({ 
@@ -243,7 +243,7 @@
 					const response = await sendCommand(command);
 				} else {
 					addTerminalContent({
-						text: `You have ${tokenBalance} Ferry Tickets and cannot proceed on the journey.`,
+						text: `You have ${tokenBalance} TOT Tokens and cannot proceed on the journey.`,
 						format: 'error',
 						useTypewriter: true,
 					});
@@ -308,7 +308,7 @@
 
 		// Call the transfer function
 		try {
-			const result = await transferFerryTicket(recipientAddress, token_ID);
+			const result = await transferToken(recipientAddress, token_ID);
 
 			// If the transfer was successful, display the result
 			addTerminalContent({

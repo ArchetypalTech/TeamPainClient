@@ -1,7 +1,9 @@
 // Internals
 import { writable, get } from 'svelte/store';
 import {connectedToArX, walletAddressArX, accountArgentX, connectedToCGC, walletAddressCont, accountController, } from '../Wallets/Wallet_constants';
-import { FerryTicketContract, addrContract } from './FerryTicket_constants.js';
+import { totNFTContract, addrContract } from './tot_NFT_constants.js';
+
+import { Buffer } from "buffer";
 
 
 // Get the balance of the FerryTicket via command
@@ -9,15 +11,22 @@ export async function getBalance(): Promise<string> {
     if (get(connectedToArX)) {
         try {       
             // Get the balance of the address stored in walletAddress
-            const balance: BigInt = await FerryTicketContract.balance_of(get(walletAddressArX));
+            const balance: BigInt = await totNFTContract.balance_of(get(walletAddressArX));
+            const raw_symbol: string = await totNFTContract.symbol();
+            // Convert the number to BigInt
+            const symbolBigInt = BigInt(raw_symbol);
+            // Convert BigInt to hex and then to a string
+            const symbolHex = symbolBigInt.toString(16); // Hex representation
+            const symbol = Buffer.from(symbolHex, "hex").toString("utf-8");
+            
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding message
             if (Number(balance) > 1) {
-                return `You have ${Number(balance)} Ferry Tickets in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol}'s in your wallet.`; 
             } else if (Number(balance) > 0 && Number(balance) < 2) {
-                return `You have ${Number(balance)} Ferry Ticket in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol} in your wallet.`; 
             } else {
-                return `You have ${Number(balance)} Ferry Tickets in your wallet.`
+                return `You have ${Number(balance)} ${symbol}'s in your wallet.`
             }
         } catch (error) {
             console.error("Error checking token balance:", error);
@@ -26,15 +35,21 @@ export async function getBalance(): Promise<string> {
     } else if (get(connectedToCGC)){
         try {       
             // Get the balance of the address stored in walletAddress
-            const balance: BigInt = await FerryTicketContract.balance_of(get(walletAddressCont));
+            const balance: BigInt = await totNFTContract.balance_of(get(walletAddressCont));
+            const raw_symbol: string = await totNFTContract.symbol();
+            // Convert the number to BigInt
+            const symbolBigInt = BigInt(raw_symbol);
+            // Convert BigInt to hex and then to a string
+            const symbolHex = symbolBigInt.toString(16); // Hex representation
+            const symbol = Buffer.from(symbolHex, "hex").toString("utf-8");
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding message
             if (Number(balance) > 1) {
-                return `You have ${Number(balance)} Ferry Tickets in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol}'s in your wallet.`; 
             } else if (Number(balance) > 0 && Number(balance) < 2) {
-                return `You have ${Number(balance)} Ferry Ticket in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol} in your wallet.`; 
             } else {
-                return `You have ${Number(balance)} Ferry Tickets in your wallet.`
+                return `You have ${Number(balance)} ${symbol}'s in your wallet.`
             }
         } catch (error) {
             console.error("Error checking token balance:", error);
@@ -51,7 +66,7 @@ export async function getBalance2(): Promise<number> {
     if (get(walletAddressArX)) {
         try {       
             // Get the balance of the address stored in walletAddress
-            const balance: BigInt = await FerryTicketContract.balance_of(get(walletAddressArX));
+            const balance: BigInt = await totNFTContract.balance_of(get(walletAddressArX));
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding value
             return Number(balance);
@@ -62,7 +77,7 @@ export async function getBalance2(): Promise<number> {
     } else if (get(walletAddressCont)){
         try {       
             // Get the balance of the address stored in walletAddress
-            const balance: BigInt = await FerryTicketContract.balance_of(get(walletAddressCont));
+            const balance: BigInt = await totNFTContract.balance_of(get(walletAddressCont));
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding value
             return Number(balance);
@@ -98,7 +113,7 @@ export async function mintFerryTicket(): Promise<number | string> {
     
             console.log("Result of minting:", mint);
     
-            return `You have successfully minted a Ferry Ticket. Your Transaction hash is ${mint?.transaction_hash}`;
+            return `You have successfully minted a TOT Token. Your Transaction hash is ${mint?.transaction_hash}`;
     
         } catch (error) {
             console.error("Error minting token:", error);
@@ -129,7 +144,7 @@ export async function mintFerryTicket(): Promise<number | string> {
     
             console.log("Result of minting:", mint);
     
-            return `You have successfully minted a Ferry Ticket. Your Transaction hash is ${mint?.transaction_hash}`;
+            return `You have successfully minted a TOT Token. Your Transaction hash is ${mint?.transaction_hash}`;
     
         } catch (error) {
             console.error("Error minting token:", error);
@@ -146,7 +161,7 @@ export async function mintFerryTicket(): Promise<number | string> {
 
 
 // Transfer the Ferry Ticket Token
-export async function transferFerryTicket(recipientAddrss: string, token_id: number): Promise<string> {
+export async function transferToken(recipientAddrss: string, token_id: number): Promise<string> {
     console.log("wallet address connected to controller is", get(walletAddressCont));
     // const wallet2 = get(walletAddressCont);
     //         const updatedWallet = wallet2?.replace(/^0x/, '0x0');
@@ -186,12 +201,18 @@ export async function transferFerryTicket(recipientAddrss: string, token_id: num
     
             // Execute the transaction
             const transferFT = await get(accountArgentX)?.execute(transaction);
+            const raw_symbol: string = await totNFTContract.symbol();
+            // Convert the number to BigInt
+            const symbolBigInt = BigInt(raw_symbol);
+            // Convert BigInt to hex and then to a string
+            const symbolHex = symbolBigInt.toString(16); // Hex representation
+            const symbol = Buffer.from(symbolHex, "hex").toString("utf-8");
     
             console.log("Result of transferring is:", transferFT);
     
             if (transferFT && transferFT.transaction_hash) {
                 // Return the transaction hash upon success
-                return `Successfully transferred ticket with ID ${token_id}. Transaction hash: ${transferFT.transaction_hash}`;
+                return `Successfully transferred a ${symbol} with ID ${token_id}. Transaction hash: ${transferFT.transaction_hash}`;
             } else {
                 // If no transaction hash is returned, throw an error
                 throw new Error("Transaction failed: No transaction hash returned");
@@ -244,11 +265,17 @@ export async function transferFerryTicket(recipientAddrss: string, token_id: num
     
             // Execute the transaction
             const transferFT = await get(accountController)?.execute(transaction);
+            const raw_symbol: string = await totNFTContract.symbol();
+            // Convert the number to BigInt
+            const symbolBigInt = BigInt(raw_symbol);
+            // Convert BigInt to hex and then to a string
+            const symbolHex = symbolBigInt.toString(16); // Hex representation
+            const symbol = Buffer.from(symbolHex, "hex").toString("utf-8");
     
             console.log("Result of transferring is:", transferFT);
             if (transferFT && transferFT.transaction_hash) {
                 // Return the transaction hash upon success
-                return `Successfully transferred ticket with ID ${token_id}. Transaction hash: ${transferFT.transaction_hash}`;
+                return `Successfully transferred a ${symbol} with ID ${token_id}. Transaction hash: ${transferFT.transaction_hash}`;
             } else {
                 // If no transaction hash is returned, throw an error
                 throw new Error("Transaction failed: No transaction hash returned");

@@ -6,7 +6,7 @@
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
     import {Manifest_Addresses} from "../be_fe_constants.js";
-    import { addrContract } from '../FerryTicketToken/FerryTicket_constants.js';
+    import { addrContract } from '../TOTToken/tot_NFT_constants.js';
     import {accountController, walletAddressCont, username, connectedToCGC, accountArgentX , walletAddressArX, connectedToArX, providerST} from '../Wallets/Wallet_constants.js';
 
   // Argent X - Wallet
@@ -41,26 +41,14 @@
       {
         // Approve minting NFT
         target: addrContract,
-        method: "approve",
-        description: "Approve minting NFT's",
-      },
-      {
-        // Reject minting NFT
-        target: addrContract,
-        method: "reject",
-        description: "Reject minting NFT's",
+        method: "mint",
+        description: "Approve minting a TOT Token",
       },
       {
         // Approve transfering the NFT
         target: addrContract,
-        method: "approve",
-        description: "Approve transfering NFT's",
-      },
-      {
-        // Reject transfering NFT
-        target: addrContract,
-        method: "reject",
-        description: "Reject transfering NFT's",
+        method: "transfer_from",
+        description: "Transfer a TOT Token",
       },
 	  ],
     // Network to connect to
@@ -70,7 +58,7 @@
     tokens: {
       erc721: [addrContract],
     },
-    slot: "theoruggintrailtesting2"
+    slot: "theoruggintrail"
 	});
 
   // Connect to Cartridge Game Controller
