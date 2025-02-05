@@ -8,7 +8,7 @@
     import HelpTerminal from './HelpTerminal.svelte';
     import { audioStore } from '$lib/stores/audio_store';
 	import {connectedToArX, connectedToCGC,} from '../Wallets/Wallet_constants';	
-	import {getBalance, getBalance2, mintFerryTicket, transferToken} from '../TOTToken/tot_NFT_Interaction';
+	import {getBalance, getBalance2, mintToken, transferToken} from '../TOTToken/tot_NFT_Interaction';
     import { get } from "svelte/store";
 
 	let headerText = [
@@ -169,15 +169,15 @@
 								text: 'You are not in the realm of shoggoth yet...', 
 								format: 'shog', 
 								useTypewriter: true 
-							});
-					return;
+							});					
 				}
+				return;
 			// Mint Ferry Ticket logic
 			/*
-			case 'mint-totToken':
+			case 'mint-tottoken':
 				if (get(connectedToArX) || get(connectedToCGC)) {
 					try {
-							const result = await mintFerryTicket();  // Await the Promise here
+							const result = await mintToken();  // Await the Promise here
 							addTerminalContent({ 
 								text: `${result}`, 
 								format: 'shog', 

@@ -23,5 +23,5 @@ export const connectedToArX= writable(false); // Initial value is a boolean fals
 // Store account address from ArgentX
 export const walletAddressArX = writable<string | undefined>(undefined);
 
-export const networkName: string = constants.NetworkName.SN_SEPOLIA;
-export const providerST = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"; // Sepolia
+// export const networkName: string = constants.NetworkName.SN_SEPOLIA;
+export const providerST = "https://api.cartridge.gg/x/theoruggintrail/katana"; // Sepolia

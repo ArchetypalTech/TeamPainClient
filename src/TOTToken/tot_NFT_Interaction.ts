@@ -1,7 +1,7 @@
 // Internals
 import { writable, get } from 'svelte/store';
 import {connectedToArX, walletAddressArX, accountArgentX, connectedToCGC, walletAddressCont, accountController, } from '../Wallets/Wallet_constants';
-import { totNFTContract, addrContract } from './tot_NFT_constants.js';
+import { totNFTContract, addrContract, totNFTContractSepolia,addrContractSepolia } from './tot_NFT_constants.js';
 
 import { Buffer } from "buffer";
 
@@ -11,8 +11,8 @@ export async function getBalance(): Promise<string> {
     if (get(connectedToArX)) {
         try {       
             // Get the balance of the address stored in walletAddress
-            const balance: BigInt = await totNFTContract.balance_of(get(walletAddressArX));
-            const raw_symbol: string = await totNFTContract.symbol();
+            const balance: BigInt = await totNFTContractSepolia.balance_of(get(walletAddressArX));
+            const raw_symbol: string = await totNFTContractSepolia.symbol();
             // Convert the number to BigInt
             const symbolBigInt = BigInt(raw_symbol);
             // Convert BigInt to hex and then to a string
@@ -22,11 +22,11 @@ export async function getBalance(): Promise<string> {
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding message
             if (Number(balance) > 1) {
-                return `You have ${Number(balance)} ${symbol}'s in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol}'s in your wallet on Sepolia.`; 
             } else if (Number(balance) > 0 && Number(balance) < 2) {
-                return `You have ${Number(balance)} ${symbol} in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol} in your wallet on Sepolia.`; 
             } else {
-                return `You have ${Number(balance)} ${symbol}'s in your wallet.`
+                return `You have ${Number(balance)} ${symbol}'s in your wallet on Sepolia.`
             }
         } catch (error) {
             console.error("Error checking token balance:", error);
@@ -45,11 +45,11 @@ export async function getBalance(): Promise<string> {
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding message
             if (Number(balance) > 1) {
-                return `You have ${Number(balance)} ${symbol}'s in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol}'s in your wallet on Katana.`; 
             } else if (Number(balance) > 0 && Number(balance) < 2) {
-                return `You have ${Number(balance)} ${symbol} in your wallet.`; 
+                return `You have ${Number(balance)} ${symbol} in your wallet on Katana.`; 
             } else {
-                return `You have ${Number(balance)} ${symbol}'s in your wallet.`
+                return `You have ${Number(balance)} ${symbol}'s in your wallet on Katana.`
             }
         } catch (error) {
             console.error("Error checking token balance:", error);
@@ -66,7 +66,7 @@ export async function getBalance2(): Promise<number> {
     if (get(walletAddressArX)) {
         try {       
             // Get the balance of the address stored in walletAddress
-            const balance: BigInt = await totNFTContract.balance_of(get(walletAddressArX));
+            const balance: BigInt = await totNFTContractSepolia.balance_of(get(walletAddressArX));
             //console.log('------>FT balance is: ', Number(balance));
             // Return the corresponding value
             return Number(balance);
@@ -91,7 +91,7 @@ export async function getBalance2(): Promise<number> {
 }
 
 // Mint the Ferry Ticket Token
-export async function mintFerryTicket(): Promise<number | string> {
+export async function mintToken(): Promise<number | string> {
     if (get(connectedToArX)) {
         try {
             // Subscribe to the walletAddress store and ensure it's defined
@@ -103,7 +103,7 @@ export async function mintFerryTicket(): Promise<number | string> {
     
             // Prepare the transaction object with valid calldata
             const transaction = {
-                contractAddress: addrContract, // Address of the NFT contract
+                contractAddress: addrContractSepolia, // Address of the NFT contract
                 entrypoint: "mint",
                 calldata: [wallet], // Wallet address to mint the token to
             };
@@ -189,7 +189,7 @@ export async function transferToken(recipientAddrss: string, token_id: number): 
     
             // Prepare the transaction object with valid calldata
             const transaction = {
-                contractAddress: addrContract,
+                contractAddress: addrContractSepolia,
                 entrypoint: "transfer_from",
                 calldata: [
                     wallet,               // 'from' address (wallet address)
@@ -201,7 +201,7 @@ export async function transferToken(recipientAddrss: string, token_id: number): 
     
             // Execute the transaction
             const transferFT = await get(accountArgentX)?.execute(transaction);
-            const raw_symbol: string = await totNFTContract.symbol();
+            const raw_symbol: string = await totNFTContractSepolia.symbol();
             // Convert the number to BigInt
             const symbolBigInt = BigInt(raw_symbol);
             // Convert BigInt to hex and then to a string

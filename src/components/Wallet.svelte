@@ -53,14 +53,15 @@
 	  ],
     // Network to connect to
     // Can be mainnet, sepolia, slot
-    rpc: "https://api.cartridge.gg/x/starknet/sepolia",
+    rpc: "https://api.cartridge.gg/x/theoruggintrail/katana",
+    //rpc: "https://api.cartridge.gg/x/starknet/sepolia",
 
     // List of tokens to follow
     tokens: {
-      erc721: [addrContract],
       erc20: [ETH_CONTRACT],
+      erc721: [addrContract],
     },
-    slot: "theoruggintrail",
+    slot: "theoruggintrail"
 	});
 
   // Connect to Cartridge Game Controller
