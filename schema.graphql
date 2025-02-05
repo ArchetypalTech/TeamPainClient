@@ -3,6 +3,12 @@ schema {
   subscription: World__Subscription
 }
 
+"""
+Indicates that an Input Object is a OneOf Input Object (and thus requires
+                        exactly one of its field be provided)
+"""
+directive @oneOf on INPUT_OBJECT
+
 scalar ByteArray
 
 scalar ContractAddress
@@ -11,29 +17,27 @@ scalar Cursor
 
 scalar DateTime
 
-type ERC__Balance {
-  balance: String!
-  tokenMetadata: ERC__Token!
-  type: String!
+type ERC20__Token {
+  amount: String!
+  contractAddress: String!
+  decimals: Int!
+  name: String!
+  symbol: String!
 }
 
-type ERC__Token {
+type ERC721__Token {
   contractAddress: String!
-  decimals: String!
+  imagePath: String!
+  metadata: String!
+  metadataAttributes: String
+  metadataDescription: String
+  metadataName: String
   name: String!
   symbol: String!
   tokenId: String!
 }
 
-type ERC__Transfer {
-  amount: String!
-  executedAt: String!
-  from: String!
-  to: String!
-  tokenMetadata: ERC__Token!
-  transactionHash: String!
-  type: String!
-}
+union ERC__Token = ERC20__Token | ERC721__Token
 
 scalar Enum
 
@@ -42,6 +46,40 @@ union ModelUnion = the_oruggin_trail_Action | the_oruggin_trail_Inventory | the_
 enum OrderDirection {
   ASC
   DESC
+}
+
+type Token__Balance {
+  tokenMetadata: ERC__Token!
+}
+
+type Token__BalanceConnection {
+  edges: [Token__BalanceEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type Token__BalanceEdge {
+  cursor: Cursor
+  node: Token__Balance
+}
+
+type Token__Transfer {
+  executedAt: String!
+  from: String!
+  to: String!
+  tokenMetadata: ERC__Token!
+  transactionHash: String!
+}
+
+type Token__TransferConnection {
+  edges: [Token__TransferEdge]
+  pageInfo: World__PageInfo!
+  totalCount: Int!
+}
+
+type Token__TransferEdge {
+  cursor: Cursor
+  node: Token__Transfer
 }
 
 type World__Content {
@@ -172,16 +210,14 @@ enum World__ModelOrderField {
 
 type World__PageInfo {
   endCursor: Cursor
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
   startCursor: Cursor
 }
 
 type World__Query {
   entities(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EntityConnection
   entity(id: ID!): World__Entity!
-  ercBalance(accountAddress: String!): [ERC__Balance]
-  ercTransfer(accountAddress: String!, limit: Int!): [ERC__Transfer]
   eventMessage(id: ID!): World__EventMessage!
   eventMessages(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EventMessageConnection
   events(after: Cursor, before: Cursor, first: Int, keys: [String], last: Int, limit: Int, offset: Int): World__EventConnection
@@ -196,6 +232,8 @@ type World__Query {
   theOrugginTrailRoomModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_RoomOrder, where: the_oruggin_trail_RoomWhereInput): the_oruggin_trail_RoomConnection
   theOrugginTrailSpawnroomModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_SpawnroomOrder, where: the_oruggin_trail_SpawnroomWhereInput): the_oruggin_trail_SpawnroomConnection
   theOrugginTrailTxtdefModels(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int, order: the_oruggin_trail_TxtdefOrder, where: the_oruggin_trail_TxtdefWhereInput): the_oruggin_trail_TxtdefConnection
+  tokenBalances(accountAddress: String!, after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int): Token__BalanceConnection
+  tokenTransfers(accountAddress: String!, after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int): Token__TransferConnection
   transaction(transactionHash: ID!): World__Transaction!
   transactions(after: Cursor, before: Cursor, first: Int, last: Int, limit: Int, offset: Int): World__TransactionConnection
 }

@@ -5,7 +5,7 @@
 
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
-    import {Manifest_Addresses} from "../be_fe_constants.js";
+    import {Manifest_Addresses, ETH_CONTRACT} from "../be_fe_constants.js";
     import { addrContract } from '../TOTToken/tot_NFT_constants.js';
     import {accountController, walletAddressCont, username, connectedToCGC, accountArgentX , walletAddressArX, connectedToArX, providerST} from '../Wallets/Wallet_constants.js';
 
@@ -53,12 +53,14 @@
 	  ],
     // Network to connect to
     // Can be mainnet, sepolia, slot
-	  rpc: "https://api.cartridge.gg/x/starknet/sepolia",
+    rpc: "https://api.cartridge.gg/x/starknet/sepolia",
+
     // List of tokens to follow
     tokens: {
       erc721: [addrContract],
+      erc20: [ETH_CONTRACT],
     },
-    slot: "theoruggintrail"
+    slot: "theoruggintrail",
 	});
 
   // Connect to Cartridge Game Controller

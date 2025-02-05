@@ -13,7 +13,7 @@ const config: UserConfig = {
         },
         proxy: {
             'api': {
-                target: 'http://localhost:5050',
+                target: 'https://api.cartridge.gg/x/theoruggintrail/katana',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '')
             }
