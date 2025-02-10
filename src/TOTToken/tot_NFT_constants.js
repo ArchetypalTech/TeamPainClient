@@ -7,7 +7,7 @@ export const provider = new RpcProvider({ nodeUrl: 'https://api.cartridge.gg/x/t
 export const providerSepolia = new RpcProvider({ nodeUrl: 'https://starknet-sepolia.public.blastapi.io' });
             
 // Contract address for the TOT NFT Token in Katana/Slot
-export const addrContract = "0x00e42c26b017863c5ad0b97373269398b9bc8bdbd6121d9c3705b644ffa29fe9";
+export const addrContract = "0x01dc981317c9b40a04229c3e48724704a428aa9582c29dabc41233cc564f1706";
 
 // Contract address for the TOT NFT Token in Sepolia
 export const addrContractSepolia = "0x02cf8f08f551ecb5b839726396d8c8600843078a30b2e288784980cb098ccb7b";
