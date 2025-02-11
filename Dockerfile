@@ -31,6 +31,9 @@ RUN pnpm install --frozen-lockfile --prod=false
 # Copy application code
 COPY . .
 
+# Ensure the manifest directory is included in the final build
+RUN mkdir -p /app/build/server/manifest && cp -r /app/src/manifest/* /app/build/server/manifest/
+
 # Build application
 RUN pnpm run build
 
