@@ -8,7 +8,8 @@
   import { helpStore } from '$lib/stores/help_store';
   import CameraShake from "$components/CameraShake.svelte";
   import Ambient from "$components/Ambient.svelte";
-
+       
+  
   const ENTITY_ID = 23;
   const entityId = getEntityIdFromKeys(ENTITY_ID);
   console.log("ID:------------> ", entityId);
@@ -16,17 +17,20 @@
   let hasError = false;
   let ambientSoundComponent: { switchTone: () => void };
 
+   
+
     function handleError(error: any) {
         hasError = true;
         console.error('Application error:', error);
-    }
+    }    
 
-    onMount(() => {
+    onMount(async() => {
         try {
             setupThree();
         } catch (error) {
             handleError(error);
         }
+        
     });
 </script>
 
@@ -49,7 +53,7 @@
           tonalFrequency2={330}
           transitionTime={2}
       />
-      
+
       <div class="relative z-10 w-full h-full">
           <div class="absolute w-[30%] h-2/3 min-w-[350px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
               <Wallet />
@@ -77,5 +81,5 @@
           </div>
       </div>
   {/if}
+    
 </div>
-

@@ -5,8 +5,9 @@
 	// console.log("LAYOUT----------->");
 
 	// This will run on both server and client
+	// fetch should be directed to /api
 	if (typeof window !== 'undefined') {
-		fetch('/graphql').catch(() => {
+		fetch('/api').catch(() => {
 			console.log('GraphQL server is down...');
 			graphqlStatus.set({ isDown: true });
 		});

@@ -5,6 +5,8 @@ import fs from "fs";
 import { setFilePath } from '$lib';
 import { RpcProvider, Account, json, Contract, CallData, byteArray } from 'starknet';
 
+import { Katana, Manifest_Addresses } from '../../be_fe_constants';
+
 // wallet 10
 // NB `sozo` uses wallet 0 as the migration account this
 // aacoutn will fail if we use it as the account for the
@@ -13,14 +15,9 @@ import { RpcProvider, Account, json, Contract, CallData, byteArray } from 'stark
 //| Private key     |  0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b
 //| Public key      |  0x4c339f18b9d1b95b64a6d378abd1480b2e0d5d5bd33cd0828cbce4d65c27284
 
-const KATANA_ENDPOINT = 'http://localhost:5050';
-
-// this should be a burner account deployed on Katana by default
-const pKey = '0x1c9053c053edf324aec366a34c6901b1095b07af69495bffec7d7fe21effb1b';
-const addr = '0x6b86e40118f29ebe393a75469b4d926c7a44c2e2681b6d319520b7c1156d114';
 
 // toggle to pass command to Torri client
-const MANIFEST = setFilePath('../manifest/systems_outputter.json')
+const MANIFEST = setFilePath('../manifest/system_outputter.json')
 
 // POST on route /api
 export const POST: RequestHandler = async (event) => {
@@ -41,8 +38,8 @@ export const GET: RequestHandler = async () => {
     console.log('----------------> GET',)
 
     // set up the provider and account. Writes are not free
-    const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: KATANA_ENDPOINT });
-    const burnerAccount: Account = new Account(katanaProvider, addr, pKey);
+    const katanaProvider: RpcProvider = new RpcProvider({ nodeUrl: Katana.KATANA_ENDPOINT });
+    const burnerAccount: Account = new Account(katanaProvider, Katana.addr, Katana.pKey);
 
     // read in the compiled contract abi
     const contractAbi = json.parse(
@@ -51,7 +48,7 @@ export const GET: RequestHandler = async () => {
 
     const contractAddr: string = '0x5351273085d5dfbf7ab213b6712cd0cd81b12eefcfa278b8f2791e9061af146';
 
-    const theOutputter: Contract = new Contract(contractAbi.abi, contractAddr, katanaProvider);
+    const theOutputter: Contract = new Contract(contractAbi.abi, Manifest_Addresses.OUTPUTTER_ADDRESS, katanaProvider);
 
     // connect the account to the contract
     theOutputter.connect(burnerAccount);
