@@ -31,11 +31,12 @@ RUN pnpm install --frozen-lockfile --prod=false
 # Copy application code
 COPY . .
 
-# Ensure the manifest directory is included in the final build
-RUN mkdir -p /app/build/server/manifest && cp -r /app/src/manifest/* /app/build/server/manifest/
-
 # Build application
 RUN pnpm run build
+
+# Ensure the manifest directory exists and copy files
+RUN mkdir -p /app/build/server/manifest 
+COPY src/manifest /app/build/server/manifest
 
 # Remove development dependencies
 RUN pnpm prune --prod
@@ -48,6 +49,9 @@ FROM base
 COPY --from=build /app/build /app/build
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/package.json /app
+
+# Ensure the manifest files exist in the final container
+COPY --from=build /app/src/manifest /app/build/server/manifest
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
