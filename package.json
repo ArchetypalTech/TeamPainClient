@@ -41,6 +41,7 @@
         "@cartridge/controller": "^0.5.5",
         "@starknet-react/chains": "^3.1.2",
         "@starknet-react/core": "^3.7.1",
+        "@sveltejs/adapter-node": "^5.2.12",
         "buffer": "^6.0.3",
         "get-starknet": "^3.3.3",
         "graphql": "^16.9.0",
