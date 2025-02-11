@@ -6,14 +6,14 @@
 	// Controller - Cartridge
     import Controller from "@cartridge/controller";
     import {Manifest_Addresses, ETH_CONTRACT} from "../be_fe_constants.js";
-    import { addrContract } from '../TOTToken/tot_NFT_constants.js';
+    import { addrContract, oruggin_ChainID } from '../TOTToken/tot_NFT_constants.js';
     import {accountController, walletAddressCont, username, connectedToCGC, accountArgentX , walletAddressArX, connectedToArX, providerST} from '../Wallets/Wallet_constants.js';
 
   // Argent X - Wallet
     import { connect, disconnect } from "get-starknet";
       
   // Starknet.js
-   import { WalletAccount } from 'starknet';
+   import { WalletAccount, constants } from 'starknet';
  
   
 	// States and variables
@@ -26,40 +26,52 @@
     colorMode: 'dark',
     //theme: "here will go our theme that needs to be designed and added",
     // Policies are required to be defined better
-	  policies: [
-      {
-        // target is the meatpuppet system, which is the entry to the world
-        target: Manifest_Addresses.ENTITY_ADDRESS,
-        method: "approve",
-        description: "Approve submiting transactions to play The Oruggin Trail",
+    policies: {
+      contracts: {
+        [Manifest_Addresses.ENTITY_ADDRESS]: {
+          name: "The Oruggin Trail", // Optional, can be added if you want a name
+          description: "Approve or reject submitting transactions to play The Oruggin Trail",
+          methods: [
+            {
+              entrypoint: "approve", // The actual method name
+              description: "Approve submitting transactions to play The Oruggin Trail",
+            },
+            {
+              entrypoint: "reject", // The actual method name
+              description: "Reject submitting transactions to play The Oruggin Trail",
+            },
+          ],
+        },
+        [addrContract]: {
+          name: "TOT NFT", // Optional
+          description: "Mint and transfer TOT tokens",
+          methods: [
+            {
+              entrypoint: "mint", // The actual method name
+              description: "Approve minting a TOT Token",
+            },
+            {
+              entrypoint: "transfer_from", // The actual method name
+              description: "Transfer a TOT Token",
+            },
+          ],
+        },
       },
-      {
-        target: Manifest_Addresses.ENTITY_ADDRESS,
-        method: "reject",
-        description: "Reject submiting transactions to play The Oruggin Trail",
-      },
-      {
-        // Approve minting NFT
-        target: addrContract,
-        method: "mint",
-        description: "Approve minting a TOT Token",
-      },
-      {
-        // Approve transfering the NFT
-        target: addrContract,
-        method: "transfer_from",
-        description: "Transfer a TOT Token",
-      },
-	  ],
+    },  
     // Network to connect to
     // Can be mainnet, sepolia, slot
-    rpc: "https://api.cartridge.gg/x/theoruggintrail/katana",
+    chains: [
+    {
+      rpcUrl: "https://api.cartridge.gg/x/theoruggintrail/katana", // Use `rpcUrl` here
+    },
+  ],
+  defaultChainId: oruggin_ChainID,
     //rpc: "https://api.cartridge.gg/x/starknet/sepolia",
 
     // List of tokens to follow
     tokens: {
       erc20: [ETH_CONTRACT],
-      erc721: [addrContract],
+      //erc721: [addrContract],
     },
     slot: "theoruggintrail"
 	});

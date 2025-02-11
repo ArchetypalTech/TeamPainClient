@@ -6,6 +6,9 @@ import fs from 'fs'; // For reading the SSL certificate files
 
 const config: UserConfig = {
 	plugins: [houdini(), sveltekit()],
+    build: {
+        target: 'esnext', // Use `esnext` for modern JavaScript features like top-level await
+    },
     server: {
         https: {
             key: fs.readFileSync(path.resolve(__dirname, 'ssl', 'localhost-key.pem')), // Path to your private key
