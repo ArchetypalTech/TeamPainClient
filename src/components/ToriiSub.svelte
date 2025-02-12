@@ -18,15 +18,20 @@
     const MAX_RETRIES = 1000;
     const RETRY_DELAY = 5000;
 
+    let isListening = false;
     async function initializeConnection() {
+        if (isListening) return; // Prevent multiple subscriptions
+        isListening = true;
+        
         console.log('---------> start torii subscription');
         try {
-             await torii_gql.listen({ id: entityId });
+            await torii_gql.listen({ id: entityId });
             isConnected = true;
             connError = null;
         } catch (error: any) {
             console.log('ERR: ----------> *');
             let err_msg = 'Unknown error occurred';
+            isListening = false; // Reset listening state if connection fails
             if (error.cause?.code === 'ECONNREFUSED') {
                 err_msg = 'Cannot connect to server. Is it running?';
             } else if (error.networkError) {
@@ -89,6 +94,8 @@
         }
     }
 
+    let lastProcessedText = "";
+
     $: if ($torii_gql.data?.entityUpdated?.models) {
         console.log(":------------> UPDATE");
         // Reset connection attempts on successful data
@@ -98,29 +105,70 @@
             model => model.__typename === 'the_oruggin_trail_Output'
         );
         if (outputModel) {
-            text_o = outputModel.text_o_vision;
-            console.log("BACON: ", text_o);
+            const newText = Array.isArray(outputModel.text_o_vision)
+             ? outputModel.text_o_vision.join('\n') 
+             : outputModel.text_o_vision || ""; // Ensure it's always a string
+            
+            // -- OLD WAY -- //
+            //text_o = outputModel.text_o_vision;
+            // -- END OLD WAY -- //
+            console.log("BACON: ", newText);  
+            
+            // Trim the newText and compare with lastProcessedText
+            const trimmedNewText = newText.trim();
+            
+            // -- OLD WAY -- //
+            // let lines: string[];
+            // if (typeof text_o === 'string') {
+            //     lines = processWhitespaceTags(text_o);
+            // } else if (Array.isArray(text_o)) {
+            //     lines = text_o.flatMap(item => processWhitespaceTags(item));
+            // } else {
+            //     lines = [];
+            // }
+            // -- END OLD WAY -- //
 
-            let lines: string[];
-            if (typeof text_o === 'string') {
-                lines = processWhitespaceTags(text_o);
-            } else if (Array.isArray(text_o)) {
-                lines = text_o.flatMap(item => processWhitespaceTags(item));
+            if (trimmedNewText !== lastProcessedText.trim()) {
+                let lines: string[] = processWhitespaceTags(trimmedNewText);
+                // Display the output with a delay between lines
+                displayToriiOutput(lines, 1500).then(() => {
+                        lastProcessedText = trimmedNewText; // Store last processed text to avoid duplicates
+                    }); 
+                
             } else {
-                lines = [];
-            }
+                console.log("Skipping duplicate update");
+            }   
 
-            for (const line of lines) {
-                console.log("LINE: ", line);
-                addTerminalContent({ 
-                    text: line,
-                    format: 'out',
-                    useTypewriter: true 
-                });
-            }
         }
     } 
-    </script>
+
+    async function displayToriiOutput(lines: string[], delay: number) {
+        // Loop through the lines and process them one by one
+        for (const line of lines) {
+            console.log("LINE: ", line);
+            await waitForLineToFinish();  // Wait for previous line to finish
+            await addTerminalContent({
+                text: line,
+                format: 'out',
+                useTypewriter: true // Set to true for typewriter effect
+            });
+        }
+    }
+
+    let lineProcessingPromise = Promise.resolve();
+
+    function waitForLineToFinish() {
+        // Return the promise to ensure each line waits for the previous one
+        return lineProcessingPromise.then(() => {
+            return new Promise<void>((resolve) => {
+                lineProcessingPromise = new Promise((resolveInner) => {
+                    resolve(); // Resolve immediately, as it's just waiting for the previous line to complete
+                    resolveInner(); // Resolve the next line after this one completes
+                });
+            });
+        });
+    }
+</script>
 
 {#if !isConnected}
     {#if connectionAttempts >= MAX_RETRIES}
