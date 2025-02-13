@@ -95,6 +95,7 @@
     }
 
     let lastProcessedText = "";
+    let trimmedNewText = "";
 
     $: if ($torii_gql.data?.entityUpdated?.models) {
         console.log(":------------> UPDATE");
@@ -115,7 +116,7 @@
             console.log("BACON: ", newText);  
             
             // Trim the newText and compare with lastProcessedText
-            const trimmedNewText = newText.trim();
+            trimmedNewText = newText.trim();
             
             // -- OLD WAY -- //
             // let lines: string[];
@@ -130,43 +131,25 @@
 
             if (trimmedNewText !== lastProcessedText.trim()) {
                 let lines: string[] = processWhitespaceTags(trimmedNewText);
-                // Display the output with a delay between lines
-                displayToriiOutput(lines, 1500).then(() => {
-                        lastProcessedText = trimmedNewText; // Store last processed text to avoid duplicates
+                lastProcessedText = trimmedNewText; // Store last processed text to avoid duplicates
+                displayToriiOutput(lines).then(() => {                        
+                        console.log("Done processing");
                     }); 
-                
             } else {
                 console.log("Skipping duplicate update");
-            }   
-
+            }
         }
     } 
 
-    async function displayToriiOutput(lines: string[], delay: number) {
-        // Loop through the lines and process them one by one
+    async function displayToriiOutput(lines: string[]) {
         for (const line of lines) {
             console.log("LINE: ", line);
-            await waitForLineToFinish();  // Wait for previous line to finish
-            await addTerminalContent({
+            await addTerminalContent({ 
                 text: line,
                 format: 'out',
-                useTypewriter: true // Set to true for typewriter effect
+                useTypewriter: true 
             });
-        }
-    }
-
-    let lineProcessingPromise = Promise.resolve();
-
-    function waitForLineToFinish() {
-        // Return the promise to ensure each line waits for the previous one
-        return lineProcessingPromise.then(() => {
-            return new Promise<void>((resolve) => {
-                lineProcessingPromise = new Promise((resolveInner) => {
-                    resolve(); // Resolve immediately, as it's just waiting for the previous line to complete
-                    resolveInner(); // Resolve the next line after this one completes
-                });
-            });
-        });
+        }        
     }
 </script>
 

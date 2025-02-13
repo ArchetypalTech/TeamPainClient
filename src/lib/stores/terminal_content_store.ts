@@ -10,12 +10,12 @@ export type TerminalContentItem = {
 export const terminalContent = writable<TerminalContentItem[]>([]);
 
 export function addTerminalContent(item: TerminalContentItem): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise<void>((resolve) => {
     terminalContent.update(content => [...content, item]);
 
     if (item.useTypewriter) {
       // Simulate the typewriter effect with a delay based on item.text length
-      const typewriterDelay = item.text.length * 50; // Adjust delay per character
+      const typewriterDelay = item.text.length * 50; // Adjust delay
 
       setTimeout(() => {
         console.log(`Finished adding: ${item.text}`);
