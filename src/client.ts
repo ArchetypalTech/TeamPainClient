@@ -3,10 +3,10 @@ import { createClient } from 'graphql-ws'
 import { subscription } from '$houdini/plugins'
 
 export default new HoudiniClient({
-    url: 'https://api.cartridge.gg/x/theoruggintrail/torii/graphql',
+    url: 'https://api.cartridge.gg/x/theoruggintrailv2/torii/graphql',
     plugins: [
         subscription(() => createClient({
-            url: 'wss://api.cartridge.gg/x/theoruggintrail/torii/graphql'
+            url: 'wss://api.cartridge.gg/x/theoruggintrailv2/torii/graphql'
         }))
     ]
 

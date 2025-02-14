@@ -16,7 +16,7 @@ const config: UserConfig = {
         },
         proxy: {
             'api': {
-                target: 'https://api.cartridge.gg/x/theoruggintrail/katana',
+                target: 'https://api.cartridge.gg/x/theoruggintrailv2/katana',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '')
             }

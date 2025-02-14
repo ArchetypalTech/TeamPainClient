@@ -3,14 +3,18 @@ import { RpcProvider, Contract, Account, ec, json } from 'starknet';
 
 // Initialize provider with Sepolia Testnet node
 // Sepolia: https://starknet-sepolia.public.blastapi.io
-export const provider = new RpcProvider({ nodeUrl: 'https://api.cartridge.gg/x/theoruggintrail/katana' });
+export const provider = new RpcProvider({ nodeUrl: 'https://api.cartridge.gg/x/theoruggintrailv2/katana' });
 export const providerSepolia = new RpcProvider({ nodeUrl: 'https://starknet-sepolia.public.blastapi.io' });
 
 // starkli chain-id --rpc https://api.cartridge.gg/x/theoruggintrail/katana
-export const oruggin_ChainID = "0x57505f5448454f52554747494e545241494c"
+//export const oruggin_ChainID = "0x57505f5448454f52554747494e545241494c"
+
+// starkli chain-id --rpc https://api.cartridge.gg/x/theoruggintrailv2/katana
+export const oruggin_ChainID = "0x57505f5448454f52554747494e545241494c5632"
             
 // Contract address for the TOT NFT Token in Katana/Slot
-export const addrContract = "0x01dc981317c9b40a04229c3e48724704a428aa9582c29dabc41233cc564f1706";
+//export const addrContract = "0x01dc981317c9b40a04229c3e48724704a428aa9582c29dabc41233cc564f1706";
+export const addrContract = "0x073e84f7c8a69177a1643af77c801eabc4203a7076ea15999fbc1ae5eae9253d";
 
 // Contract address for the TOT NFT Token in Sepolia
 export const addrContractSepolia = "0x02cf8f08f551ecb5b839726396d8c8600843078a30b2e288784980cb098ccb7b";

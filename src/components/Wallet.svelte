@@ -62,7 +62,7 @@
     // Can be mainnet, sepolia, slot
     chains: [
     {
-      rpcUrl: "https://api.cartridge.gg/x/theoruggintrail/katana", // Use `rpcUrl` here
+      rpcUrl: "https://api.cartridge.gg/x/theoruggintrailv2/katana", // Use `rpcUrl` here
     },
   ],
   defaultChainId: oruggin_ChainID,
@@ -73,7 +73,7 @@
       erc20: [ETH_CONTRACT],
       //erc721: [addrContract],
     },
-    slot: "theoruggintrail"
+    slot: "theoruggintrailv2"
 	});
 
   // Connect to Cartridge Game Controller
