@@ -1,7 +1,7 @@
 // Katana burner account
 export const Katana = {
     // Endpoint connection to Katana. // fish this from an env file if in local mode
-    KATANA_ENDPOINT: 'https://api.cartridge.gg/x/theoruggintrail/katana',
+    KATANA_ENDPOINT: 'http://localhost:5050',
     
     // this should be a burner account deployed on Katana by default
     // we be using `controller`at this point in the astartup logic
@@ -19,6 +19,8 @@ export const Manifest_Addresses = {
     // manifest_slot
     //ENTITY_ADDRESS: '0x6f758cfd367ac46b8cae5b74770503253f0fd090097cfb0d8772ce275ea1376',
     // manifest_slot_v2 -> with drop implementation
+    //ENTITY_ADDRESS: '0x7e23776ff1349818ff81333008f7ad18554ad6d31a44944632f3985a62a1a9b',
+     // manifest_local -> for local testing
     ENTITY_ADDRESS: '0x7e23776ff1349818ff81333008f7ad18554ad6d31a44944632f3985a62a1a9b',
 
     // outputter
@@ -27,6 +29,8 @@ export const Manifest_Addresses = {
     // manifest_slot
     //OUTPUTTER_ADDRESS: '0x743573d012b712630f5c2a0b4d0ce8886986e9cac50e294dee45b7298106589',
     // manifest_slot_v2 -> with drop implementation
+    //OUTPUTTER_ADDRESS: '0x743573d012b712630f5c2a0b4d0ce8886986e9cac50e294dee45b7298106589',
+    // manifest_local -> for local testing
     OUTPUTTER_ADDRESS: '0x743573d012b712630f5c2a0b4d0ce8886986e9cac50e294dee45b7298106589',
 
     // the world
