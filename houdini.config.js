@@ -3,7 +3,7 @@
 /** @type {import('houdini').ConfigFile} */
 const config = {
     watchSchema: {
-        url: "https://api.cartridge.gg/x/theoruggintrailv2/torii/graphql",
+        url: "https://api.cartridge.gg/x/theoruggintrail/torii/graphql",
         interval: 1000,  // Consider increasing this in development
         maxRetries: 3,   // Fixed typo
         quiet: true,

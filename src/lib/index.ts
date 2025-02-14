@@ -21,6 +21,7 @@ export const setFilePath = (target: string) => {
 }
 
 // make this go away into a setup function
+// File is the one with -> drop implementation
 const MANIFEST = setFilePath('../manifest/the_oruggin_trail_meatpuppet.contract_class_v2.json');
 
 // SYSTEM CALLS
