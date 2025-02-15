@@ -16,11 +16,17 @@ export const Manifest_Addresses = {
     // meatpuppet
     // cat TeamPainClient/src/manifest/manifest_dev.json | jq -r '.contracts[0].address'  
     // cat TeamPainClient/src/manifest/manifest_slot.json | jq -r '.contracts[0].address'   
-    ENTITY_ADDRESS: '0x6f758cfd367ac46b8cae5b74770503253f0fd090097cfb0d8772ce275ea1376',
+    // manifest_slot
+    //ENTITY_ADDRESS: '0x6f758cfd367ac46b8cae5b74770503253f0fd090097cfb0d8772ce275ea1376',
+    // manifest_slot_v2 -> with drop implementation
+    ENTITY_ADDRESS: '0x7e23776ff1349818ff81333008f7ad18554ad6d31a44944632f3985a62a1a9b',
 
     // outputter
     // cat ~TeamPainClient/src/manifest/manifest_dev.json | jq -r '.contracts[1].address'
     // cat TeamPainClient/src/manifest/manifest_slot.json | jq -r '.contracts[1].address'
+    // manifest_slot
+    //OUTPUTTER_ADDRESS: '0x743573d012b712630f5c2a0b4d0ce8886986e9cac50e294dee45b7298106589',
+    // manifest_slot_v2 -> with drop implementation
     OUTPUTTER_ADDRESS: '0x743573d012b712630f5c2a0b4d0ce8886986e9cac50e294dee45b7298106589',
 
     // the world
